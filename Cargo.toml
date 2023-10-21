@@ -1,9 +1,9 @@
 [package]
 name = "mt-interface"
-version = "0.0.1"
+version = "0.0.1-dev"
 edition = "2021"
 authors = ["Guy Or <guydude1@gmail.com>"]
-description = ""
+description = "TI Z-Stack Monitor and Test API client implementation"
 license = "MIT OR Apache-2.0"
 readme = "Readme.md"
 repository = "https://github.com/guyo13/mt-interface.git"
