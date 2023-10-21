@@ -1,5 +1,5 @@
 use crate::api::{Command, CommandId};
-use crate::constants::{MtCommandIdentifier, MtCommandSubsystem, MtCommandType};
+use crate::constants::{MtSysCommandId, MtCommandSubsystem, MtCommandType};
 
 const MT_CMD_ID_MASK_SUB_SYS: u8 = 0x1F;
 const MT_CMD_ID_MASK_TYPE: u8 = 0xE0;
@@ -40,7 +40,7 @@ impl MtCommandId {
     pub fn new(
         subsystem: MtCommandSubsystem,
         cmd_type: MtCommandType,
-        cmd_id: MtCommandIdentifier,
+        cmd_id: MtSysCommandId,
     ) -> Self {
         let cmd0 = (subsystem as u8) | (cmd_type as u8);
 
@@ -94,7 +94,19 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::SYSInterface,
                 MtCommandType::SREQ,
-                MtCommandIdentifier::SysPing,
+                MtSysCommandId::SysPing,
+            ),
+            data: [0; 256],
+        }
+    }
+
+    pub fn sys_version() -> Self {
+        MtCommand {
+            data_len: 0,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::SYSInterface,
+                MtCommandType::SREQ,
+                MtSysCommandId::SysVersion,
             ),
             data: [0; 256],
         }

@@ -56,14 +56,36 @@ impl MtCommandSubsystem {
 }
 
 #[derive(Clone, Copy)]
-pub enum MtCommandIdentifier {
+pub enum MtSysCommandId {
+    SysResetReq = 0x00,
     SysPing = 0x01,
+    SysVersion = 0x02,
+    SysSetExtaddr = 0x03,
+    SysGetExtaddr = 0x04,
+    SysRamRead = 0x05,
+    SysRamWrite = 0x06,
+    SysOsalNvRead = 0x08,
+    SysOsalNvWrite = 0x09,
+    SysOsalNvItemInit = 0x07,
+    SysOsalNvDelete = 0x12,
+    SysOsalNvLength = 0x13,
 }
 
-impl MtCommandIdentifier {
+impl MtSysCommandId {
     pub fn parse_byte(value: u8) -> Option<Self> {
         match value {
-            0x01 => Some(MtCommandIdentifier::SysPing),
+            0x00 => Some(MtSysCommandId::SysResetReq),
+            0x01 => Some(MtSysCommandId::SysPing),
+            0x02 => Some(MtSysCommandId::SysVersion),
+            0x03 => Some(MtSysCommandId::SysSetExtaddr),
+            0x04 => Some(MtSysCommandId::SysGetExtaddr),
+            0x05 => Some(MtSysCommandId::SysRamRead),
+            0x06 => Some(MtSysCommandId::SysRamWrite),
+            0x08 => Some(MtSysCommandId::SysOsalNvRead),
+            0x09 => Some(MtSysCommandId::SysOsalNvWrite),
+            0x07 => Some(MtSysCommandId::SysOsalNvItemInit),
+            0x12 => Some(MtSysCommandId::SysOsalNvDelete),
+            0x13 => Some(MtSysCommandId::SysOsalNvLength),
             _ => None,
         }
     }
