@@ -1,0 +1,14 @@
+[package]
+name = "mt-interface"
+version = "0.0.1"
+edition = "2021"
+authors = ["Guy Or <guydude1@gmail.com>"]
+description = ""
+license = "MIT OR Apache-2.0"
+readme = "Readme.md"
+repository = "https://github.com/guyo13/mt-interface.git"
+keywords = ["Zigbee", "Z-Stack", "Texas Instruments"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
