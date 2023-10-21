@@ -1,5 +1,6 @@
 pub const SOF: u8 = 0xFE;
 
+#[derive(Clone, Copy)]
 pub enum MtCommandType {
     POLL = 0x00,
     SREQ = 0x20,
@@ -18,6 +19,7 @@ impl MtCommandType {
     }
 }
 
+#[derive(Clone, Copy)]
 pub enum MtCommandSubsystem {
     Reserved = 0x00,
     SYSInterface = 0x01,
@@ -48,6 +50,20 @@ impl MtCommandSubsystem {
             0x09 => Some(MtCommandSubsystem::APPInterface),
             0x0F => Some(MtCommandSubsystem::APPConfig),
             0x15 => Some(MtCommandSubsystem::GreenPower),
+            _ => None,
+        }
+    }
+}
+
+#[derive(Clone, Copy)]
+pub enum MtCommandIdentifier {
+    SysPing = 0x01,
+}
+
+impl MtCommandIdentifier {
+    pub fn parse_byte(value: u8) -> Option<Self> {
+        match value {
+            0x01 => Some(MtCommandIdentifier::SysPing),
             _ => None,
         }
     }

@@ -20,11 +20,12 @@ impl<T: Command> GeneralSerialPacket<T> {
     }
 
     pub fn to_frame(&self) -> Vec<u8> {
-        let mut frame = Vec::with_capacity(MT_CMD_BASE_CAP + (self.mt_cmd.len() as usize));
-        let cmd_id = self.mt_cmd.cmd();
         let d_len = self.mt_cmd.len() as usize;
+        let mut frame = Vec::with_capacity(MT_CMD_BASE_CAP + d_len);
+        let cmd_id = self.mt_cmd.cmd();
 
         frame.push(SOF);
+        frame.push(self.mt_cmd.len());
         frame.push(cmd_id.cmd0());
         frame.push(cmd_id.cmd1());
         self.mt_cmd.data()[0..d_len]
@@ -33,5 +34,20 @@ impl<T: Command> GeneralSerialPacket<T> {
         frame.push(self.fcs);
 
         frame
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::data::MtCommand;
+
+    #[test]
+    fn test_serialization_sys_ping() {
+        let mt_cmd = MtCommand::sys_ping();
+        let packet = GeneralSerialPacket::from_cmd(mt_cmd);
+        let expected: Vec<u8> = vec![0xFE, 0x00, 0x21, 0x01, 0x20];
+
+        assert_eq!(packet.to_frame(), expected);
     }
 }
