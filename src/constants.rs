@@ -69,6 +69,10 @@ pub enum MtSysCommandId {
     SysOsalNvItemInit = 0x07,
     SysOsalNvDelete = 0x12,
     SysOsalNvLength = 0x13,
+    SysOsalStartTimer = 0x0A,
+    SysOsalStopTimer = 0x0B,
+    SysRandom = 0x0C,
+    SysADCRead = 0x0D,
 }
 
 impl MtSysCommandId {
@@ -86,6 +90,10 @@ impl MtSysCommandId {
             0x07 => Some(MtSysCommandId::SysOsalNvItemInit),
             0x12 => Some(MtSysCommandId::SysOsalNvDelete),
             0x13 => Some(MtSysCommandId::SysOsalNvLength),
+            0x0A => Some(MtSysCommandId::SysOsalStartTimer),
+            0x0B => Some(MtSysCommandId::SysOsalStopTimer),
+            0x0C => Some(MtSysCommandId::SysRandom),
+            0x0D => Some(MtSysCommandId::SysADCRead),
             _ => None,
         }
     }
