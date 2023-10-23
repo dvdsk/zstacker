@@ -14,7 +14,6 @@ pub enum MtAppConfigCommandId {
     // TODO - implement ParseByte
 }
 
-
 #[derive(Clone, Copy)]
 pub enum MtAppConfigCallbackId {
     APP_CNF_BDB_COMMISSIONING_NOTIFICATION = 0x80,

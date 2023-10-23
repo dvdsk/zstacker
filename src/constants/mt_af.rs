@@ -11,7 +11,6 @@ pub enum MtAFCommandId {
     // TODO - implement ParseByte
 }
 
-
 #[derive(Clone, Copy)]
 pub enum MtAFCallbackId {
     AF_DATA_CONFIRM = 0x80,

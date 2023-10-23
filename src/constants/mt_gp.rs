@@ -5,7 +5,6 @@ pub enum MtGPCommandId {
     // TODO - implement ParseByte
 }
 
-
 #[derive(Clone, Copy)]
 pub enum MtGPCallbackId {
     GP_DATA_CNF = 0x05,
