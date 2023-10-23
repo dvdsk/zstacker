@@ -1,3 +1,5 @@
+use crate::api::ParseByte;
+
 pub const SOF: u8 = 0xFE;
 
 #[derive(Clone, Copy)]
@@ -7,8 +9,10 @@ pub enum MtCommandType {
     AREQ = 0x40,
     SRSP = 0x60,
 }
-impl MtCommandType {
-    pub fn parse_byte(value: u8) -> Option<Self> {
+
+// TODO - use derive(ParseByte)
+impl ParseByte<Self> for MtCommandType {
+    fn parse_byte(value: u8) -> Option<Self> {
         match value {
             0x00 => Some(MtCommandType::POLL),
             0x20 => Some(MtCommandType::SREQ),
@@ -35,8 +39,9 @@ pub enum MtCommandSubsystem {
     GreenPower = 0x15,
 }
 
-impl MtCommandSubsystem {
-    pub fn parse_byte(value: u8) -> Option<Self> {
+// TODO - use derive(ParseByte)
+impl ParseByte<Self> for MtCommandSubsystem {
+    fn parse_byte(value: u8) -> Option<Self> {
         match value {
             0x00 => Some(MtCommandSubsystem::Reserved),
             0x01 => Some(MtCommandSubsystem::SYSInterface),
@@ -92,8 +97,9 @@ pub enum MtSysCommandId {
     SysNvCompact = 0x36,
 }
 
-impl MtSysCommandId {
-    pub fn parse_byte(value: u8) -> Option<Self> {
+// TODO - use derive(ParseByte)
+impl ParseByte<Self> for MtSysCommandId {
+    fn parse_byte(value: u8) -> Option<Self> {
         match value {
             0x00 => Some(MtSysCommandId::SysResetReq),
             0x01 => Some(MtSysCommandId::SysPing),

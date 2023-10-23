@@ -1,4 +1,4 @@
-use crate::api::{Command, CommandId};
+use crate::api::{Command, CommandId, ParseByte};
 use crate::constants::{MtSysCommandId, MtCommandSubsystem, MtCommandType};
 
 const MT_CMD_ID_MASK_SUB_SYS: u8 = 0x1F;
