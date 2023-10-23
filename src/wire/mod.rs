@@ -16,7 +16,7 @@ impl<T: Command> GeneralSerialPacket<T> {
             .iter()
             .fold(cmd_id.cmd0() ^ cmd_id.cmd1(), |x, y| x ^ y);
 
-        GeneralSerialPacket { mt_cmd, fcs: fcs }
+        GeneralSerialPacket { mt_cmd, fcs }
     }
 
     pub fn to_frame(&self) -> Vec<u8> {

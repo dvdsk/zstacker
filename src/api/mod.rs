@@ -8,6 +8,7 @@ pub trait CommandId {
     fn cmd1(&self) -> u8;
 }
 
+#[allow(clippy::len_without_is_empty)]
 pub trait Command {
     type CmdId: CommandId;
 
