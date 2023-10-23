@@ -17,7 +17,7 @@ pub trait Command {
     fn data(&self) -> &[u8];
 }
 
-// TODO - write a Derive macro 
+// TODO - write a Derive macro
 pub trait ParseByte<T> {
     fn parse_byte(value: u8) -> Option<T>;
 }

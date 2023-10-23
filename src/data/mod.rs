@@ -1,5 +1,5 @@
 use crate::api::{Command, CommandId, ParseByte};
-use crate::constants::{MtSysCommandId, MtCommandSubsystem, MtCommandType};
+use crate::constants::{MtCommandSubsystem, MtCommandType, MtSysCommandId};
 
 const MT_CMD_ID_MASK_SUB_SYS: u8 = 0x1F;
 const MT_CMD_ID_MASK_TYPE: u8 = 0xE0;
@@ -118,4 +118,3 @@ impl Default for MtCommand {
         MtCommand::empty()
     }
 }
-
