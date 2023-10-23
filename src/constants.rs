@@ -73,6 +73,23 @@ pub enum MtSysCommandId {
     SysOsalStopTimer = 0x0B,
     SysRandom = 0x0C,
     SysADCRead = 0x0D,
+    SysGIO = 0x0E,
+    SysStackTune = 0x0F,
+    SysSetTime = 0x10,
+    SysGetTime = 0x11,
+    SysSetTxPower = 0x14,
+    SysZDiagsInitStats = 0x17,
+    SysZDiagsClearStats = 0x18,
+    SysZDiagsGetStats = 0x19,
+    SysZDiagsRestoreStatsNv = 0x1A,
+    SysZDiagsSaveStatsToNv = 0x1B,
+    SysNvCreate = 0x30,
+    SysNvDelete = 0x31,
+    SysNvLength = 0x32,
+    SysNvRead = 0x33,
+    SysNvWrite = 0x34,
+    SysNvUpdate = 0x35,
+    SysNvCompact = 0x36,
 }
 
 impl MtSysCommandId {
@@ -97,6 +114,12 @@ impl MtSysCommandId {
             _ => None,
         }
     }
+}
+
+#[derive(Clone, Copy)]
+pub enum MtSysCallbackId {
+    SysResetInd = 0x80,
+    SysOsalTimerExpired = 0x81,
 }
 
 #[cfg(test)]
