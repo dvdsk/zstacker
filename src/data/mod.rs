@@ -1,5 +1,5 @@
 use crate::api::{Command, CommandId, ParseByte};
-use crate::constants::{MtCommandSubsystem, MtCommandType, MtSysCommandId};
+use crate::constants::{MtCommandSubsystem, MtCommandType, MtSysCommandId, MtUtilCommandId};
 
 const MT_CMD_ID_MASK_SUB_SYS: u8 = 0x1F;
 const MT_CMD_ID_MASK_TYPE: u8 = 0xE0;
@@ -40,13 +40,13 @@ impl MtCommandId {
     pub fn new(
         subsystem: MtCommandSubsystem,
         cmd_type: MtCommandType,
-        cmd_id: MtSysCommandId,
+        cmd_id: u8,
     ) -> Self {
         let cmd0 = (subsystem as u8) | (cmd_type as u8);
 
         MtCommandId {
             cmd0,
-            cmd1: cmd_id as u8,
+            cmd1: cmd_id,
         }
     }
 }
@@ -94,7 +94,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::SYSInterface,
                 MtCommandType::SREQ,
-                MtSysCommandId::SysPing,
+                MtSysCommandId::SysPing as u8,
             ),
             data: [0; 256],
         }
@@ -106,7 +106,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::SYSInterface,
                 MtCommandType::SREQ,
-                MtSysCommandId::SysVersion,
+                MtSysCommandId::SysVersion as u8,
             ),
             data: [0; 256],
         }
@@ -118,7 +118,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::SYSInterface,
                 MtCommandType::SREQ,
-                MtSysCommandId::SysGetExtaddr,
+                MtSysCommandId::SysGetExtaddr as u8,
             ),
             data: [0; 256],
         }
@@ -135,7 +135,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::SYSInterface,
                 MtCommandType::SREQ,
-                MtSysCommandId::SysOsalStartTimer,
+                MtSysCommandId::SysOsalStartTimer as u8,
             ),
             data,
         }
@@ -150,7 +150,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::SYSInterface,
                 MtCommandType::SREQ,
-                MtSysCommandId::SysOsalStopTimer,
+                MtSysCommandId::SysOsalStopTimer as u8,
             ),
             data,
         }
@@ -162,7 +162,19 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::SYSInterface,
                 MtCommandType::SREQ,
-                MtSysCommandId::SysRandom,
+                MtSysCommandId::SysRandom as u8,
+            ),
+            data: [0; 256],
+        }
+    }
+
+    pub fn util_get_device_info() -> Self {
+        MtCommand {
+            data_len: 0,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::UTILInterface,
+                MtCommandType::SREQ,
+                MtUtilCommandId::UTIL_GET_DEVICE_INFO as u8,
             ),
             data: [0; 256],
         }
