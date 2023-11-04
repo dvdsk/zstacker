@@ -155,6 +155,18 @@ impl MtCommand {
             data,
         }
     }
+
+    pub fn sys_random() -> Self {
+        MtCommand {
+            data_len: 0,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::SYSInterface,
+                MtCommandType::SREQ,
+                MtSysCommandId::SysRandom,
+            ),
+            data: [0; 256],
+        }
+    }
 }
 
 impl Default for MtCommand {
