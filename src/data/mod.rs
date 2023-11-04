@@ -111,6 +111,50 @@ impl MtCommand {
             data: [0; 256],
         }
     }
+
+    pub fn sys_get_extaddr() -> Self {
+        MtCommand {
+            data_len: 0,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::SYSInterface,
+                MtCommandType::SREQ,
+                MtSysCommandId::SysGetExtaddr,
+            ),
+            data: [0; 256],
+        }
+    }
+
+    pub fn sys_osal_start_timer(timer_id:u8, timeout:u16) -> Self {
+        let mut data:[u8;256] = [0; 256];
+        data[0] = timer_id;
+        data[1] = (timeout & 0x00FF) as u8;
+        data[2] = ((timeout & 0xFF00) >> 8) as u8;
+
+        MtCommand {
+            data_len: 3,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::SYSInterface,
+                MtCommandType::SREQ,
+                MtSysCommandId::SysOsalStartTimer,
+            ),
+            data,
+        }
+    }
+
+    pub fn sys_osal_stop_timer(timer_id:u8) -> Self {
+        let mut data:[u8;256] = [0; 256];
+        data[0] = timer_id;
+
+        MtCommand {
+            data_len: 1,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::SYSInterface,
+                MtCommandType::SREQ,
+                MtSysCommandId::SysOsalStartTimer,
+            ),
+            data,
+        }
+    }
 }
 
 impl Default for MtCommand {
