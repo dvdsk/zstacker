@@ -150,7 +150,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::SYSInterface,
                 MtCommandType::SREQ,
-                MtSysCommandId::SysOsalStartTimer,
+                MtSysCommandId::SysOsalStopTimer,
             ),
             data,
         }
