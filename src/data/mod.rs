@@ -179,6 +179,18 @@ impl MtCommand {
             data: [0; 256],
         }
     }
+
+    pub fn util_get_nv_info() -> Self {
+        MtCommand {
+            data_len: 0,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::UTILInterface,
+                MtCommandType::SREQ,
+                MtUtilCommandId::UTIL_GET_NV_INFO as u8,
+            ),
+            data: [0; 256],
+        }
+    }
 }
 
 impl Default for MtCommand {
