@@ -124,8 +124,8 @@ impl MtCommand {
         }
     }
 
-    pub fn sys_osal_start_timer(timer_id:u8, timeout:u16) -> Self {
-        let mut data:[u8;256] = [0; 256];
+    pub fn sys_osal_start_timer(timer_id: u8, timeout: u16) -> Self {
+        let mut data: [u8; 256] = [0; 256];
         data[0] = timer_id;
         data[1] = (timeout & 0x00FF) as u8;
         data[2] = ((timeout & 0xFF00) >> 8) as u8;
@@ -141,8 +141,8 @@ impl MtCommand {
         }
     }
 
-    pub fn sys_osal_stop_timer(timer_id:u8) -> Self {
-        let mut data:[u8;256] = [0; 256];
+    pub fn sys_osal_stop_timer(timer_id: u8) -> Self {
+        let mut data: [u8; 256] = [0; 256];
         data[0] = timer_id;
 
         MtCommand {
