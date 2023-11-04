@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use mt_interface::{data::MtCommand, wire::GeneralSerialPacket};
+use serialport::SerialPort;
 
 fn main() {
     let ports = serialport::available_ports().expect("No ports found!");
@@ -13,37 +14,44 @@ fn main() {
         .open()
         .expect("Failed to open port");
 
-    let packets = vec![
-        GeneralSerialPacket::from_cmd(MtCommand::sys_ping()),
-        GeneralSerialPacket::from_cmd(MtCommand::sys_version()),
-        GeneralSerialPacket::from_cmd(MtCommand::sys_get_extaddr()),
-        GeneralSerialPacket::from_cmd(MtCommand::sys_osal_start_timer(3, 1500)),
-        GeneralSerialPacket::from_cmd(MtCommand::sys_osal_stop_timer(3)),
-        GeneralSerialPacket::from_cmd(MtCommand::sys_random()),
-        GeneralSerialPacket::from_cmd(MtCommand::util_get_device_info()),
-        GeneralSerialPacket::from_cmd(MtCommand::util_get_nv_info()),
-        GeneralSerialPacket::from_cmd(MtCommand::util_time_alive()),
-        GeneralSerialPacket::from_cmd(MtCommand::util_srng_gen()),
+    let commands = vec![
+        MtCommand::sys_ping(),
+        MtCommand::sys_version(),
+        MtCommand::sys_get_extaddr(),
+        MtCommand::sys_osal_start_timer(3, 1500),
+        MtCommand::sys_osal_stop_timer(3),
+        MtCommand::sys_random(),
+        MtCommand::util_get_device_info(),
+        MtCommand::util_get_nv_info(),
+        MtCommand::util_time_alive(),
+        MtCommand::util_srng_gen(),
     ];
 
-    for packet in packets {
-        let tx = packet.to_frame();
+    for command in commands {
+        send_command(&mut port, command, true);
+    }
+}
+
+fn send_command(port: &mut Box<dyn SerialPort>, mt_cmd: MtCommand, should_read:bool) {
+    let packet = GeneralSerialPacket::from_cmd(mt_cmd);
+    let tx = packet.to_frame();
         print!("Write: ");
         print_packet(&tx, tx.len());
         let start = std::time::Instant::now();
         port.write(tx.as_slice()).expect("Write failed!");
 
-        let mut serial_buf: Vec<u8> = vec![0; 100];
-        let len = port
-            .read(serial_buf.as_mut_slice())
-            .expect("Found no data!");
+        if should_read {
+            let mut serial_buf: Vec<u8> = vec![0; 100];
+            let len = port
+                .read(serial_buf.as_mut_slice())
+                .expect("Found no data!");
+            
+            print!("Read: ");
+            print_packet(&serial_buf, len);
+        }
         let end = std::time::Instant::now();
-
-        print!("Read: ");
-        print_packet(&serial_buf, len);
         print!("Command took: {}ms", (end - start).as_millis());
         println!();
-    }
 }
 
 fn print_packet(packet: &Vec<u8>, len: usize) {
