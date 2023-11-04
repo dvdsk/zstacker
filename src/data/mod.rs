@@ -203,6 +203,18 @@ impl MtCommand {
             data: [0; 256],
         }
     }
+
+    pub fn util_srng_gen() -> Self {
+        MtCommand {
+            data_len: 0,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::UTILInterface,
+                MtCommandType::SREQ,
+                MtUtilCommandId::UTIL_SRNG_GEN as u8,
+            ),
+            data: [0; 256],
+        }
+    }
 }
 
 impl Default for MtCommand {
