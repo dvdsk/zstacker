@@ -215,6 +215,13 @@ impl MtCommand {
             data: [0; 256],
         }
     }
+    // TODO - implement ZDO_NODE_DESC_REQ to get node capabilities
+    // TODO - implement ZDO_POWER_DESC_REQ to get node power status
+    // TODO - implement ZDO_SIMPLE_DESC_REQ to get node simple descriptor
+    // TODO - implement ZDO_COMPLEX_DESC_REQ to get node complex descriptor
+    // TODO - implement ZDO_USER_DESC_REQ to get node user descriptor
+    // TODO - implement ZDO_ACTIVE_EP_REQ to get node active endpoints list
+    // TODO - implement ZDO_END_DEVICE_ANNCE 
 }
 
 impl Default for MtCommand {
