@@ -191,6 +191,18 @@ impl MtCommand {
             data: [0; 256],
         }
     }
+
+    pub fn util_time_alive() -> Self {
+        MtCommand {
+            data_len: 0,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::UTILInterface,
+                MtCommandType::SREQ,
+                MtUtilCommandId::UTIL_TIME_ALIVE as u8,
+            ),
+            data: [0; 256],
+        }
+    }
 }
 
 impl Default for MtCommand {
