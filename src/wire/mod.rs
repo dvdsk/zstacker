@@ -14,7 +14,7 @@ impl<T: Command> GeneralSerialPacket<T> {
 
         let fcs = mt_cmd.data()[0..d_len]
             .iter()
-            .fold(cmd_id.cmd0() ^ cmd_id.cmd1(), |x, y| x ^ y);
+            .fold(mt_cmd.len() ^ cmd_id.cmd0() ^ cmd_id.cmd1(), |x, y| x ^ y);
 
         GeneralSerialPacket { mt_cmd, fcs }
     }
