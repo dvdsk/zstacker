@@ -38,17 +38,10 @@ impl MtCommandId {
         MtCommandId { cmd0: 0, cmd1: 0 }
     }
 
-    pub fn new(
-        subsystem: MtCommandSubsystem,
-        cmd_type: MtCommandType,
-        cmd_id: u8,
-    ) -> Self {
+    pub fn new(subsystem: MtCommandSubsystem, cmd_type: MtCommandType, cmd_id: u8) -> Self {
         let cmd0 = (subsystem as u8) | (cmd_type as u8);
 
-        MtCommandId {
-            cmd0,
-            cmd1: cmd_id,
-        }
+        MtCommandId { cmd0, cmd1: cmd_id }
     }
 }
 
@@ -168,7 +161,7 @@ impl MtCommand {
         }
     }
 
-    pub fn sys_osal_nv_read(item_id:u16, offset:u8) -> Self {
+    pub fn sys_osal_nv_read(item_id: u16, offset: u8) -> Self {
         let mut data: [u8; 256] = [0; 256];
         encode_short(item_id, &mut data, 0);
         data[2] = offset;
@@ -237,7 +230,7 @@ impl MtCommand {
     // TODO - implement ZDO_COMPLEX_DESC_REQ to get node complex descriptor
     // TODO - implement ZDO_USER_DESC_REQ to get node user descriptor
     // TODO - implement ZDO_ACTIVE_EP_REQ to get node active endpoints list
-    // TODO - implement ZDO_END_DEVICE_ANNCE 
+    // TODO - implement ZDO_END_DEVICE_ANNCE
 }
 
 impl Default for MtCommand {
