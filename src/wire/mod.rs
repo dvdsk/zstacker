@@ -37,6 +37,11 @@ impl<T: Command> GeneralSerialPacket<T> {
     }
 }
 
+pub fn encode_short(short: u16, buf: &mut [u8], offset:usize) {
+    buf[offset] = (short & 0xFF) as u8;
+    buf[offset + 1] = ((short >> 8) & 0xFF) as u8;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

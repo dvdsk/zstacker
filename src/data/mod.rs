@@ -1,5 +1,6 @@
 use crate::api::{Command, CommandId, ParseByte};
 use crate::constants::{MtCommandSubsystem, MtCommandType, MtSysCommandId, MtUtilCommandId};
+use crate::wire::encode_short;
 
 const MT_CMD_ID_MASK_SUB_SYS: u8 = 0x1F;
 const MT_CMD_ID_MASK_TYPE: u8 = 0xE0;
@@ -127,8 +128,7 @@ impl MtCommand {
     pub fn sys_osal_start_timer(timer_id: u8, timeout: u16) -> Self {
         let mut data: [u8; 256] = [0; 256];
         data[0] = timer_id;
-        data[1] = (timeout & 0x00FF) as u8;
-        data[2] = ((timeout & 0xFF00) >> 8) as u8;
+        encode_short(timeout, &mut data, 1);
 
         MtCommand {
             data_len: 3,
@@ -163,6 +163,22 @@ impl MtCommand {
                 MtCommandSubsystem::SYSInterface,
                 MtCommandType::SREQ,
                 MtSysCommandId::SysRandom as u8,
+            ),
+            data: [0; 256],
+        }
+    }
+
+    pub fn sys_osal_nv_read(item_id:u16, offset:u8) -> Self {
+        let mut data: [u8; 256] = [0; 256];
+        encode_short(item_id, &mut data, 0);
+        data[2] = offset;
+
+        MtCommand {
+            data_len: 3,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::SYSInterface,
+                MtCommandType::SREQ,
+                MtSysCommandId::SysOsalNvRead as u8,
             ),
             data: [0; 256],
         }
