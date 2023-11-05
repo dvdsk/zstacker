@@ -180,7 +180,7 @@ impl MtCommand {
                 MtCommandType::SREQ,
                 MtSysCommandId::SysOsalNvRead as u8,
             ),
-            data: [0; 256],
+            data,
         }
     }
 
