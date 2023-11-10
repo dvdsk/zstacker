@@ -19,3 +19,11 @@ pub enum MtAFCallbackId {
     AF_INCOMING_MSG_EXT = 0x82,
     // TODO - implement ParseByte
 }
+
+#[derive(Clone, Copy)]
+pub enum LatencyReq {
+    NoLatency = 0x00,
+    FastBeacons = 0x01,
+    SlowBeacons = 0x02,
+    // TODO - implement ParseByte
+}

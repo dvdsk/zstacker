@@ -1,6 +1,8 @@
 use crate::api::{Command, CommandId, ParseByte};
-use crate::constants::{MtCommandSubsystem, MtCommandType, MtSysCommandId, MtUtilCommandId};
-use crate::wire::encode_short;
+use crate::constants::{
+    LatencyReq, MtAFCommandId, MtCommandSubsystem, MtCommandType, MtSysCommandId, MtUtilCommandId,
+};
+use crate::wire::{encode_short, encode_short_slice};
 
 const MT_CMD_ID_MASK_SUB_SYS: u8 = 0x1F;
 const MT_CMD_ID_MASK_TYPE: u8 = 0xE0;
@@ -224,6 +226,50 @@ impl MtCommand {
             data: [0; 256],
         }
     }
+
+    pub fn af_register(
+        end_point: u8,
+        app_prof_id: u16,
+        app_device_id: u16,
+        app_dev_ver: u8,
+        latency_req: LatencyReq,
+        app_num_in_clusters: u8,
+        app_in_cluster_list: [u16; 16],
+        app_num_out_clusters: u8,
+        app_out_cluster_list: [u16; 16],
+    ) -> Self {
+        let data_len = 0x09 + (app_num_in_clusters * 2) + (app_num_out_clusters * 2);
+        let mut data: [u8; 256] = [0; 256];
+        data[0] = end_point;
+        encode_short(app_prof_id, &mut data, 1);
+        encode_short(app_device_id, &mut data, 3);
+        data[5] = app_dev_ver;
+        data[6] = latency_req as u8;
+        data[7] = app_num_in_clusters;
+        encode_short_slice(
+            &app_in_cluster_list[..app_num_in_clusters as usize],
+            &mut data,
+            8,
+        );
+        let out_clusters_offset = 8 + (app_num_in_clusters * 2) as usize;
+        data[out_clusters_offset] = app_num_out_clusters;
+        encode_short_slice(
+            &app_out_cluster_list[..app_num_out_clusters as usize],
+            &mut data,
+            out_clusters_offset + 1,
+        );
+
+        MtCommand {
+            data_len,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::AFInterface,
+                MtCommandType::SREQ,
+                MtAFCommandId::AF_REGISTER as u8,
+            ),
+            data,
+        }
+    }
+
     // TODO - implement ZDO_NODE_DESC_REQ to get node capabilities
     // TODO - implement ZDO_POWER_DESC_REQ to get node power status
     // TODO - implement ZDO_SIMPLE_DESC_REQ to get node simple descriptor

@@ -1,7 +1,9 @@
 use std::time::Duration;
 
 use mt_interface::{
-    constants::{DeviceSpecificConfigurationItem, NetworkSpecificConfigurationItem}, data::MtCommand, wire::GeneralSerialPacket,
+    constants::{DeviceSpecificConfigurationItem, LatencyReq, NetworkSpecificConfigurationItem},
+    data::MtCommand,
+    wire::GeneralSerialPacket,
 };
 use serialport::SerialPort;
 
@@ -16,6 +18,8 @@ fn main() {
         .open()
         .expect("Failed to open port");
 
+    let mut OCCUPANCY_SENSE_CLUSTER: [u16; 16] = [0; 16];
+    OCCUPANCY_SENSE_CLUSTER[0] = 0x0406;
     let commands = vec![
         ("Ping", MtCommand::sys_ping(), true),
         ("Version", MtCommand::sys_version(), true),
@@ -57,9 +61,21 @@ fn main() {
         ),
         (
             "Nv Read PAN-ID",
-            MtCommand::sys_osal_nv_read(
-                NetworkSpecificConfigurationItem::ZCD_NV_PANID as u16,
-                0,
+            MtCommand::sys_osal_nv_read(NetworkSpecificConfigurationItem::ZCD_NV_PANID as u16, 0),
+            true,
+        ),
+        (
+            "Register endpoint 1, prof id 0x0104, dev id 0x0100 ver 1, no input clusters, output cluster: 0x0406",
+            MtCommand::af_register(
+                0x01,
+                0x0104,
+                0x0100,
+                0x01,
+                LatencyReq::NoLatency,
+                0x00,
+                [0;16],
+                0x01,
+                OCCUPANCY_SENSE_CLUSTER,
             ),
             true,
         ),

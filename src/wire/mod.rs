@@ -42,6 +42,30 @@ pub fn encode_short(short: u16, buf: &mut [u8], offset: usize) {
     buf[offset + 1] = ((short >> 8) & 0xFF) as u8;
 }
 
+pub fn encode_short_slice(shorts: &[u16], buf: &mut [u8], offset: usize) {
+    let buf_len = buf.len();
+
+    if offset >= buf_len || offset + (shorts.len() * 2) >= buf_len {
+        panic!("Offset and length exceed the buffer size");
+    }
+
+    let mut i = offset;
+    for short in shorts {
+        encode_short(*short, buf, i);
+        i += 2;
+    }
+}
+
+pub fn encode_bytes(bytes: &[u8], buf: &mut [u8], offset: usize) {
+    let buf_len = buf.len();
+
+    if offset >= buf_len || offset + bytes.len() >= buf_len {
+        panic!("Offset and length exceed the buffer size");
+    }
+
+    buf.copy_from_slice(&bytes);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
