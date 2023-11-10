@@ -1,8 +1,9 @@
 use crate::api::{Command, CommandId, ParseByte};
 use crate::constants::{
-    LatencyReq, MtAFCommandId, MtCommandSubsystem, MtCommandType, MtSysCommandId, MtUtilCommandId,
+    CommissioningMode, LatencyReq, MtAFCommandId, MtAppConfigCommandId, MtCommandSubsystem,
+    MtCommandType, MtSysCommandId, MtUtilCommandId, MtZdoCommandId, ScanChannels,
 };
-use crate::wire::{encode_short, encode_short_slice};
+use crate::wire::{encode_32, encode_short, encode_short_slice};
 
 const MT_CMD_ID_MASK_SUB_SYS: u8 = 0x1F;
 const MT_CMD_ID_MASK_TYPE: u8 = 0xE0;
@@ -270,6 +271,36 @@ impl MtCommand {
         }
     }
 
+    pub fn app_cnf_bdb_start_commissioning(commissioning_mode: CommissioningMode) -> Self {
+        let mut data: [u8; 256] = [0; 256];
+        data[0] = commissioning_mode as u8;
+
+        MtCommand {
+            data_len: 0x01,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::APPConfig,
+                MtCommandType::SREQ,
+                MtAppConfigCommandId::APP_CNF_BDB_START_COMMISSIONING as u8,
+            ),
+            data,
+        }
+    }
+
+    pub fn zdo_nwk_discovery_req(scan_channels: ScanChannels, scan_duration: u8) -> Self {
+        let mut data: [u8; 256] = [0; 256];
+        encode_32(scan_channels as u32, &mut data, 0);
+        data[4] = scan_duration;
+
+        MtCommand {
+            data_len: 0x05,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::ZDOInterface,
+                MtCommandType::SREQ,
+                MtZdoCommandId::ZDO_NWK_DISCOVERY_REQ as u8,
+            ),
+            data,
+        }
+    }
     // TODO - implement ZDO_NODE_DESC_REQ to get node capabilities
     // TODO - implement ZDO_POWER_DESC_REQ to get node power status
     // TODO - implement ZDO_SIMPLE_DESC_REQ to get node simple descriptor

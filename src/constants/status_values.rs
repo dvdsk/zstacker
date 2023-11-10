@@ -71,4 +71,8 @@ pub enum ZDOStatus {
     TABLE_FULL = 0x8c,
     NOT_AUTHORIZED = 0x8d,
     BINDING_TABLE_FULL = 0x8e,
+    ZMAC_NO_BEACON = 0xea,
+    ZMAC_INVALID_PARAMETER = 0xe8,
+    MAC_SCAN_IN_PROGRESS = 0xfc,
+    MAC_NO_RESOURCE = 0x1a,
 }

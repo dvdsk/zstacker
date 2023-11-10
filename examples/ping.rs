@@ -1,7 +1,10 @@
 use std::time::Duration;
 
 use mt_interface::{
-    constants::{DeviceSpecificConfigurationItem, LatencyReq, NetworkSpecificConfigurationItem},
+    constants::{
+        CommissioningMode, DeviceSpecificConfigurationItem, LatencyReq,
+        NetworkSpecificConfigurationItem, ScanChannels,
+    },
     data::MtCommand,
     wire::GeneralSerialPacket,
 };
@@ -79,11 +82,39 @@ fn main() {
             ),
             true,
         ),
+        (
+            "Discovery all channels",
+            MtCommand::zdo_nwk_discovery_req(ScanChannels::AllChannels, 0x01),
+            true,
+        ),
+        (
+            "BDB Start Commissioning - Network Formation ",
+            MtCommand::app_cnf_bdb_start_commissioning(CommissioningMode::NetworkFormation),
+            true,
+        ),
     ];
 
     for (desc, command, should_read) in commands {
         send_command(&mut port, command, should_read, desc);
     }
+
+    loop {
+        if let Ok((serial_buf, len)) = try_read(&mut port) {
+            let ms = std::time::SystemTime::now()
+                .duration_since(std::time::SystemTime::UNIX_EPOCH)
+                .map(|d| d.as_millis())
+                .unwrap_or(0);
+            print!("Read {}: ", ms);
+            print_packet(&serial_buf, len);
+        }
+    }
+}
+
+fn try_read(port: &mut Box<dyn SerialPort>) -> Result<(Vec<u8>, usize), serialport::Error> {
+    let mut serial_buf: Vec<u8> = vec![0; 100];
+    let len = port.read(serial_buf.as_mut_slice())?;
+
+    Ok((serial_buf, len))
 }
 
 fn send_command(port: &mut Box<dyn SerialPort>, mt_cmd: MtCommand, should_read: bool, desc: &str) {
@@ -96,13 +127,14 @@ fn send_command(port: &mut Box<dyn SerialPort>, mt_cmd: MtCommand, should_read: 
     port.write(tx.as_slice()).expect("Write failed!");
 
     if should_read {
-        let mut serial_buf: Vec<u8> = vec![0; 100];
-        let len = port
-            .read(serial_buf.as_mut_slice())
-            .expect("Found no data!");
-
-        print!("Read: ");
-        print_packet(&serial_buf, len);
+        let res = try_read(port);
+        match res {
+            Err(_) => println!("Error reading!"),
+            Ok((serial_buf, len)) => {
+                print!("Read: ");
+                print_packet(&serial_buf, len);
+            }
+        }
     }
     let end = std::time::Instant::now();
     println!("Command took: {}ms", (end - start).as_millis());
