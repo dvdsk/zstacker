@@ -49,6 +49,11 @@ pub fn encode_32(num: u32, buf: &mut [u8], offset: usize) {
     buf[offset + 3] = ((num >> 24) & 0xFF) as u8;
 }
 
+pub fn encode_64(num: u64, buf: &mut [u8], offset: usize) {
+    encode_32((num & 0xFF_FF_FF_FF) as u32, buf, offset);
+    encode_32(((num >> 32) & 0xFF_FF_FF_FF) as u32, buf, offset + 4);
+}
+
 pub fn encode_short_slice(shorts: &[u16], buf: &mut [u8], offset: usize) {
     let buf_len = buf.len();
 

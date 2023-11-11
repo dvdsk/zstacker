@@ -1,9 +1,10 @@
 use crate::api::{Command, CommandId, ParseByte};
 use crate::constants::{
-    CommissioningMode, LatencyReq, MtAFCommandId, MtAppConfigCommandId, MtCommandSubsystem,
-    MtCommandType, MtSysCommandId, MtUtilCommandId, MtZdoCommandId, ScanChannels, TimeoutIndex,
+    CommissioningMode, InstallCodeFormat, LatencyReq, MtAFCommandId, MtAppConfigCommandId,
+    MtCommandSubsystem, MtCommandType, MtSysCommandId, MtUtilCommandId, MtZdoCommandId,
+    ScanChannels, TimeoutIndex,
 };
-use crate::wire::{encode_32, encode_short, encode_short_slice};
+use crate::wire::{encode_32, encode_64, encode_bytes, encode_short, encode_short_slice};
 
 const MT_CMD_ID_MASK_SUB_SYS: u8 = 0x1F;
 const MT_CMD_ID_MASK_TYPE: u8 = 0xE0;
@@ -357,6 +358,31 @@ impl MtCommand {
                 MtCommandSubsystem::APPConfig,
                 MtCommandType::SREQ,
                 MtAppConfigCommandId::APP_CNF_BDB_SET_CHANNEL as u8,
+            ),
+            data,
+        }
+    }
+
+    pub fn app_cnf_bdb_add_installcode(
+        install_code_format: InstallCodeFormat,
+        ieee_address: u64,
+        install_code: [u8; 18],
+    ) -> Self {
+        let mut data: [u8; 256] = [0; 256];
+        data[0] = install_code_format as u8;
+        encode_64(ieee_address, &mut data, 1);
+        let (install_code_bytes, data_len) = match install_code_format {
+            InstallCodeFormat::InstallCodePlusCRC => (&install_code[..], 0x1B),
+            InstallCodeFormat::KeyDerivedFromInstallCode => (&install_code[..16], 0x19),
+        };
+        encode_bytes(install_code_bytes, &mut data, 9);
+
+        MtCommand {
+            data_len,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::APPConfig,
+                MtCommandType::SREQ,
+                MtAppConfigCommandId::APP_CNF_BDB_ADD_INSTALLCODE as u8,
             ),
             data,
         }
