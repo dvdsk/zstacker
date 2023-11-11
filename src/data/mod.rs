@@ -1,7 +1,7 @@
 use crate::api::{Command, CommandId, ParseByte};
 use crate::constants::{
     CommissioningMode, LatencyReq, MtAFCommandId, MtAppConfigCommandId, MtCommandSubsystem,
-    MtCommandType, MtSysCommandId, MtUtilCommandId, MtZdoCommandId, ScanChannels,TimeoutIndex
+    MtCommandType, MtSysCommandId, MtUtilCommandId, MtZdoCommandId, ScanChannels, TimeoutIndex,
 };
 use crate::wire::{encode_32, encode_short, encode_short_slice};
 
@@ -350,7 +350,6 @@ impl MtCommand {
         let mut data: [u8; 256] = [0; 256];
         data[0] = is_primary as u8;
         encode_32(channel as u32, &mut data, 1);
-
 
         MtCommand {
             data_len: 0x05,
