@@ -388,7 +388,7 @@ impl MtCommand {
         }
     }
 
-    pub fn app_cnf_set_tc_require_key_exchange(
+    pub fn app_cnf_bdb_set_tc_require_key_exchange(
         bdb_trust_center_require_key_exchange: bool,
     ) -> Self {
         let mut data: [u8; 256] = [0; 256];
