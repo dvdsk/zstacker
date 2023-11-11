@@ -1,7 +1,7 @@
 use crate::api::{Command, CommandId, ParseByte};
 use crate::constants::{
     CommissioningMode, LatencyReq, MtAFCommandId, MtAppConfigCommandId, MtCommandSubsystem,
-    MtCommandType, MtSysCommandId, MtUtilCommandId, MtZdoCommandId, ScanChannels,
+    MtCommandType, MtSysCommandId, MtUtilCommandId, MtZdoCommandId, ScanChannels,TimeoutIndex
 };
 use crate::wire::{encode_32, encode_short, encode_short_slice};
 
@@ -281,6 +281,21 @@ impl MtCommand {
                 MtCommandSubsystem::APPConfig,
                 MtCommandType::SREQ,
                 MtAppConfigCommandId::APP_CNF_SET_NWK_FRAME_COUNTER as u8,
+            ),
+            data,
+        }
+    }
+
+    pub fn app_cnf_set_default_remote_enddevice_timeout(timeout_index: TimeoutIndex) -> Self {
+        let mut data: [u8; 256] = [0; 256];
+        data[0] = timeout_index as u8;
+
+        MtCommand {
+            data_len: 0x01,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::APPConfig,
+                MtCommandType::SREQ,
+                MtAppConfigCommandId::APP_CNF_SET_DEFAULT_REMOTE_ENDDEVICE_TIMEOUT as u8,
             ),
             data,
         }
