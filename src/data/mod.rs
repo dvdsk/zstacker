@@ -422,6 +422,25 @@ impl MtCommand {
         }
     }
 
+    pub fn app_cnf_bdb_set_active_default_centralized_key(
+        use_global: bool,
+        install_code: [u8; 18],
+    ) -> Self {
+        let mut data: [u8; 256] = [0; 256];
+        data[0] = use_global as u8;
+        encode_bytes(&install_code, &mut data, 1);
+
+        MtCommand {
+            data_len: 0x13,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::APPConfig,
+                MtCommandType::SREQ,
+                MtAppConfigCommandId::APP_CNF_BDB_SET_ACTIVE_DEFAULT_CENTRALIZED_KEY as u8,
+            ),
+            data,
+        }
+    }
+
     pub fn zdo_nwk_discovery_req(scan_channels: ScanChannels, scan_duration: u8) -> Self {
         let mut data: [u8; 256] = [0; 256];
         encode_32(scan_channels as u32, &mut data, 0);
