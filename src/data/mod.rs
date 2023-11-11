@@ -271,6 +271,21 @@ impl MtCommand {
         }
     }
 
+    pub fn app_cnf_set_nwk_frame_counter(frame_counter_value: u32) -> Self {
+        let mut data: [u8; 256] = [0; 256];
+        encode_32(frame_counter_value, &mut data, 0);
+
+        MtCommand {
+            data_len: 0x04,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::APPConfig,
+                MtCommandType::SREQ,
+                MtAppConfigCommandId::APP_CNF_SET_NWK_FRAME_COUNTER as u8,
+            ),
+            data,
+        }
+    }
+
     pub fn app_cnf_bdb_start_commissioning(commissioning_mode: CommissioningMode) -> Self {
         let mut data: [u8; 256] = [0; 256];
         data[0] = commissioning_mode as u8;
@@ -281,6 +296,23 @@ impl MtCommand {
                 MtCommandSubsystem::APPConfig,
                 MtCommandType::SREQ,
                 MtAppConfigCommandId::APP_CNF_BDB_START_COMMISSIONING as u8,
+            ),
+            data,
+        }
+    }
+
+    pub fn app_cnf_bdb_set_channel(is_primary: bool, channel: ScanChannels) -> Self {
+        let mut data: [u8; 256] = [0; 256];
+        data[0] = is_primary as u8;
+        encode_32(channel as u32, &mut data, 1);
+
+
+        MtCommand {
+            data_len: 0x05,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::APPConfig,
+                MtCommandType::SREQ,
+                MtAppConfigCommandId::APP_CNF_BDB_SET_CHANNEL as u8,
             ),
             data,
         }
