@@ -441,6 +441,18 @@ impl MtCommand {
         }
     }
 
+    pub fn app_cnf_bdb_zed_attempt_recover_nwk() -> Self {
+        MtCommand {
+            data_len: 0x00,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::APPConfig,
+                MtCommandType::SREQ,
+                MtAppConfigCommandId::APP_CNF_BDB_ZED_ATTEMPT_RECOVER_NWK as u8,
+            ),
+            data: [0; 256],
+        }
+    }
+
     pub fn zdo_nwk_discovery_req(scan_channels: ScanChannels, scan_duration: u8) -> Self {
         let mut data: [u8; 256] = [0; 256];
         encode_32(scan_channels as u32, &mut data, 0);
