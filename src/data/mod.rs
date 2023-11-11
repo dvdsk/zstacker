@@ -316,6 +316,21 @@ impl MtCommand {
         }
     }
 
+    pub fn app_cnf_set_allowrejoin_tc_policy(allow_rejoin: bool) -> Self {
+        let mut data: [u8; 256] = [0; 256];
+        data[0] = allow_rejoin as u8;
+
+        MtCommand {
+            data_len: 0x01,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::APPConfig,
+                MtCommandType::SREQ,
+                MtAppConfigCommandId::APP_CNF_SET_ALLOWREJOIN_TC_POLICY as u8,
+            ),
+            data,
+        }
+    }
+
     pub fn app_cnf_bdb_start_commissioning(commissioning_mode: CommissioningMode) -> Self {
         let mut data: [u8; 256] = [0; 256];
         data[0] = commissioning_mode as u8;
