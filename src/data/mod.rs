@@ -301,6 +301,21 @@ impl MtCommand {
         }
     }
 
+    pub fn app_cnf_set_enddevicetimeout(timeout_index: TimeoutIndex) -> Self {
+        let mut data: [u8; 256] = [0; 256];
+        data[0] = timeout_index as u8;
+
+        MtCommand {
+            data_len: 0x01,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::APPConfig,
+                MtCommandType::SREQ,
+                MtAppConfigCommandId::APP_CNF_SET_ENDDEVICETIMEOUT as u8,
+            ),
+            data,
+        }
+    }
+
     pub fn app_cnf_bdb_start_commissioning(commissioning_mode: CommissioningMode) -> Self {
         let mut data: [u8; 256] = [0; 256];
         data[0] = commissioning_mode as u8;
