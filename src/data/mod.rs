@@ -2,7 +2,7 @@ use crate::api::{Command, CommandId, ParseByte};
 use crate::constants::{
     CommissioningMode, InstallCodeFormat, LatencyReq, MtAFCommandId, MtAppConfigCommandId,
     MtCommandSubsystem, MtCommandType, MtSysCommandId, MtUtilCommandId, MtZdoCommandId,
-    ScanChannels, TimeoutIndex,
+    ResetRequestType, ScanChannels, TimeoutIndex,
 };
 use crate::wire::{encode_32, encode_64, encode_bytes, encode_short, encode_short_slice};
 
@@ -83,6 +83,21 @@ impl MtCommand {
             data_len: 0,
             cmd: MtCommandId::empty(),
             data: [0; 256],
+        }
+    }
+
+    pub fn sys_reset_req(reset_type: ResetRequestType) -> Self {
+        let mut data = [0; 256];
+        data[0] = reset_type as u8;
+
+        MtCommand {
+            data_len: 0x01,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::SYSInterface,
+                MtCommandType::SREQ,
+                MtSysCommandId::SysResetReq as u8,
+            ),
+            data,
         }
     }
 
@@ -176,6 +191,26 @@ impl MtCommand {
                 MtCommandSubsystem::SYSInterface,
                 MtCommandType::SREQ,
                 MtSysCommandId::SysOsalNvRead as u8,
+            ),
+            data,
+        }
+    }
+
+    pub fn sys_osal_nv_write(item_id: u16, offset: u8, len: u8, value: &[u8]) -> Self {
+        let mut data: [u8; 256] = [0; 256];
+        encode_short(item_id, &mut data, 0);
+        data[2] = offset;
+        data[3] = len;
+        // `value` must be up to 246 bytes in length
+        encode_bytes(value, &mut data, 4);
+        let data_len = (0x04 as usize + value.len()) as u8;
+
+        MtCommand {
+            data_len,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::SYSInterface,
+                MtCommandType::SREQ,
+                MtSysCommandId::SysOsalNvWrite as u8,
             ),
             data,
         }
@@ -405,9 +440,7 @@ impl MtCommand {
         }
     }
 
-    pub fn app_cnf_bdb_set_joinusesinstallcodekey(
-        bdb_join_uses_install_code_key: bool,
-    ) -> Self {
+    pub fn app_cnf_bdb_set_joinusesinstallcodekey(bdb_join_uses_install_code_key: bool) -> Self {
         let mut data: [u8; 256] = [0; 256];
         data[0] = bdb_join_uses_install_code_key as u8;
 

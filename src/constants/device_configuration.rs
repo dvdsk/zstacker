@@ -20,3 +20,8 @@ pub enum NvLogicalType {
     ZG_DEVICETYPE_ROUTER = 0x01,
     ZG_DEVICETYPE_ENDDEVICE = 0x02,
 }
+
+pub enum ResetRequestType {
+    HardwareReset = 0x00,
+    SoftReset = 0x01,
+}
