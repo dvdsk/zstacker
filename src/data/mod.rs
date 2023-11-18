@@ -252,6 +252,22 @@ impl MtCommand {
         }
     }
 
+    pub fn util_callback_sub_cmd(subsystem_id: u16, should_enable: bool) -> Self {
+        let mut data: [u8; 256] = [0; 256];
+        encode_short(subsystem_id, &mut data, 0);
+        data[2] = should_enable as u8;
+
+        MtCommand {
+            data_len: 0x03,
+            cmd: MtCommandId::new(
+                MtCommandSubsystem::UTILInterface,
+                MtCommandType::SREQ,
+                MtUtilCommandId::UTIL_CALLBACK_SUB_CMD as u8,
+            ),
+            data,
+        }
+    }
+
     pub fn util_srng_gen() -> Self {
         MtCommand {
             data_len: 0,
