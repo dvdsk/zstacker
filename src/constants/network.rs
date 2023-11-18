@@ -19,3 +19,26 @@ pub enum ScanChannels {
     Channel25 = 0x02000000,
     Channel26 = 0x04000000,
 }
+
+/// Values from Zigbee spec Section 2.2.4.1.3 APSDE-DATA.indication Table 2-4 DstAddrMode.
+#[derive(Clone, Copy)]
+pub enum DestinationAddressMode {
+    AddrNotPresent = 0x00,
+    AddrGroup = 0x01,
+    Addr16Bit = 0x02,
+    Addr64Bit = 0x03,
+    ZStackAddrBroadcast = 0xF,
+}
+
+/// Values from Zigbee spec Section 3.6.6 Broadcast Communication Table 3-76.
+#[derive(Clone, Copy)]
+pub enum BroadcastAddress {
+    ShortAddressReservedF8 = 0xFFF8,
+    ShortAddressReservedF9 = 0xFFF9,
+    ShortAddressReservedFA = 0xFFFA,
+    LowPowerRoutersOnly = 0xFFFB,
+    AllRoutersAndCoordinator = 0xFFFC,
+    MacRxOnWhenIdleIsTrue = 0xFFFD,
+    ShortAddressReservedFE = 0xFFFE,
+    AllDevicesInPan = 0xFFFF,
+}
