@@ -222,7 +222,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::UTILInterface,
                 MtCommandType::SREQ,
-                MtUtilCommandId::UTIL_GET_DEVICE_INFO as u8,
+                MtUtilCommandId::UtilGetDeviceInfo as u8,
             ),
             data: [0; 256],
         }
@@ -234,7 +234,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::UTILInterface,
                 MtCommandType::SREQ,
-                MtUtilCommandId::UTIL_GET_NV_INFO as u8,
+                MtUtilCommandId::UtilGetNvInfo as u8,
             ),
             data: [0; 256],
         }
@@ -246,7 +246,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::UTILInterface,
                 MtCommandType::SREQ,
-                MtUtilCommandId::UTIL_TIME_ALIVE as u8,
+                MtUtilCommandId::UtilTimeAlive as u8,
             ),
             data: [0; 256],
         }
@@ -262,7 +262,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::UTILInterface,
                 MtCommandType::SREQ,
-                MtUtilCommandId::UTIL_CALLBACK_SUB_CMD as u8,
+                MtUtilCommandId::UtilCallbackSubCmd as u8,
             ),
             data,
         }
@@ -274,7 +274,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::UTILInterface,
                 MtCommandType::SREQ,
-                MtUtilCommandId::UTIL_SRNG_GEN as u8,
+                MtUtilCommandId::UtilSrngGen as u8,
             ),
             data: [0; 256],
         }
@@ -317,7 +317,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::AFInterface,
                 MtCommandType::SREQ,
-                MtAFCommandId::AF_REGISTER as u8,
+                MtAFCommandId::AfRegister as u8,
             ),
             data,
         }
@@ -332,7 +332,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::APPConfig,
                 MtCommandType::SREQ,
-                MtAppConfigCommandId::APP_CNF_SET_NWK_FRAME_COUNTER as u8,
+                MtAppConfigCommandId::AppCnfSetNwkFrameCounter as u8,
             ),
             data,
         }
@@ -347,7 +347,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::APPConfig,
                 MtCommandType::SREQ,
-                MtAppConfigCommandId::APP_CNF_SET_DEFAULT_REMOTE_ENDDEVICE_TIMEOUT as u8,
+                MtAppConfigCommandId::AppCnfSetDefaultRemoteEnddeviceTimeout as u8,
             ),
             data,
         }
@@ -362,7 +362,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::APPConfig,
                 MtCommandType::SREQ,
-                MtAppConfigCommandId::APP_CNF_SET_ENDDEVICETIMEOUT as u8,
+                MtAppConfigCommandId::AppCnfSetEnddevicetimeout as u8,
             ),
             data,
         }
@@ -377,7 +377,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::APPConfig,
                 MtCommandType::SREQ,
-                MtAppConfigCommandId::APP_CNF_SET_ALLOWREJOIN_TC_POLICY as u8,
+                MtAppConfigCommandId::AppCnfSetAllowrejoinTcPolicy as u8,
             ),
             data,
         }
@@ -392,7 +392,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::APPConfig,
                 MtCommandType::SREQ,
-                MtAppConfigCommandId::APP_CNF_BDB_START_COMMISSIONING as u8,
+                MtAppConfigCommandId::AppCnfBdbStartCommissioning as u8,
             ),
             data,
         }
@@ -408,7 +408,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::APPConfig,
                 MtCommandType::SREQ,
-                MtAppConfigCommandId::APP_CNF_BDB_SET_CHANNEL as u8,
+                MtAppConfigCommandId::AppCnfBdbSetChannel as u8,
             ),
             data,
         }
@@ -433,7 +433,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::APPConfig,
                 MtCommandType::SREQ,
-                MtAppConfigCommandId::APP_CNF_BDB_ADD_INSTALLCODE as u8,
+                MtAppConfigCommandId::AppCnfBdbAddInstallcode as u8,
             ),
             data,
         }
@@ -450,7 +450,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::APPConfig,
                 MtCommandType::SREQ,
-                MtAppConfigCommandId::APP_CNF_BDB_SET_TC_REQUIRE_KEY_EXCHANGE as u8,
+                MtAppConfigCommandId::AppCnfBdbSetTcRequireKeyExchange as u8,
             ),
             data,
         }
@@ -465,7 +465,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::APPConfig,
                 MtCommandType::SREQ,
-                MtAppConfigCommandId::APP_CNF_BDB_SET_JOINUSESINSTALLCODEKEY as u8,
+                MtAppConfigCommandId::AppCnfBdbSetJoinusesinstallcodekey as u8,
             ),
             data,
         }
@@ -484,7 +484,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::APPConfig,
                 MtCommandType::SREQ,
-                MtAppConfigCommandId::APP_CNF_BDB_SET_ACTIVE_DEFAULT_CENTRALIZED_KEY as u8,
+                MtAppConfigCommandId::AppCnfBdbSetActiveDefaultCentralizedKey as u8,
             ),
             data,
         }
@@ -496,7 +496,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::APPConfig,
                 MtCommandType::SREQ,
-                MtAppConfigCommandId::APP_CNF_BDB_ZED_ATTEMPT_RECOVER_NWK as u8,
+                MtAppConfigCommandId::AppCnfBdbZedAttemptRecoverNwk as u8,
             ),
             data: [0; 256],
         }
@@ -512,7 +512,7 @@ impl MtCommand {
             cmd: MtCommandId::new(
                 MtCommandSubsystem::ZDOInterface,
                 MtCommandType::SREQ,
-                MtZdoCommandId::ZDO_NWK_DISCOVERY_REQ as u8,
+                MtZdoCommandId::ZdoNwkDiscoveryReq as u8,
             ),
             data,
         }
