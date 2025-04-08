@@ -2,8 +2,7 @@ use std::time::Duration;
 
 use mt_interface::{
     constants::{
-        CommissioningMode, DeviceSpecificConfigurationItem, LatencyReq,
-        NetworkSpecificConfigurationItem, NvStartupOptionBitMask, ResetRequestType, ScanChannels,
+        CommissioningMode, DeviceSpecificConfigurationItem, LatencyReq, NvStartupOptionBitMask, ResetRequestType,
     },
     data::MtCommand,
     wire::GeneralSerialPacket,
@@ -125,9 +124,9 @@ fn get_start_comssioning_formation() -> (&'static str, MtCommand, bool, u64) {
 }
 
 fn startup_sequence() -> Vec<(&'static str, MtCommand, bool, u64)> {
-    let clear_conf: [u8; 1] = [NvStartupOptionBitMask::ZCD_STARTOPT_CLEAR_CONFIG as u8
-        | NvStartupOptionBitMask::ZCD_STARTOPT_CLEAR_NWK_FRAME_COUNTER as u8
-        | NvStartupOptionBitMask::ZCD_STARTOPT_CLEAR_STATE as u8];
+    let clear_conf: [u8; 1] = [NvStartupOptionBitMask::ZcdStartoptClearConfig as u8
+        | NvStartupOptionBitMask::ZcdStartoptClearNwkFrameCounter as u8
+        | NvStartupOptionBitMask::ZcdStartoptClearState as u8];
     vec![
         (
             "Reset device",
@@ -138,7 +137,7 @@ fn startup_sequence() -> Vec<(&'static str, MtCommand, bool, u64)> {
         (
             "Clear config",
             MtCommand::sys_osal_nv_write(
-                DeviceSpecificConfigurationItem::ZCD_NV_STARTUP_OPTION as u16,
+                DeviceSpecificConfigurationItem::ZcdNvStartupOption as u16,
                 0,
                 1,
                 &clear_conf,

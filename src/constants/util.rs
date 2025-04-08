@@ -16,7 +16,7 @@ impl SubSystemId {
     pub fn of(sub_systems: &[SubSystemId]) -> u16 {
         let mut systems = 0x0000;
         for sys in sub_systems {
-            systems = systems | *sys as u16;
+            systems |= *sys as u16;
         }
 
         systems

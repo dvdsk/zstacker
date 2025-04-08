@@ -75,7 +75,7 @@ pub fn encode_bytes(bytes: &[u8], buf: &mut [u8], offset: usize) {
         panic!("Offset and length exceed the buffer size");
     }
 
-    buf[offset..offset + bytes.len()].copy_from_slice(&bytes);
+    buf[offset..offset + bytes.len()].copy_from_slice(bytes);
 }
 
 #[cfg(test)]

@@ -203,7 +203,7 @@ impl MtCommand {
         data[3] = len;
         // `value` must be up to 246 bytes in length
         encode_bytes(value, &mut data, 4);
-        let data_len = (0x04 as usize + value.len()) as u8;
+        let data_len = (0x04_usize + value.len()) as u8;
 
         MtCommand {
             data_len,
