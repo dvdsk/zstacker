@@ -2,7 +2,8 @@ use std::time::Duration;
 
 use mt_interface::{
     constants::{
-        CommissioningMode, DeviceSpecificConfigurationItem, LatencyReq, NvStartupOptionBitMask, ResetRequestType,
+        CommissioningMode, DeviceSpecificConfigurationItem, LatencyReq, NvStartupOptionBitMask,
+        ResetRequestType,
     },
     data::MtCommand,
     wire::GeneralSerialPacket,
@@ -15,7 +16,7 @@ fn main() {
         println!("{}", p.port_name);
     }
 
-    let mut port = serialport::new("/dev/cu.usbserial-14320", 115_200)
+    let mut port = serialport::new("/dev/ttyUSB0", 115_200)
         .timeout(Duration::from_millis(10000))
         .open()
         .expect("Failed to open port");
@@ -128,31 +129,31 @@ fn startup_sequence() -> Vec<(&'static str, MtCommand, bool, u64)> {
         | NvStartupOptionBitMask::ZcdStartoptClearNwkFrameCounter as u8
         | NvStartupOptionBitMask::ZcdStartoptClearState as u8];
     vec![
-        (
-            "Reset device",
-            MtCommand::sys_reset_req(ResetRequestType::SoftReset),
-            true,
-            1000,
-        ),
-        (
-            "Clear config",
-            MtCommand::sys_osal_nv_write(
-                DeviceSpecificConfigurationItem::ZcdNvStartupOption as u16,
-                0,
-                1,
-                &clear_conf,
-            ),
-            true,
-            0,
-        ),
-        (
-            "Reset device",
-            MtCommand::sys_reset_req(ResetRequestType::SoftReset),
-            true,
-            1000,
-        ),
-        get_occupancy_consumer(),
-        get_start_comssioning_formation(),
+        // (
+        //     "Reset device",
+        //     MtCommand::sys_reset_req(ResetRequestType::SoftReset),
+        //     true,
+        //     1000,
+        // ),
+        // (
+        //     "Clear config",
+        //     MtCommand::sys_osal_nv_write(
+        //         DeviceSpecificConfigurationItem::ZcdNvStartupOption as u16,
+        //         0,
+        //         1,
+        //         &clear_conf,
+        //     ),
+        //     true,
+        //     0,
+        // ),
+        // (
+        //     "Reset device",
+        //     MtCommand::sys_reset_req(ResetRequestType::SoftReset),
+        //     true,
+        //     1000,
+        // ),
+        // get_occupancy_consumer(),
+        // get_start_comssioning_formation(),
     ]
 }
 

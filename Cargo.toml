@@ -1,12 +1,11 @@
 [package]
-name = "mt-interface"
+name = "zstacker"
 version = "0.0.1-dev"
-edition = "2021"
-authors = ["Guy Or <guydude1@gmail.com>"]
-description = "TI Z-Stack Monitor and Test API client implementation"
+edition = "2024"
+authors = ["David Kleingeld"]
+description = "TI Z-Stack API"
 license = "MIT OR Apache-2.0"
 readme = "README.md"
-repository = "https://github.com/guyo13/mt-interface.git"
 keywords = ["Zigbee", "Z-Stack", "Texas-Instruments"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
