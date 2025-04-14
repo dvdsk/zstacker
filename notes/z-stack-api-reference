@@ -1,0 +1,8 @@
+https://software-dl.ti.com/simplelink/esd/simplelink_cc26x2_sdk/2.30.00.34/exports/docs/zstack/doxygen/zigbee/html/zstackapi_8c.html
+
+TODO
+impl Serde format or find an existing that matches zstack msgs
+use that to get length of encoded for reading
+write a ton of structs :)
+
+make struct generate request

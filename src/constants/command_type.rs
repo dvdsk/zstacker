@@ -1,7 +1,7 @@
 use crate::api::ParseByte;
 
 #[derive(Clone, Copy)]
-pub enum MtCommandType {
+pub enum CommandType {
     POLL = 0x00,
     SREQ = 0x20,
     AREQ = 0x40,
@@ -9,13 +9,13 @@ pub enum MtCommandType {
 }
 
 // TODO - use derive(ParseByte)
-impl ParseByte<Self> for MtCommandType {
+impl ParseByte<Self> for CommandType {
     fn parse_byte(value: u8) -> Option<Self> {
         match value {
-            0x00 => Some(MtCommandType::POLL),
-            0x20 => Some(MtCommandType::SREQ),
-            0x40 => Some(MtCommandType::AREQ),
-            0x60 => Some(MtCommandType::SRSP),
+            0x00 => Some(CommandType::POLL),
+            0x20 => Some(CommandType::SREQ),
+            0x40 => Some(CommandType::AREQ),
+            0x60 => Some(CommandType::SRSP),
             _ => None,
         }
     }
@@ -27,9 +27,9 @@ mod tests {
 
     #[test]
     fn test_mt_command_type() {
-        assert_eq!(MtCommandType::POLL as u8, 0x00);
-        assert_eq!(MtCommandType::SREQ as u8, 0x20);
-        assert_eq!(MtCommandType::AREQ as u8, 0x40);
-        assert_eq!(MtCommandType::SRSP as u8, 0x60);
+        assert_eq!(CommandType::POLL as u8, 0x00);
+        assert_eq!(CommandType::SREQ as u8, 0x20);
+        assert_eq!(CommandType::AREQ as u8, 0x40);
+        assert_eq!(CommandType::SRSP as u8, 0x60);
     }
 }

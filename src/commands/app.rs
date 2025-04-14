@@ -1,0 +1,38 @@
+        {
+            name: 'msg',
+            ID: 0,
+            type: CommandType.SREQ,
+            request: [
+                {name: 'appendpoint', parameterType: ParameterType.UINT8},
+                {name: 'destaddress', parameterType: ParameterType.UINT16},
+                {name: 'destendpoint', parameterType: ParameterType.UINT8},
+                {name: 'clusterid', parameterType: ParameterType.UINT16},
+                {name: 'msglen', parameterType: ParameterType.UINT8},
+                {name: 'message', parameterType: ParameterType.BUFFER},
+            ],
+            response: [{name: 'status', parameterType: ParameterType.UINT8}],
+        },
+        {
+            name: 'userTest',
+            ID: 1,
+            type: CommandType.SREQ,
+            request: [
+                {name: 'srcep', parameterType: ParameterType.UINT8},
+                {name: 'commandid', parameterType: ParameterType.UINT16},
+                {name: 'param1', parameterType: ParameterType.UINT16},
+                {name: 'param2', parameterType: ParameterType.UINT16},
+            ],
+            response: [{name: 'status', parameterType: ParameterType.UINT8}],
+        },
+        {
+            name: 'zllTlInd',
+            ID: 129,
+            type: CommandType.AREQ,
+            request: [
+                {name: 'nwkaddr', parameterType: ParameterType.UINT16},
+                {name: 'endpoint', parameterType: ParameterType.UINT8},
+                {name: 'profileid', parameterType: ParameterType.UINT16},
+                {name: 'deviceid', parameterType: ParameterType.UINT16},
+                {name: 'version', parameterType: ParameterType.UINT8},
+            ],
+        },

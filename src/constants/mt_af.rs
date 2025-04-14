@@ -1,5 +1,5 @@
 #[derive(Clone, Copy)]
-pub enum MtAFCommandId {
+pub enum AFCommandId {
     AfRegister = 0x00,
     AfDataRequest = 0x01,
     AfDataRequestExt = 0x02,

@@ -1,14 +1,11 @@
 use std::time::Duration;
 
-use mt_interface::{
-    constants::{
-        CommissioningMode, DeviceSpecificConfigurationItem, LatencyReq, NvStartupOptionBitMask,
-        ResetRequestType,
-    },
-    data::MtCommand,
-    wire::GeneralSerialPacket,
-};
 use serialport::SerialPort;
+use zstacker::{
+    constants::{CommissioningMode, LatencyReq, NvStartupOptionBitMask},
+    data::Command,
+    wire::Packet,
+};
 
 fn main() {
     let ports = serialport::available_ports().expect("No ports found!");
@@ -58,12 +55,12 @@ fn print_read(port: &mut Box<dyn SerialPort>) {
 
 fn send_command(
     port: &mut Box<dyn SerialPort>,
-    mt_cmd: MtCommand,
+    mt_cmd: Command,
     should_read: bool,
     desc: &str,
     delay: u64,
 ) {
-    let packet = GeneralSerialPacket::from_cmd(mt_cmd);
+    let packet = Packet::from_cmd(mt_cmd);
     let tx = packet.to_frame();
     println!("####{}", desc);
     print!("Write: ");
@@ -93,38 +90,38 @@ fn print_packet(packet: &Vec<u8>, len: usize) {
     println!();
 }
 
-fn get_occupancy_consumer() -> (&'static str, MtCommand, bool, u64) {
+fn get_occupancy_consumer() -> (&'static str, Command, bool, u64) {
     let mut occupancy_sense_cluster: [u16; 16] = [0; 16];
     occupancy_sense_cluster[0] = 0x0406;
 
     (
         "Register endpoint 1, prof id 0x0104, dev id 0x0100 ver 1, no input clusters, output cluster: 0x0406",
-        MtCommand::af_register(
+        Command::af_register(
             0x01,
             0x0104,
             0x0100,
             0x01,
             LatencyReq::NoLatency,
             0x00,
-            [0;16],
+            [0; 16],
             0x01,
             occupancy_sense_cluster,
         ),
-        true,
-        0
-    )
-}
-
-fn get_start_comssioning_formation() -> (&'static str, MtCommand, bool, u64) {
-    (
-        "BDB Start Commissioning - Network Formation ",
-        MtCommand::app_cnf_bdb_start_commissioning(CommissioningMode::NetworkFormation),
         true,
         0,
     )
 }
 
-fn startup_sequence() -> Vec<(&'static str, MtCommand, bool, u64)> {
+fn get_start_comssioning_formation() -> (&'static str, Command, bool, u64) {
+    (
+        "BDB Start Commissioning - Network Formation ",
+        Command::app_cnf_bdb_start_commissioning(CommissioningMode::NetworkFormation),
+        true,
+        0,
+    )
+}
+
+fn startup_sequence() -> Vec<(&'static str, Command, bool, u64)> {
     let clear_conf: [u8; 1] = [NvStartupOptionBitMask::ZcdStartoptClearConfig as u8
         | NvStartupOptionBitMask::ZcdStartoptClearNwkFrameCounter as u8
         | NvStartupOptionBitMask::ZcdStartoptClearState as u8];
@@ -157,7 +154,7 @@ fn startup_sequence() -> Vec<(&'static str, MtCommand, bool, u64)> {
     ]
 }
 
-fn testing_startup() -> Vec<(&'static str, MtCommand, bool, u64)> {
+fn testing_startup() -> Vec<(&'static str, Command, bool, u64)> {
     vec![
         // ("Ping", MtCommand::sys_ping(), true),
         // ("Version", MtCommand::sys_version(), true),
@@ -169,7 +166,7 @@ fn testing_startup() -> Vec<(&'static str, MtCommand, bool, u64)> {
         // ),
         // ("Stop Timer", MtCommand::sys_osal_stop_timer(3), true),
         // ("Random", MtCommand::sys_random(), true),
-        ("Device Info", MtCommand::util_get_device_info(), true, 0),
+        ("Device Info", Command::get_device_info(), true, 0),
         // ("NV Info", MtCommand::util_get_nv_info(), true),
         // ("Time Alive", MtCommand::util_time_alive(), true),
         // ("SRNG Gen", MtCommand::util_srng_gen(), true),
@@ -230,6 +227,6 @@ fn testing_startup() -> Vec<(&'static str, MtCommand, bool, u64)> {
         //     true,
         // ),
         get_start_comssioning_formation(),
-        ("Nv NIB", MtCommand::sys_osal_nv_read(0x0021, 0), true, 0),
+        ("Nv NIB", Command::sys_osal_nv_read(0x0021, 0), true, 0),
     ]
 }

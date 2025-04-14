@@ -18,10 +18,10 @@ mod status_values;
 mod timeout;
 mod util;
 
-pub const SOF: u8 = 0xFE;
+pub const START_OF_FRAME: u8 = 0xFE;
 pub use crate::constants::bdb::*;
-pub use crate::constants::command_subsystem::MtCommandSubsystem;
-pub use crate::constants::command_type::MtCommandType;
+pub use crate::constants::command_subsystem::Subsystem;
+pub use crate::constants::command_type::CommandType;
 pub use crate::constants::device_configuration::*;
 pub use crate::constants::install_code::*;
 pub use crate::constants::mt_af::*;
