@@ -99,21 +99,21 @@ function first(list_a, list_b)
 {
 	min = 9999
 	for (i in list_a) {
-		min == i
-		break
-	}
-	for (i in list_b) {
-		if (i < min) {
+		if (i+0 < min+0) {
 			min = i
 		}
-		break
+	}
+	for (i in list_b) {
+		if (i+0 < min+0) {
+			min = i
+		}
 	}
 	return min
 }
 
+# print struct and cmd impl
 { 
 	if (length(name) > 0) {
-        # print struct and cmd impl
 		print "#[derive(Debug, Clone, Serialize)]"
 		print "struct " name " {";
 		start = first(req_field_names, req_comments)
