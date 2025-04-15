@@ -52,8 +52,8 @@ impl<'a> ser::Serializer for &'a mut Serializer {
         Ok(())
     }
 
-    fn serialize_i8(self, _: i8) -> Result<()> {
-        Err(super::Error::I8NotSupported)
+    fn serialize_i8(self, v: i8) -> Result<()> {
+        self.serialize_u8(v.cast_unsigned())
     }
 
     fn serialize_i16(self, _: i16) -> Result<()> {

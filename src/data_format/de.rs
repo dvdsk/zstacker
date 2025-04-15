@@ -55,6 +55,12 @@ impl<R: Read> Deserializer<R> {
         Ok(byte[0])
     }
 
+    fn parse_i8(&mut self) -> Result<i8> {
+        let mut byte = [0u8];
+        self.reader.read_exact(&mut byte).map_err(Error::Reading)?;
+        Ok(byte[0].cast_signed())
+    }
+
     fn parse_u16(&mut self) -> Result<u16> {
         let mut bytes = [0u8, 0u8];
         self.reader.read_exact(&mut bytes).map_err(Error::Reading)?;
@@ -107,11 +113,11 @@ impl<'de, R: Read> de::Deserializer<'de> for &mut Deserializer<R> {
 
     // The `parse_signed` function is generic over the integer type `T` so here
     // it is invoked with `T=i8`. The next 8 methods are similar.
-    fn deserialize_i8<V>(self, _: V) -> Result<V::Value>
+    fn deserialize_i8<V>(self, visitor: V) -> Result<V::Value>
     where
         V: Visitor<'de>,
     {
-        Err(Error::I8NotSupported)
+        visitor.visit_i8(self.parse_i8()?)
     }
 
     fn deserialize_i16<V>(self, _: V) -> Result<V::Value>
