@@ -1,6 +1,7 @@
 # typescript fragment to translate needs to start with empty line
 
 BEGIN { RS="[[:space:]]+},"; FS="\n" }
+BEGIN { print "#![allow(dead_code)]" }
 BEGIN { print "use serde::{Serialize, Deserialize};\n" }
 BEGIN { print "use super::{Command, CommandType, Status, Subsystem, IeeeAddr};\n" }
 { 	
@@ -90,9 +91,23 @@ function translate_types(list)
 	}
 }
 
+function translate_names(list)
+{
+	for (i in list) {
+		switch (list[i]) {
+			case "type":
+				list[i] = "ty"
+				break
+			default:
+		}
+	}
+}
+
 {
 	translate_types(req_field_types)
 	translate_types(rsp_field_types)
+	translate_names(req_field_names)
+	translate_names(rsp_field_names)
 }
 
 function first(list_a, list_b) 
