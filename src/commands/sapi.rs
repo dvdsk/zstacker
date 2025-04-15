@@ -121,7 +121,7 @@ impl Command for GetDeviceInfo {
 
 #[derive(Debug, Clone, Serialize)]
 struct FindDeviceRequest {
-    searchKey: IeeeAddr,
+    search_key: IeeeAddr,
 }
 
 impl Command for FindDeviceRequest {

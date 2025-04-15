@@ -173,28 +173,6 @@ struct ShortAddr(u16);
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Endpoint(u8);
 
-struct ProfileAndVersion {
-    stack_profile: u8,
-    zigbee_version: u8,
-}
-
-/// See: Z-Stack Monitor and Test API section 3.12.2.15 revision 1.14
-/// Note this is not serialized like this in the wire format
-/// Can not use serde to get this over the wire. Overwrite the default
-/// `Command::data_to_vec` implementation instead.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct Network {
-    // PAN ID of the neighbor device
-    pan_id: u16,
-    // The current logical channel occupied by the network.
-    logical_channel: u8,
-    stack_profile: u8,     // 4th byte bits 3-0
-    zigbee_version: u8,    // 4th byte bits 7-4
-    beacon_order: u8,      // 4th byte bits 3-0
-    super_frame_order: u8, // pth byte bits 7-4
-    permit_joining: bool,
-}
-
 /// See: Z-Stack Monitor and Test API section 3.12.2.16 revision 1.14
 /// Note this is not serialized like this in the wire format
 /// Can not use serde to get this over the wire. Overwrite the default

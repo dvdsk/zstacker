@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use serde::Serialize;
 use serde_repr::Serialize_repr;
 
