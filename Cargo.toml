@@ -2,6 +2,7 @@
 name = "zstacker"
 version = "0.0.1-dev"
 edition = "2024"
+rust-version = "1.87"
 authors = ["David Kleingeld"]
 description = "TI Z-Stack API"
 license = "MIT OR Apache-2.0"
