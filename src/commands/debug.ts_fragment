@@ -1,0 +1,20 @@
+
+        {
+            name: 'setThreshold',
+            ID: 0,
+            type: CommandType.SREQ,
+            request: [
+                {name: 'componentid', parameterType: ParameterType.UINT8},
+                {name: 'threshold', parameterType: ParameterType.UINT8},
+            ],
+            response: [{name: 'status', parameterType: ParameterType.UINT8}],
+        },
+        {
+            name: 'msg',
+            ID: 128,
+            type: CommandType.AREQ,
+            request: [
+                {name: 'length', parameterType: ParameterType.UINT8},
+                {name: 'string', parameterType: ParameterType.BUFFER},
+            ],
+        },

@@ -1,38 +1,52 @@
-        {
-            name: 'msg',
-            ID: 0,
-            type: CommandType.SREQ,
-            request: [
-                {name: 'appendpoint', parameterType: ParameterType.UINT8},
-                {name: 'destaddress', parameterType: ParameterType.UINT16},
-                {name: 'destendpoint', parameterType: ParameterType.UINT8},
-                {name: 'clusterid', parameterType: ParameterType.UINT16},
-                {name: 'msglen', parameterType: ParameterType.UINT8},
-                {name: 'message', parameterType: ParameterType.BUFFER},
-            ],
-            response: [{name: 'status', parameterType: ParameterType.UINT8}],
-        },
-        {
-            name: 'userTest',
-            ID: 1,
-            type: CommandType.SREQ,
-            request: [
-                {name: 'srcep', parameterType: ParameterType.UINT8},
-                {name: 'commandid', parameterType: ParameterType.UINT16},
-                {name: 'param1', parameterType: ParameterType.UINT16},
-                {name: 'param2', parameterType: ParameterType.UINT16},
-            ],
-            response: [{name: 'status', parameterType: ParameterType.UINT8}],
-        },
-        {
-            name: 'zllTlInd',
-            ID: 129,
-            type: CommandType.AREQ,
-            request: [
-                {name: 'nwkaddr', parameterType: ParameterType.UINT16},
-                {name: 'endpoint', parameterType: ParameterType.UINT8},
-                {name: 'profileid', parameterType: ParameterType.UINT16},
-                {name: 'deviceid', parameterType: ParameterType.UINT16},
-                {name: 'version', parameterType: ParameterType.UINT8},
-            ],
-        },
+use serde::Serialize;
+
+use super::{Command, CommandType, Status, Subsystem};
+
+#[derive(Debug, Clone, Serialize)]
+struct Msg {
+	appendpoint: u8,
+	destaddress: u16,
+	destendpoint: u8,
+	clusterid: u16,
+	msglen: u8,
+	message: Vec<u8>,
+}
+
+impl Command for Msg {
+	const ID: u8 = 0;
+	const TYPE: CommandType = CommandType::SREQ;
+	const SUBSYSTEM: Subsystem = Subsystem::App;
+	type Reply = Status;
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct UserTest {
+	srcep: u8,
+	commandid: u16,
+	param1: u16,
+	param2: u16,
+}
+
+impl Command for UserTest {
+	const ID: u8 = 1;
+	const TYPE: CommandType = CommandType::SREQ;
+	const SUBSYSTEM: Subsystem = Subsystem::App;
+	type Reply = Status;
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct ZllTlInd {
+	nwkaddr: u16,
+	endpoint: u8,
+	profileid: u16,
+	deviceid: u16,
+	version: u8,
+}
+
+impl Command for ZllTlInd {
+	const ID: u8 = 129;
+	const TYPE: CommandType = CommandType::AREQ;
+	const SUBSYSTEM: Subsystem = Subsystem::App;
+	type Reply = ();
+}
+

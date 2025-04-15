@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use serde_repr::Serialize_repr;
 
-use super::{Command, CommandType, IeeeAddr, Subsystem};
+use super::{Command, CommandType, IeeeAddr, Status, Subsystem};
 
 #[derive(Clone, Copy, Debug, Serialize_repr)]
 #[repr(u8)]
@@ -109,10 +109,4 @@ impl Command for SetNwkFrameCounter {
     const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: Subsystem = Subsystem::AppConfig;
     type Reply = Status;
-}
-
-#[allow(dead_code)]
-#[derive(Debug, Clone, Deserialize)]
-pub struct Status {
-    status: u8,
 }

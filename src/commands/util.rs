@@ -11,7 +11,7 @@ pub struct GetDeviceInfo;
 impl Command for GetDeviceInfo {
     const ID: u8 = 0;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::UtilInterface;
+    const SUBSYSTEM: Subsystem = Subsystem::Util;
     type Reply = DeviceInfo;
 }
 

@@ -1,0 +1,17 @@
+
+        {
+            name: 'secReq',
+            ID: 3,
+            type: CommandType.SREQ,
+            request: [
+                {name: 'applicationID', parameterType: ParameterType.UINT8},
+                {name: 'srcID', parameterType: ParameterType.UINT32},
+                {name: 'gdpIeeeAddr', parameterType: ParameterType.IEEEADDR},
+                {name: 'endpoint', parameterType: ParameterType.UINT8},
+                {name: 'gpdfSecurityLevel', parameterType: ParameterType.UINT8},
+                {name: 'gpdfSecurityFrameCounter', parameterType: ParameterType.UINT8},
+                {name: 'dgpStubHandle', parameterType: ParameterType.UINT8},
+            ],
+            response: [{name: 'status', parameterType: ParameterType.UINT8}],
+        },
+
