@@ -27,9 +27,10 @@ BEGIN { print "use super::{Command, CommandType, Status, Subsystem, IeeeAddr};\n
 			if ($i ~ / ],$/) { break }
 			if ($i ~ /response: \[/) { break }
 			if ($i ~ /\/\//) { req_commented[i] = 1 }
+			if ($i ~ /}, \/\//) { req_comments[i] = gensub(/.+}, /, "//", "g", $i) }
 			if ($i !~ /{name/) { req_comments[i] = $i; continue }
 			req_field_names[i] = gensub(/.+{name: '(.+)', .+/, "\\1", "g", $i);
-			req_field_types[i] = gensub(/.+ParameterType.(.+)}]?,/, "\\1", "g", $i);
+			req_field_types[i] = gensub(/.+ParameterType.(.+)}.+/, "\\1", "g", $i);
 		}
 	}
 	# for (i in req_field_names) print req_field_types[i]
@@ -62,6 +63,9 @@ function translate_types(list)
 {
 	for (i in list) {
 		switch (list[i]) {
+			case /LIST_UINT[[:digit:]]+/:
+				list[i] = "Vec<" gensub("LIST_UINT", "u", "g", list[i]) ">"
+				break
 			case /UINT[[:digit:]]+/:
 				list[i] = gensub("UINT", "u", "g", list[i])
 				break
@@ -83,8 +87,23 @@ function translate_types(list)
 			case "IEEEADDR":
 				list[i] = "IeeeAddr"
 				break
+			case "LIST_ASSOC_DEV":
+				list[i] = "Vec<u16>"
+				break
+			case "LIST_NETWORK":
+				list[i] = "compile_error!(\"needs custom derive with Network type\")"
+				break
+			case "LIST_NEIGHBOR_LQI":
+				list[i] = "compile_error!(\"needs custom derive with NeighborLqi type\")"
+				break
+			case "LIST_ROUTING_TABLE":
+				list[i] = "RoutingTable"
+				break
+			case "LIST_BIND_TABLE":
+				list[i] = "BindTable"
+				break
 			default:
-				print "error can not translate type: " list[i]
+				print "error can not translate type: '" list[i] "'"
 				print "for field " list[i]
 				exit 
 		}
@@ -103,11 +122,34 @@ function translate_names(list)
 	}
 }
 
+function remove_list_counts(name_list, type_list)
+{
+	prev_idx = "None"
+	for (i in name_list) {
+		if (prev_idx == "None") {
+			prev_idx = i
+			continue
+		}
+
+		if (gensub(/count/, "", "g", name_list[prev_idx]) == gensub(/list/, "", "g", name_list[i])) {
+			delete name_list[prev_idx]
+			delete type_list[prev_idx]
+		} else if (gensub(/s$/, "", "g", gensub(/num/, "", "g", name_list[prev_idx])) \
+			== gensub(/list/, "", "g", name_list[i])) {
+			delete name_list[prev_idx]
+			delete type_list[prev_idx]
+		}
+		prev_idx = i
+	}
+}
+
 {
 	translate_types(req_field_types)
 	translate_types(rsp_field_types)
 	translate_names(req_field_names)
 	translate_names(rsp_field_names)
+	remove_list_counts(req_field_names, req_field_types)
+	remove_list_counts(rsp_field_names, rsp_field_types)
 }
 
 function first(list_a, list_b) 
