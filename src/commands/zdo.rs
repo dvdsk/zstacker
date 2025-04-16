@@ -696,7 +696,7 @@ struct MgmtNwkDiscRsp {
     status: u8,
     networkcount: u8,
     startindex: u8,
-    networklist: Vec<super::Network>,
+    networklist: Vec<Network>,
 }
 
 /// See: Z-Stack Monitor and Test API section 3.12.2.15 revision 1.14

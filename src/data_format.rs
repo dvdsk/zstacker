@@ -1,12 +1,12 @@
-/// This is a `serde` implementation for the `zpn` general frame format
-/// 
-/// The general frame format is
-/// ```
-/// n bytes: | 1       | 2       | 0-250
-///          | Length  | Command | Data
-/// ```
-/// Length: length of data field (0 to 250)
-///
+//! This is a `serde` implementation for the `zpn` general frame format
+//! 
+//! The general frame format is
+//! ```
+//! n bytes: | 1       | 2       | 0-250
+//!          | Length  | Command | Data
+//! ```
+//! Length: length of data field (0 to 250)
+//!
 
 mod ser;
 mod error;

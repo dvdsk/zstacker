@@ -9,16 +9,16 @@ use crate::data_format;
 pub const START_OF_FRAME: u8 = 0xFE;
 
 // TODO set subsystem for all of these
-pub(crate) mod sys;
-pub(crate) mod mac;
 pub(crate) mod af;
-pub(crate) mod zdo;
-pub(crate) mod sapi;
-pub(crate) mod util;
-pub(crate) mod debug;
 pub(crate) mod app;
 pub(crate) mod appconfig;
+pub(crate) mod debug;
 pub(crate) mod greenpower;
+pub(crate) mod mac;
+pub(crate) mod sapi;
+pub(crate) mod sys;
+pub(crate) mod util;
+pub(crate) mod zdo;
 
 pub trait Command: Serialize {
     const ID: u8;
@@ -44,11 +44,10 @@ pub trait Command: Serialize {
             Self::ID,
         ]
         .into_iter()
-        .chain(serialized.into_iter());
+        .chain(serialized);
 
         let checksum = frame
             .clone()
-            .into_iter()
             .reduce(|checksum, byte| checksum ^ byte)
             .expect("never empty");
 
