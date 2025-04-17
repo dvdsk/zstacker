@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use serde::{Serialize, Deserialize};
 
-use super::{AsyncRequest, SyncRequest, SyncReply, CommandType, IeeeAddr, Status, SubSystem};
+use super::{AsyncRequest, SyncRequest, SyncReply, IeeeAddr, Status, SubSystem};
 
 #[derive(Debug, Clone, Serialize)]
 struct ResetReq {
@@ -10,7 +10,6 @@ struct ResetReq {
 
 impl SyncRequest for ResetReq {
 	const ID: u8 = 1;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
@@ -21,7 +20,6 @@ struct Init {
 
 impl SyncRequest for Init {
 	const ID: u8 = 2;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
@@ -49,7 +47,6 @@ struct StartReq {
 
 impl SyncRequest for StartReq {
 	const ID: u8 = 3;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
@@ -63,7 +60,6 @@ struct SyncReq {
 
 impl SyncRequest for SyncReq {
 	const ID: u8 = 4;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
@@ -88,7 +84,6 @@ struct DataReq {
 
 impl SyncRequest for DataReq {
 	const ID: u8 = 5;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
@@ -109,7 +104,6 @@ struct AssociateReq {
 
 impl SyncRequest for AssociateReq {
 	const ID: u8 = 6;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
@@ -129,7 +123,6 @@ struct DisassociateReq {
 
 impl SyncRequest for DisassociateReq {
 	const ID: u8 = 7;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
@@ -152,7 +145,6 @@ impl SyncReply for GetReqReply {
 
 impl SyncRequest for GetReq {
 	const ID: u8 = 8;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = GetReqReply;
 }
@@ -165,7 +157,6 @@ struct SetReq {
 
 impl SyncRequest for SetReq {
 	const ID: u8 = 9;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
@@ -185,7 +176,6 @@ struct ScanReq {
 
 impl SyncRequest for ScanReq {
 	const ID: u8 = 12;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
@@ -203,7 +193,6 @@ struct PollReq {
 
 impl SyncRequest for PollReq {
 	const ID: u8 = 13;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
@@ -215,7 +204,6 @@ struct PurgeReq {
 
 impl SyncRequest for PurgeReq {
 	const ID: u8 = 14;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
@@ -227,7 +215,6 @@ struct SetRxGainReq {
 
 impl SyncRequest for SetRxGainReq {
 	const ID: u8 = 15;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
@@ -241,7 +228,6 @@ struct SecurityGetReq {
 
 impl SyncRequest for SecurityGetReq {
 	const ID: u8 = 48;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
@@ -254,7 +240,6 @@ struct SecuritySetReq {
 
 impl SyncRequest for SecuritySetReq {
 	const ID: u8 = 49;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
@@ -268,7 +253,6 @@ struct AssociateRsp {
 
 impl SyncRequest for AssociateRsp {
 	const ID: u8 = 80;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
@@ -282,7 +266,6 @@ struct OrphanRsp {
 
 impl SyncRequest for OrphanRsp {
 	const ID: u8 = 81;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }

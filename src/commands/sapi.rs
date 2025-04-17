@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
-use super::{AsyncRequest, SyncRequest, SyncReply, CommandType, IeeeAddr, Status, SubSystem};
+use super::{AsyncRequest, SyncRequest, SyncReply, IeeeAddr, Status, SubSystem};
 
 #[derive(Debug, Clone, Serialize)]
 struct SystemReset {}
@@ -16,7 +16,6 @@ struct StartRequest {}
 
 impl SyncRequest for StartRequest {
     const ID: u8 = 0;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = ();
 }
@@ -30,7 +29,6 @@ struct BindDevice {
 
 impl SyncRequest for BindDevice {
     const ID: u8 = 1;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = ();
 }
@@ -42,7 +40,6 @@ struct AllowBind {
 
 impl SyncRequest for AllowBind {
     const ID: u8 = 2;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = ();
 }
@@ -60,7 +57,6 @@ struct SendDataRequest {
 
 impl SyncRequest for SendDataRequest {
     const ID: u8 = 3;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = ();
 }
@@ -85,7 +81,6 @@ impl SyncReply for ReadConfigurationReply {
 
 impl SyncRequest for ReadConfiguration {
     const ID: u8 = 4;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = ReadConfigurationReply;
 }
@@ -99,7 +94,6 @@ struct WriteConfiguration {
 
 impl SyncRequest for WriteConfiguration {
     const ID: u8 = 5;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = Status;
 }
@@ -122,7 +116,6 @@ impl SyncReply for GetDeviceInfoReply {
 
 impl SyncRequest for GetDeviceInfo {
     const ID: u8 = 6;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = GetDeviceInfoReply;
 }
@@ -134,7 +127,6 @@ struct FindDeviceRequest {
 
 impl SyncRequest for FindDeviceRequest {
     const ID: u8 = 7;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = ();
 }
@@ -147,7 +139,6 @@ struct PermitJoiningRequest {
 
 impl SyncRequest for PermitJoiningRequest {
     const ID: u8 = 8;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = Status;
 }

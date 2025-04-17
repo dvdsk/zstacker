@@ -29,7 +29,6 @@ pub struct CommandError {
 
 pub trait SyncRequest: Serialize {
     const ID: u8;
-    const TYPE: CommandType;
     const SUBSYSTEM: SubSystem;
     type Reply: SyncReply;
 
@@ -50,7 +49,7 @@ pub trait SyncRequest: Serialize {
         })?;
         let frame = [
             serialized.len() as u8,
-            Self::SUBSYSTEM as u8 | Self::TYPE as u8,
+            Self::SUBSYSTEM as u8 | CommandType::SREQ as u8,
             Self::ID,
         ]
         .into_iter()

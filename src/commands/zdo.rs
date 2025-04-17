@@ -2,7 +2,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::{
-    AsyncRequest, SyncRequest, SyncReply, CommandType, IeeeAddr, Status,
+    AsyncRequest, SyncRequest, SyncReply, IeeeAddr, Status,
     SubSystem,
 };
 
@@ -15,7 +15,6 @@ struct NwkAddrReq {
 
 impl SyncRequest for NwkAddrReq {
     const ID: u8 = 0;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -29,7 +28,6 @@ struct IeeeAddrReq {
 
 impl SyncRequest for IeeeAddrReq {
     const ID: u8 = 1;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -42,7 +40,6 @@ struct NodeDescReq {
 
 impl SyncRequest for NodeDescReq {
     const ID: u8 = 2;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -55,7 +52,6 @@ struct PowerDescReq {
 
 impl SyncRequest for PowerDescReq {
     const ID: u8 = 3;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -69,7 +65,6 @@ struct SimpleDescReq {
 
 impl SyncRequest for SimpleDescReq {
     const ID: u8 = 4;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -82,7 +77,6 @@ struct ActiveEpReq {
 
 impl SyncRequest for ActiveEpReq {
     const ID: u8 = 5;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -97,7 +91,6 @@ struct MatchDescReq {
 
 impl SyncRequest for MatchDescReq {
     const ID: u8 = 6;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -110,7 +103,6 @@ struct ComplexDescReq {
 
 impl SyncRequest for ComplexDescReq {
     const ID: u8 = 7;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -123,7 +115,6 @@ struct UserDescReq {
 
 impl SyncRequest for UserDescReq {
     const ID: u8 = 8;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -137,7 +128,6 @@ struct EndDeviceAnnce {
 
 impl SyncRequest for EndDeviceAnnce {
     const ID: u8 = 10;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -152,7 +142,6 @@ struct UserDescSet {
 
 impl SyncRequest for UserDescSet {
     const ID: u8 = 11;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -164,7 +153,6 @@ struct ServerDiscReq {
 
 impl SyncRequest for ServerDiscReq {
     const ID: u8 = 12;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -181,7 +169,6 @@ struct EndDeviceBindReq {
 
 impl SyncRequest for EndDeviceBindReq {
     const ID: u8 = 32;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -199,7 +186,6 @@ struct BindReq {
 
 impl SyncRequest for BindReq {
     const ID: u8 = 33;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -217,7 +203,6 @@ struct UnbindReq {
 
 impl SyncRequest for UnbindReq {
     const ID: u8 = 34;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -231,7 +216,6 @@ struct SetLinkKey {
 
 impl SyncRequest for SetLinkKey {
     const ID: u8 = 35;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -243,7 +227,6 @@ struct RemoveLinkKey {
 
 impl SyncRequest for RemoveLinkKey {
     const ID: u8 = 36;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -267,7 +250,6 @@ impl SyncReply for GetLinkKeyReply {
 
 impl SyncRequest for GetLinkKey {
     const ID: u8 = 37;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = GetLinkKeyReply;
 }
@@ -280,7 +262,6 @@ struct NwkDiscoveryReq {
 
 impl SyncRequest for NwkDiscoveryReq {
     const ID: u8 = 38;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -297,7 +278,6 @@ struct JoinReq {
 
 impl SyncRequest for JoinReq {
     const ID: u8 = 39;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -312,7 +292,6 @@ struct MgmtNwkDiscReq {
 
 impl SyncRequest for MgmtNwkDiscReq {
     const ID: u8 = 48;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -325,7 +304,6 @@ struct MgmtLqiReq {
 
 impl SyncRequest for MgmtLqiReq {
     const ID: u8 = 49;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -338,7 +316,6 @@ struct MgmtRtgReq {
 
 impl SyncRequest for MgmtRtgReq {
     const ID: u8 = 50;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -351,7 +328,6 @@ struct MgmtBindReq {
 
 impl SyncRequest for MgmtBindReq {
     const ID: u8 = 51;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -365,7 +341,6 @@ struct MgmtLeaveReq {
 
 impl SyncRequest for MgmtLeaveReq {
     const ID: u8 = 52;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -379,7 +354,6 @@ struct MgmtDirectJoinReq {
 
 impl SyncRequest for MgmtDirectJoinReq {
     const ID: u8 = 53;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -394,7 +368,6 @@ struct MgmtPermitJoinReq {
 
 impl SyncRequest for MgmtPermitJoinReq {
     const ID: u8 = 54;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -412,7 +385,6 @@ struct MgmtNwkUpdateReq {
 
 impl SyncRequest for MgmtNwkUpdateReq {
     const ID: u8 = 55; // the spec says 0x38 but TI used 0x37 see https://github.com/Koenkk/zigbee-herdsman/issues/1237
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -424,7 +396,6 @@ struct MsgCbRegister {
 
 impl SyncRequest for MsgCbRegister {
     const ID: u8 = 62;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -436,7 +407,6 @@ struct MsgCbRemove {
 
 impl SyncRequest for MsgCbRemove {
     const ID: u8 = 63;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -448,7 +418,6 @@ struct StartupFromApp {
 
 impl SyncRequest for StartupFromApp {
     const ID: u8 = 64;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -909,7 +878,6 @@ struct SetRejoinParametersReq {
 
 impl SyncRequest for SetRejoinParametersReq {
     const ID: u8 = 204;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -939,7 +907,6 @@ struct EndDeviceTimeoutReq {
 
 impl SyncRequest for EndDeviceTimeoutReq {
     const ID: u8 = 13;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -955,7 +922,6 @@ struct SendData {
 
 impl SyncRequest for SendData {
     const ID: u8 = 40;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -969,7 +935,6 @@ struct NwkAddrOfInterestReq {
 
 impl SyncRequest for NwkAddrOfInterestReq {
     const ID: u8 = 41;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -983,7 +948,6 @@ struct SecAddLinkKey {
 
 impl SyncRequest for SecAddLinkKey {
     const ID: u8 = 66;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -1008,7 +972,6 @@ impl SyncReply for SecEntryLookupExtReply {
 
 impl SyncRequest for SecEntryLookupExt {
     const ID: u8 = 67;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = SecEntryLookupExtReply;
 }
@@ -1020,7 +983,6 @@ struct SecDeviceRemove {
 
 impl SyncRequest for SecDeviceRemove {
     const ID: u8 = 68;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -1034,7 +996,6 @@ struct ExtRouteDisc {
 
 impl SyncRequest for ExtRouteDisc {
     const ID: u8 = 69;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -1048,7 +1009,6 @@ struct ExtRouteCheck {
 
 impl SyncRequest for ExtRouteCheck {
     const ID: u8 = 70;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -1061,7 +1021,6 @@ struct ExtRemoveGroup {
 
 impl SyncRequest for ExtRemoveGroup {
     const ID: u8 = 71;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -1073,7 +1032,6 @@ struct ExtRemoveAllGroup {
 
 impl SyncRequest for ExtRemoveAllGroup {
     const ID: u8 = 72;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -1095,7 +1053,6 @@ impl SyncReply for ExtFindAllGroupsEndpointReply {
 
 impl SyncRequest for ExtFindAllGroupsEndpoint {
     const ID: u8 = 73;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = ExtFindAllGroupsEndpointReply;
 }
@@ -1121,7 +1078,6 @@ impl SyncReply for ExtFindGroupReply {
 
 impl SyncRequest for ExtFindGroup {
     const ID: u8 = 74;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = ExtFindGroupReply;
 }
@@ -1136,7 +1092,6 @@ struct ExtAddGroup {
 
 impl SyncRequest for ExtAddGroup {
     const ID: u8 = 75;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -1146,7 +1101,6 @@ struct ExtCountAllGroups {}
 
 impl SyncRequest for ExtCountAllGroups {
     const ID: u8 = 76;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -1159,7 +1113,6 @@ struct ExtRxIdle {
 
 impl SyncRequest for ExtRxIdle {
     const ID: u8 = 77;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -1173,7 +1126,6 @@ struct ExtUpdateNwkKey {
 
 impl SyncRequest for ExtUpdateNwkKey {
     const ID: u8 = 78;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -1186,7 +1138,6 @@ struct ExtSwitchNwkKey {
 
 impl SyncRequest for ExtSwitchNwkKey {
     const ID: u8 = 79;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -1212,7 +1163,6 @@ impl SyncReply for ExtNwkInfoRsp {
 
 impl SyncRequest for ExtNwkInfo {
     const ID: u8 = 80;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = ExtNwkInfoRsp;
 }
@@ -1226,7 +1176,6 @@ struct ExtSecApsRemoveReq {
 
 impl SyncRequest for ExtSecApsRemoveReq {
     const ID: u8 = 81;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
@@ -1236,7 +1185,6 @@ struct ForceConcentratorChange {}
 
 impl SyncRequest for ForceConcentratorChange {
     const ID: u8 = 82;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = ();
 }
@@ -1248,7 +1196,6 @@ struct ExtSetParams {
 
 impl SyncRequest for ExtSetParams {
     const ID: u8 = 83;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }

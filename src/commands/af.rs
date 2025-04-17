@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
-use super::{AsyncRequest, SyncRequest, SyncReply, CommandType, IeeeAddr, Status, SubSystem};
+use super::{AsyncRequest, SyncRequest, SyncReply, IeeeAddr, Status, SubSystem};
 
 #[derive(Debug, Clone, Serialize)]
 struct Register {
@@ -15,7 +15,6 @@ struct Register {
 
 impl SyncRequest for Register {
     const ID: u8 = 0;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
@@ -35,7 +34,6 @@ struct DataRequest {
 
 impl SyncRequest for DataRequest {
     const ID: u8 = 1;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
@@ -57,7 +55,6 @@ struct DataRequestExt {
 
 impl SyncRequest for DataRequestExt {
     const ID: u8 = 2;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
@@ -78,7 +75,6 @@ struct DataRequestSrcRtg {
 
 impl SyncRequest for DataRequestSrcRtg {
     const ID: u8 = 3;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
@@ -90,7 +86,6 @@ struct Delete {
 
 impl SyncRequest for Delete {
     const ID: u8 = 4;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
@@ -103,7 +98,6 @@ struct InterPanCtl {
 
 impl SyncRequest for InterPanCtl {
     const ID: u8 = 16;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
@@ -117,7 +111,6 @@ struct DataStore {
 
 impl SyncRequest for DataStore {
     const ID: u8 = 17;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
@@ -143,7 +136,6 @@ impl SyncReply for DataRetrieveReply {
 
 impl SyncRequest for DataRetrieve {
     const ID: u8 = 18;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = DataRetrieveReply;
 }
@@ -157,7 +149,6 @@ struct ApsfConfigSet {
 
 impl SyncRequest for ApsfConfigSet {
     const ID: u8 = 19;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
@@ -181,7 +172,6 @@ impl SyncReply for ApsfConfigGetReply {
 
 impl SyncRequest for ApsfConfigGet {
     const ID: u8 = 20;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = ApsfConfigGetReply;
 }

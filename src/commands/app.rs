@@ -2,7 +2,7 @@
 
 use serde::Serialize;
 
-use super::{AsyncRequest, SyncRequest, CommandType, Status, SubSystem};
+use super::{AsyncRequest, SyncRequest, Status, SubSystem};
 
 #[derive(Debug, Clone, Serialize)]
 struct Msg {
@@ -16,7 +16,6 @@ struct Msg {
 
 impl SyncRequest for Msg {
 	const ID: u8 = 0;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::App;
 	type Reply = Status;
 }
@@ -31,7 +30,6 @@ struct UserTest {
 
 impl SyncRequest for UserTest {
 	const ID: u8 = 1;
-	const TYPE: CommandType = CommandType::SREQ;
 	const SUBSYSTEM: SubSystem = SubSystem::App;
 	type Reply = Status;
 }

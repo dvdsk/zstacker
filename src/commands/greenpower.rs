@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use serde::Serialize;
 
-use super::{SyncRequest, CommandType, IeeeAddr, Status, SubSystem};
+use super::{SyncRequest, IeeeAddr, Status, SubSystem};
 
 #[derive(Debug, Clone, Serialize)]
 struct SecReq {
@@ -16,7 +16,6 @@ struct SecReq {
 
 impl SyncRequest for SecReq {
     const ID: u8 = 3;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::GreenPower;
     type Reply = Status;
 }

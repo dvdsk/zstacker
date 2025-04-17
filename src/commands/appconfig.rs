@@ -3,7 +3,7 @@
 use serde::Serialize;
 use serde_repr::Serialize_repr;
 
-use super::{AsyncRequest, SyncRequest, CommandType, IeeeAddr, Status, SubSystem};
+use super::{AsyncRequest, SyncRequest, IeeeAddr, Status, SubSystem};
 
 #[derive(Clone, Copy, Debug, Serialize_repr)]
 #[repr(u8)]
@@ -32,7 +32,6 @@ impl Serialize for AddInstallCode {
 
 impl SyncRequest for AddInstallCode {
     const ID: u8 = 4;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
     type Reply = Status;
 
@@ -62,7 +61,6 @@ struct BdbStartCommissioning {
 }
 impl SyncRequest for BdbStartCommissioning {
     const ID: u8 = 5;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
     type Reply = Status;
 }
@@ -75,7 +73,6 @@ struct BdbSetChannel {
 
 impl SyncRequest for BdbSetChannel {
     const ID: u8 = 8;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
     type Reply = Status;
 }
@@ -86,7 +83,6 @@ struct BdbSetTcRequireKeyExchange {
 }
 impl SyncRequest for BdbSetTcRequireKeyExchange {
     const ID: u8 = 9;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
     type Reply = Status;
 }
@@ -107,7 +103,6 @@ struct SetNwkFrameCounter {
 }
 impl SyncRequest for SetNwkFrameCounter {
     const ID: u8 = 255;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
     type Reply = Status;
 }

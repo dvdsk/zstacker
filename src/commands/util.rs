@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::{
-    SyncRequest, SyncReply, CommandType, DeviceState, DeviceType, IeeeAddr,
+    SyncRequest, SyncReply, DeviceState, DeviceType, IeeeAddr,
     ShortAddr, SubSystem,
 };
 
@@ -10,7 +10,6 @@ pub struct GetDeviceInfo;
 
 impl SyncRequest for GetDeviceInfo {
     const ID: u8 = 0;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Util;
     type Reply = DeviceInfo;
 }

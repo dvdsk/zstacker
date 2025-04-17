@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
-use super::{AsyncRequest, SyncRequest, SyncReply, CommandType, IeeeAddr, Status, SubSystem};
+use super::{AsyncRequest, SyncRequest, SyncReply, IeeeAddr, Status, SubSystem};
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct ResetReq {
@@ -29,7 +29,6 @@ impl SyncReply for PingReply {
 
 impl SyncRequest for Ping {
     const ID: u8 = 1;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = PingReply;
 }
@@ -89,7 +88,6 @@ impl SyncReply for VersionReply {
 
 impl SyncRequest for Version {
     const ID: u8 = 2;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = VersionReply;
 }
@@ -101,7 +99,6 @@ pub(crate) struct SetExtAddr {
 
 impl SyncRequest for SetExtAddr {
     const ID: u8 = 3;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -121,7 +118,6 @@ impl SyncReply for GetExtAddrReply {
 
 impl SyncRequest for GetExtAddr {
     const ID: u8 = 4;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = GetExtAddrReply;
 }
@@ -146,7 +142,6 @@ impl SyncReply for RamReadReply {
 
 impl SyncRequest for RamRead {
     const ID: u8 = 5;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = RamReadReply;
 }
@@ -160,7 +155,6 @@ pub(crate) struct RamWrite {
 
 impl SyncRequest for RamWrite {
     const ID: u8 = 6;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -175,7 +169,6 @@ pub(crate) struct OsalNvItemInit {
 
 impl SyncRequest for OsalNvItemInit {
     const ID: u8 = 7;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -200,7 +193,6 @@ impl SyncReply for OsalNvReadReply {
 
 impl SyncRequest for OsalNvRead {
     const ID: u8 = 8;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = OsalNvReadReply;
 }
@@ -215,7 +207,6 @@ pub(crate) struct OsalNvWrite {
 
 impl SyncRequest for OsalNvWrite {
     const ID: u8 = 9;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -228,7 +219,6 @@ pub(crate) struct OsalStartTimer {
 
 impl SyncRequest for OsalStartTimer {
     const ID: u8 = 10;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -240,7 +230,6 @@ pub(crate) struct OsalStopTimer {
 
 impl SyncRequest for OsalStopTimer {
     const ID: u8 = 11;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -260,7 +249,6 @@ impl SyncReply for RandomReply {
 
 impl SyncRequest for Random {
     const ID: u8 = 12;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = RandomReply;
 }
@@ -283,7 +271,6 @@ impl SyncReply for AdcReadReply {
 
 impl SyncRequest for AdcRead {
     const ID: u8 = 13;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = AdcReadReply;
 }
@@ -306,7 +293,6 @@ impl SyncReply for GpioReply {
 
 impl SyncRequest for Gpio {
     const ID: u8 = 14;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = GpioReply;
 }
@@ -329,7 +315,6 @@ impl SyncReply for StackTuneReply {
 
 impl SyncRequest for StackTune {
     const ID: u8 = 15;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = StackTuneReply;
 }
@@ -347,7 +332,6 @@ pub(crate) struct SetTime {
 
 impl SyncRequest for SetTime {
     const ID: u8 = 16;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -373,7 +357,6 @@ impl SyncReply for GetTimeReply {
 
 impl SyncRequest for GetTime {
     const ID: u8 = 17;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = GetTimeReply;
 }
@@ -386,7 +369,6 @@ pub(crate) struct OsalNvDelete {
 
 impl SyncRequest for OsalNvDelete {
     const ID: u8 = 18;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -408,7 +390,6 @@ impl SyncReply for OsalNvLengthReply {
 
 impl SyncRequest for OsalNvLength {
     const ID: u8 = 19;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = OsalNvLengthReply;
 }
@@ -430,7 +411,6 @@ impl SyncReply for SetTxPowerReply {
 
 impl SyncRequest for SetTxPower {
     const ID: u8 = 20;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = SetTxPowerReply;
 }
@@ -444,7 +424,6 @@ pub(crate) struct JammerParameters {
 
 impl SyncRequest for JammerParameters {
     const ID: u8 = 21;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -456,7 +435,6 @@ pub(crate) struct SnifferParameters {
 
 impl SyncRequest for SnifferParameters {
     const ID: u8 = 22;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -466,7 +444,6 @@ pub(crate) struct ZdiagsInitStats;
 
 impl SyncRequest for ZdiagsInitStats {
     const ID: u8 = 23;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -488,7 +465,6 @@ impl SyncReply for ZdiagsClearStatsReply {
 
 impl SyncRequest for ZdiagsClearStats {
     const ID: u8 = 24;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = ZdiagsClearStatsReply;
 }
@@ -510,7 +486,6 @@ impl SyncReply for ZdiagsGetStatsReply {
 
 impl SyncRequest for ZdiagsGetStats {
     const ID: u8 = 25;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = ZdiagsGetStatsReply;
 }
@@ -520,7 +495,6 @@ pub(crate) struct ZdiagsRestoreStatsNv;
 
 impl SyncRequest for ZdiagsRestoreStatsNv {
     const ID: u8 = 26;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -540,7 +514,6 @@ impl SyncReply for ZdiagsSaveStatsToNvReply {
 
 impl SyncRequest for ZdiagsSaveStatsToNv {
     const ID: u8 = 27;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = ZdiagsSaveStatsToNvReply;
 }
@@ -565,7 +538,6 @@ impl SyncReply for OsalNvReadExtReply {
 
 impl SyncRequest for OsalNvReadExt {
     const ID: u8 = 28;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = OsalNvReadExtReply;
 }
@@ -580,7 +552,6 @@ pub(crate) struct OsalNvWriteExt {
 
 impl SyncRequest for OsalNvWriteExt {
     const ID: u8 = 29;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -595,7 +566,6 @@ pub(crate) struct NvCreate {
 
 impl SyncRequest for NvCreate {
     const ID: u8 = 48;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -609,7 +579,6 @@ pub(crate) struct NvDelete {
 
 impl SyncRequest for NvDelete {
     const ID: u8 = 49;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -633,7 +602,6 @@ impl SyncReply for NvLengthReply {
 
 impl SyncRequest for NvLength {
     const ID: u8 = 50;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = NvLengthReply;
 }
@@ -661,7 +629,6 @@ impl SyncReply for NvReadReply {
 
 impl SyncRequest for NvRead {
     const ID: u8 = 51;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = NvReadReply;
 }
@@ -678,7 +645,6 @@ pub(crate) struct NvWrite {
 
 impl SyncRequest for NvWrite {
     const ID: u8 = 52;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -694,7 +660,6 @@ pub(crate) struct NvUpdate {
 
 impl SyncRequest for NvUpdate {
     const ID: u8 = 53;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
@@ -706,7 +671,6 @@ pub(crate) struct NvCompact {
 
 impl SyncRequest for NvCompact {
     const ID: u8 = 54;
-    const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
     type Reply = Status;
 }
