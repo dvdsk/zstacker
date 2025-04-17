@@ -16,7 +16,14 @@ struct Register {
 impl SyncRequest for Register {
     const ID: u8 = 0;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
-    type Reply = Status;
+    type Reply = RegisterReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct RegisterReply(Status);
+
+impl SyncReply for RegisterReply {
+    type Request = Register;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -35,7 +42,14 @@ struct DataRequest {
 impl SyncRequest for DataRequest {
     const ID: u8 = 1;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
-    type Reply = Status;
+    type Reply = DataRequestReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct DataRequestReply(Status);
+
+impl SyncReply for DataRequestReply {
+    type = DataRequest;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -56,7 +70,14 @@ struct DataRequestExt {
 impl SyncRequest for DataRequestExt {
     const ID: u8 = 2;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
-    type Reply = Status;
+    type Reply = DataRequestExtReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct DataRequestExtReply(Status);
+
+impl SyncReply for DataRequestExtReply {
+    type = DataRequestExt;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -76,7 +97,14 @@ struct DataRequestSrcRtg {
 impl SyncRequest for DataRequestSrcRtg {
     const ID: u8 = 3;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
-    type Reply = Status;
+    type Reply = DataRequestSrcRtgReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct DataRequestSrcRtgReply(Status);
+
+impl SyncReply for DataRequestSrcRtgReply {
+    type Request = DataRequestSrcRtg;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -87,7 +115,14 @@ struct Delete {
 impl SyncRequest for Delete {
     const ID: u8 = 4;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
-    type Reply = Status;
+    type Reply = DeleteReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct DeleteReply(Status);
+
+impl SyncReply for DeleteReply {
+    type = Delete;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -99,7 +134,14 @@ struct InterPanCtl {
 impl SyncRequest for InterPanCtl {
     const ID: u8 = 16;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
-    type Reply = Status;
+    type Reply = InterPanCtlReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct InterPanCtlReply(Status);
+
+impl SyncReply for InterPanCtlReply {
+    type = InterPanCtl;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -112,7 +154,14 @@ struct DataStore {
 impl SyncRequest for DataStore {
     const ID: u8 = 17;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
-    type Reply = Status;
+    type Reply = DataStoreReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct DataStoreReply(Status);
+
+impl SyncReply for DataStoreReply {
+    type = DataStore;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -150,7 +199,14 @@ struct ApsfConfigSet {
 impl SyncRequest for ApsfConfigSet {
     const ID: u8 = 19;
     const SUBSYSTEM: SubSystem = SubSystem::Af;
-    type Reply = Status;
+    type Reply = ApsfConfigSetReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct ApsfConfigSetReply(Status);
+
+impl SyncReply for ApsfConfigSetReply {
+    type = ApsfConfigSet;
 }
 
 #[derive(Debug, Clone, Serialize)]

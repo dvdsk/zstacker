@@ -17,7 +17,14 @@ struct Msg {
 impl SyncRequest for Msg {
 	const ID: u8 = 0;
 	const SUBSYSTEM: SubSystem = SubSystem::App;
-	type Reply = Status;
+	type Reply = MsgStatusReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct MsgReply(Status);
+
+impl SyncReply for MsgStatusReply {
+    type Request = Msg;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -31,7 +38,14 @@ struct UserTest {
 impl SyncRequest for UserTest {
 	const ID: u8 = 1;
 	const SUBSYSTEM: SubSystem = SubSystem::App;
-	type Reply = Status;
+	type Reply = UserTestStatusReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct UserTestReply(Status);
+
+impl SyncReply for UserTestStatusReply {
+    type Request = UserTest;
 }
 
 #[derive(Debug, Clone, Serialize)]

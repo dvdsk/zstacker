@@ -33,7 +33,7 @@ impl Serialize for AddInstallCode {
 impl SyncRequest for AddInstallCode {
     const ID: u8 = 4;
     const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
-    type Reply = Status;
+    type Reply = AddInstallCodeReply;
 
     fn data_to_vec(&self) -> Result<Vec<u8>, crate::data_format::Error>
     where
@@ -56,13 +56,21 @@ impl SyncRequest for AddInstallCode {
 }
 
 #[derive(Debug, Clone, Serialize)]
+struct AddInstallCodeReply(Status);
+
+impl SyncReply for AddInstallCodeReply {
+    type Request = AddInstallCode;
+}
+
+#[derive(Debug, Clone, Serialize)]
 struct BdbStartCommissioning {
     mode: u8,
 }
+
 impl SyncRequest for BdbStartCommissioning {
     const ID: u8 = 5;
     const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
-    type Reply = Status;
+    type Reply = BdbStartCommissioning ;
 }
 
 #[derive(Debug, Clone, Serialize)]

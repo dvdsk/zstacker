@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use super::{
-    SyncRequest, SyncReply, DeviceState, DeviceType, IeeeAddr,
-    ShortAddr, SubSystem,
+    DeviceState, DeviceType, IeeeAddr, ShortAddr, SubSystem, SyncReply,
+    SyncRequest,
 };
 
 #[derive(Debug, Clone, Serialize)]
@@ -29,6 +29,7 @@ pub struct DeviceInfo {
 impl SyncReply for DeviceInfo {
     const CMD0: u8 = 0x67;
     const CMD1: u8 = 0x00;
+    type Request = GetDeviceInfo;
 }
 
 fn device_type_from_u8<'de, D>(

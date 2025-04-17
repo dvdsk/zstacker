@@ -185,8 +185,7 @@ fn split_off_and_verify_checksum<R: SyncReply>(
 }
 
 pub trait SyncReply: DeserializeOwned {
-    const CMD0: u8;
-    const CMD1: u8;
+    type Request: SyncRequest;
 
     fn from_reader(
         reader: &mut impl std::io::Read,
@@ -196,20 +195,6 @@ pub trait SyncReply: DeserializeOwned {
             cause,
         })
     }
-}
-
-impl SyncReply for () {
-    const CMD0: u8 = 0;
-    const CMD1: u8 = 0;
-
-    fn from_reader(_: &mut impl std::io::Read) -> Result<Self, ReplyError> {
-        Ok(())
-    }
-}
-
-impl SyncReply for Status {
-    const CMD0: u8 = 0x67;
-    const CMD1: u8 = 0x23;
 }
 
 /// The status parameter that is returned from the `ZNP` device
