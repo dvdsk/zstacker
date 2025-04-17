@@ -1,9 +1,11 @@
 #![allow(dead_code)]
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_repr::Serialize_repr;
 
-use super::{AsyncRequest, SyncRequest, IeeeAddr, Status, SubSystem};
+use super::{
+    AsyncRequest, IeeeAddr, Status, SubSystem, SyncReply, SyncRequest,
+};
 
 #[derive(Clone, Copy, Debug, Serialize_repr)]
 #[repr(u8)]
@@ -55,7 +57,7 @@ impl SyncRequest for AddInstallCode {
     }
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Deserialize)]
 struct AddInstallCodeReply(Status);
 
 impl SyncReply for AddInstallCodeReply {
@@ -70,7 +72,14 @@ struct BdbStartCommissioning {
 impl SyncRequest for BdbStartCommissioning {
     const ID: u8 = 5;
     const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
-    type Reply = BdbStartCommissioning ;
+    type Reply = BdbStartCommissioningReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct BdbStartCommissioningReply(Status);
+
+impl SyncReply for BdbStartCommissioningReply {
+    type Request = BdbStartCommissioning;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -82,7 +91,14 @@ struct BdbSetChannel {
 impl SyncRequest for BdbSetChannel {
     const ID: u8 = 8;
     const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
-    type Reply = Status;
+    type Reply = BdbSetChannelReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct BdbSetChannelReply(Status);
+
+impl SyncReply for BdbSetChannelReply {
+    type Request = BdbSetChannel;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -92,7 +108,14 @@ struct BdbSetTcRequireKeyExchange {
 impl SyncRequest for BdbSetTcRequireKeyExchange {
     const ID: u8 = 9;
     const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
-    type Reply = Status;
+    type Reply = BdbSetTcRequireKeyExchangeReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct BdbSetTcRequireKeyExchangeReply(Status);
+
+impl SyncReply for BdbSetTcRequireKeyExchangeReply {
+    type Request = BdbSetTcRequireKeyExchange;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -109,8 +132,16 @@ impl AsyncRequest for BdbComissioningNotification {
 struct SetNwkFrameCounter {
     value: u32,
 }
+
 impl SyncRequest for SetNwkFrameCounter {
     const ID: u8 = 255;
     const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
-    type Reply = Status;
+    type Reply = SetNwkFrameCounterReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct SetNwkFrameCounterReply(Status);
+
+impl SyncReply for SetNwkFrameCounterReply {
+    type Request = SetNwkFrameCounter;
 }

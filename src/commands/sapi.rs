@@ -75,8 +75,7 @@ struct ReadConfigurationReply {
 }
 
 impl SyncReply for ReadConfigurationReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = ReadConfiguration;
 }
 
 impl SyncRequest for ReadConfiguration {
@@ -110,8 +109,7 @@ struct GetDeviceInfoReply {
 }
 
 impl SyncReply for GetDeviceInfoReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = GetDeviceInfo;
 }
 
 impl SyncRequest for GetDeviceInfo {

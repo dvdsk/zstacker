@@ -8,20 +8,34 @@ struct ResetReq {
 	setdefault: u8,
 }
 
+
 impl SyncRequest for ResetReq {
 	const ID: u8 = 1;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = ResetReqReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct ResetReqReply(Status);
+impl SyncReply for ResetReqReply {
+    type Request = ResetReq;
 }
 
 #[derive(Debug, Clone, Serialize)]
 struct Init {
 }
 
+
 impl SyncRequest for Init {
 	const ID: u8 = 2;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = InitReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct InitReply(Status);
+impl SyncReply for InitReply {
+    type Request = Init;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -45,10 +59,17 @@ struct StartReq {
 	beaconkeyindex: u8,
 }
 
+
 impl SyncRequest for StartReq {
 	const ID: u8 = 3;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = StartReqReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct StartReqReply(Status);
+impl SyncReply for StartReqReply {
+    type Request = StartReq;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -58,10 +79,17 @@ struct SyncReq {
 	trackbeacon: u8,
 }
 
+
 impl SyncRequest for SyncReq {
 	const ID: u8 = 4;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = SyncReqReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct SyncReqReply(Status);
+impl SyncReply for SyncReqReply {
+    type Request = SyncReq;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -82,10 +110,17 @@ struct DataReq {
 	msdu: Vec<u8>,
 }
 
+
 impl SyncRequest for DataReq {
 	const ID: u8 = 5;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = DataReqReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct DataReqReply(Status);
+impl SyncReply for DataReqReply {
+    type Request = DataReq;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -102,10 +137,17 @@ struct AssociateReq {
 	keyindex: u8,
 }
 
+
 impl SyncRequest for AssociateReq {
 	const ID: u8 = 6;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = AssociateReqReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct AssociateReqReply(Status);
+impl SyncReply for AssociateReqReply {
+    type Request = AssociateReq;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -121,10 +163,17 @@ struct DisassociateReq {
 	keyindex: u8,
 }
 
+
 impl SyncRequest for DisassociateReq {
 	const ID: u8 = 7;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = DisassociateReqReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct DisassociateReqReply(Status);
+impl SyncReply for DisassociateReqReply {
+    type Request = DisassociateReq;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -139,9 +188,9 @@ struct GetReqReply {
 }
 
 impl SyncReply for GetReqReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = GetReq;
 }
+
 
 impl SyncRequest for GetReq {
 	const ID: u8 = 8;
@@ -155,10 +204,18 @@ struct SetReq {
 	attributevalue: Vec<u8>,
 }
 
+
 impl SyncRequest for SetReq {
 	const ID: u8 = 9;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = SetReqReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct SetReqReply(Status);
+
+impl SyncReply for SetReqReply {
+    type Request = SetReq;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -174,10 +231,18 @@ struct ScanReq {
 	keyindex: u8,
 }
 
+
 impl SyncRequest for ScanReq {
 	const ID: u8 = 12;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = ScanReqReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct ScanReqReply(Status);
+
+impl SyncReply for ScanReqReply {
+    type Request = ScanReq;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -191,10 +256,18 @@ struct PollReq {
 	keyindex: u8,
 }
 
+
 impl SyncRequest for PollReq {
 	const ID: u8 = 13;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = PollReqReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PollReqReply(Status);
+
+impl SyncReply for PollReqReply {
+    type Request = PollReq;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -202,10 +275,18 @@ struct PurgeReq {
 	msduhandle: u8,
 }
 
+
 impl SyncRequest for PurgeReq {
 	const ID: u8 = 14;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = PurgeReqReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct PurgeReqReply(Status);
+
+impl SyncReply for PurgeReqReply {
+    type Request = PurgeReq;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -213,10 +294,18 @@ struct SetRxGainReq {
 	mode: u8,
 }
 
+
 impl SyncRequest for SetRxGainReq {
 	const ID: u8 = 15;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = SetRxGainReqReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct SetRxGainReqReply(Status);
+
+impl SyncReply for SetRxGainReqReply {
+    type Request = SetRxGainReq;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -226,10 +315,18 @@ struct SecurityGetReq {
 	index2: u8,
 }
 
+
 impl SyncRequest for SecurityGetReq {
 	const ID: u8 = 48;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = SecurityGetReqReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct SecurityGetReqReply(Status);
+
+impl SyncReply for SecurityGetReqReply {
+    type Request = SecurityGetReq;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -238,10 +335,18 @@ struct SecuritySetReq {
 	attributevalue: Vec<u8>,
 }
 
+
 impl SyncRequest for SecuritySetReq {
 	const ID: u8 = 49;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = SecuritySetReqReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct SecuritySetReqReply(Status);
+
+impl SyncReply for SecuritySetReqReply {
+    type Request = SecuritySetReq;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -251,10 +356,18 @@ struct AssociateRsp {
 	assocstatus: u8,
 }
 
+
 impl SyncRequest for AssociateRsp {
 	const ID: u8 = 80;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = AssociateRspReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct AssociateRspReply(Status);
+
+impl SyncReply for AssociateRspReply {
+    type Request = AssociateRsp;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -264,10 +377,18 @@ struct OrphanRsp {
 	associatedmember: u8,
 }
 
+
 impl SyncRequest for OrphanRsp {
 	const ID: u8 = 81;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
-	type Reply = Status;
+    type Reply = OrphanRspReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct OrphanRspReply(Status);
+
+impl SyncReply for OrphanRspReply {
+    type Request = OrphanRsp;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -503,4 +624,3 @@ impl AsyncRequest for PurgeCnf {
 	const ID: u8 = 144;
 	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
-

@@ -1,8 +1,8 @@
 #![allow(dead_code)]
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-use super::{AsyncRequest, SyncRequest, Status, SubSystem};
+use super::{AsyncRequest, Status, SubSystem, SyncReply, SyncRequest};
 
 #[derive(Debug, Clone, Serialize)]
 struct Msg {
@@ -17,13 +17,13 @@ struct Msg {
 impl SyncRequest for Msg {
 	const ID: u8 = 0;
 	const SUBSYSTEM: SubSystem = SubSystem::App;
-	type Reply = MsgStatusReply;
+	type Reply = MsgReply;
 }
 
 #[derive(Debug, Clone, Deserialize)]
 struct MsgReply(Status);
 
-impl SyncReply for MsgStatusReply {
+impl SyncReply for MsgReply {
     type Request = Msg;
 }
 
@@ -38,13 +38,13 @@ struct UserTest {
 impl SyncRequest for UserTest {
 	const ID: u8 = 1;
 	const SUBSYSTEM: SubSystem = SubSystem::App;
-	type Reply = UserTestStatusReply;
+	type Reply = UserTestReply;
 }
 
 #[derive(Debug, Clone, Deserialize)]
 struct UserTestReply(Status);
 
-impl SyncReply for UserTestStatusReply {
+impl SyncReply for UserTestReply {
     type Request = UserTest;
 }
 

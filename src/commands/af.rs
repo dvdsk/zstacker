@@ -49,7 +49,7 @@ impl SyncRequest for DataRequest {
 struct DataRequestReply(Status);
 
 impl SyncReply for DataRequestReply {
-    type = DataRequest;
+    type Request = DataRequest;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -77,7 +77,7 @@ impl SyncRequest for DataRequestExt {
 struct DataRequestExtReply(Status);
 
 impl SyncReply for DataRequestExtReply {
-    type = DataRequestExt;
+    type Request = DataRequestExt;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -122,7 +122,7 @@ impl SyncRequest for Delete {
 struct DeleteReply(Status);
 
 impl SyncReply for DeleteReply {
-    type = Delete;
+    type Request = Delete;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -141,7 +141,7 @@ impl SyncRequest for InterPanCtl {
 struct InterPanCtlReply(Status);
 
 impl SyncReply for InterPanCtlReply {
-    type = InterPanCtl;
+    type Request = InterPanCtl;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -161,7 +161,7 @@ impl SyncRequest for DataStore {
 struct DataStoreReply(Status);
 
 impl SyncReply for DataStoreReply {
-    type = DataStore;
+    type Request = DataStore;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -179,8 +179,7 @@ struct DataRetrieveReply {
 }
 
 impl SyncReply for DataRetrieveReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = DataRetrieve;
 }
 
 impl SyncRequest for DataRetrieve {
@@ -206,7 +205,7 @@ impl SyncRequest for ApsfConfigSet {
 struct ApsfConfigSetReply(Status);
 
 impl SyncReply for ApsfConfigSetReply {
-    type = ApsfConfigSet;
+    type Request = ApsfConfigSet;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -222,8 +221,7 @@ struct ApsfConfigGetReply {
 }
 
 impl SyncReply for ApsfConfigGetReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = ApsfConfigGet;
 }
 
 impl SyncRequest for ApsfConfigGet {
