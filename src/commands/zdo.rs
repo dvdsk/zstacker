@@ -1,9 +1,9 @@
 #![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
-use super::{Command, CommandType, IeeeAddr, Status, Subsystem};
+use super::{Command, CommandReply, CommandType, IeeeAddr, Status, Subsystem};
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct NwkAddrReq {
     // ieeeaddr: IeeeAddr,
     // reqtype: u8,
@@ -17,7 +17,7 @@ impl Command for NwkAddrReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct IeeeAddrReq {
     // shortaddr: u16,
     // reqtype: u8,
@@ -31,7 +31,7 @@ impl Command for IeeeAddrReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct NodeDescReq {
     // dstaddr: u16,
     // nwkaddrofinterest: u16,
@@ -44,7 +44,7 @@ impl Command for NodeDescReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct PowerDescReq {
     // dstaddr: u16,
     // nwkaddrofinterest: u16,
@@ -57,7 +57,7 @@ impl Command for PowerDescReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct SimpleDescReq {
     // dstaddr: u16,
     // nwkaddrofinterest: u16,
@@ -71,7 +71,7 @@ impl Command for SimpleDescReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ActiveEpReq {
     // dstaddr: u16,
     // nwkaddrofinterest: u16,
@@ -84,7 +84,7 @@ impl Command for ActiveEpReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MatchDescReq {
     // dstaddr: u16,
     // nwkaddrofinterest: u16,
@@ -99,7 +99,7 @@ impl Command for MatchDescReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ComplexDescReq {
     dstaddr: u16,
     nwkaddrofinterest: u16,
@@ -112,7 +112,7 @@ impl Command for ComplexDescReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct UserDescReq {
     dstaddr: u16,
     nwkaddrofinterest: u16,
@@ -125,7 +125,7 @@ impl Command for UserDescReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct EndDeviceAnnce {
     nwkaddr: u16,
     ieeeaddr: IeeeAddr,
@@ -139,7 +139,7 @@ impl Command for EndDeviceAnnce {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct UserDescSet {
     dstaddr: u16,
     nwkaddrofinterest: u16,
@@ -154,7 +154,7 @@ impl Command for UserDescSet {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ServerDiscReq {
     // servermask: u16,
 }
@@ -166,7 +166,7 @@ impl Command for ServerDiscReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct EndDeviceBindReq {
     dstaddr: u16,
     localcoord: u16,
@@ -183,7 +183,7 @@ impl Command for EndDeviceBindReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct BindReq {
     // dstaddr: u16,
     // srcaddr: IeeeAddr,
@@ -201,7 +201,7 @@ impl Command for BindReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct UnbindReq {
     // dstaddr: u16,
     // srcaddr: IeeeAddr,
@@ -219,7 +219,7 @@ impl Command for UnbindReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct SetLinkKey {
     shortaddr: u16,
     ieeeaddr: IeeeAddr,
@@ -233,7 +233,7 @@ impl Command for SetLinkKey {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct RemoveLinkKey {
     ieeeaddr: IeeeAddr,
 }
@@ -245,7 +245,7 @@ impl Command for RemoveLinkKey {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct GetLinkKey {
     ieeeaddr: IeeeAddr,
 }
@@ -257,6 +257,11 @@ struct GetLinkKeyReply {
     linkkeydata: [u8; 16],
 }
 
+impl CommandReply for GetLinkKeyReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
+}
+
 impl Command for GetLinkKey {
     const ID: u8 = 37;
     const TYPE: CommandType = CommandType::SREQ;
@@ -264,7 +269,7 @@ impl Command for GetLinkKey {
     type Reply = GetLinkKeyReply;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct NwkDiscoveryReq {
     scanchannels: u32,
     scanduration: u8,
@@ -277,7 +282,7 @@ impl Command for NwkDiscoveryReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct JoinReq {
     logicalchannel: u8,
     panid: u16,
@@ -294,7 +299,7 @@ impl Command for JoinReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtNwkDiscReq {
     dstaddr: u16,
     scanchannels: u32,
@@ -309,7 +314,7 @@ impl Command for MgmtNwkDiscReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtLqiReq {
     // dstaddr: u16,
     // startindex: u8,
@@ -322,7 +327,7 @@ impl Command for MgmtLqiReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtRtgReq {
     // dstaddr: u16,
     // startindex: u8,
@@ -335,7 +340,7 @@ impl Command for MgmtRtgReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtBindReq {
     // dstaddr: u16,
     // startindex: u8,
@@ -348,7 +353,7 @@ impl Command for MgmtBindReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtLeaveReq {
     // dstaddr: u16,
     // deviceaddress: IeeeAddr,
@@ -362,7 +367,7 @@ impl Command for MgmtLeaveReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtDirectJoinReq {
     dstaddr: u16,
     deviceaddr: IeeeAddr,
@@ -376,7 +381,7 @@ impl Command for MgmtDirectJoinReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtPermitJoinReq {
     // addrmode: u8,
     // dstaddr: u16,
@@ -391,7 +396,7 @@ impl Command for MgmtPermitJoinReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtNwkUpdateReq {
     // dstaddr: u16,
     // dstaddrmode: u8,
@@ -409,7 +414,7 @@ impl Command for MgmtNwkUpdateReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MsgCbRegister {
     clusterid: u16,
 }
@@ -421,7 +426,7 @@ impl Command for MsgCbRegister {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MsgCbRemove {
     clusterid: u16,
 }
@@ -433,7 +438,7 @@ impl Command for MsgCbRemove {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct StartupFromApp {
     startdelay: u16,
 }
@@ -445,7 +450,7 @@ impl Command for StartupFromApp {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct AutoFindDestination {
     endpoint: u8,
 }
@@ -457,7 +462,7 @@ impl Command for AutoFindDestination {
     type Reply = ();
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct NwkAddrRsp {
     // status: u8,
     // Parse the ieeeaddr as it is needed for ZNP waitFor (see zStackAdapter.requestNetworkAddress())
@@ -467,14 +472,12 @@ struct NwkAddrRsp {
     // assocdevlist: Vec<u16>,
 }
 
-impl Command for NwkAddrRsp {
-    const ID: u8 = 128;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for NwkAddrRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct IeeeAddrRsp {
     // status: u8,
     // ieeeaddr: IeeeAddr,
@@ -483,14 +486,12 @@ struct IeeeAddrRsp {
     // assocdevlist: Vec<u16>,
 }
 
-impl Command for IeeeAddrRsp {
-    const ID: u8 = 129;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for IeeeAddrRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct NodeDescRsp {
     // srcaddr: u16,
     // status: u8,
@@ -506,14 +507,12 @@ struct NodeDescRsp {
     // descriptorcap: u8,
 }
 
-impl Command for NodeDescRsp {
-    const ID: u8 = 130;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for NodeDescRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct PowerDescRsp {
     // srcaddr: u16,
     // status: u8,
@@ -522,14 +521,12 @@ struct PowerDescRsp {
     // currentpowersrc_currentpowersrclevel: u8,
 }
 
-impl Command for PowerDescRsp {
-    const ID: u8 = 131;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for PowerDescRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct SimpleDescRsp {
     // srcaddr: u16,
     // status: u8,
@@ -542,14 +539,12 @@ struct SimpleDescRsp {
     // inclusterlist: Vec<u16>,
 }
 
-impl Command for SimpleDescRsp {
-    const ID: u8 = 132;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for SimpleDescRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ActiveEpRsp {
     // srcaddr: u16,
     // status: u8,
@@ -557,14 +552,12 @@ struct ActiveEpRsp {
     // activeeplist: Vec<u8>,
 }
 
-impl Command for ActiveEpRsp {
-    const ID: u8 = 133;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for ActiveEpRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Deserialize)]
 struct MatchDescRsp {
     // srcaddr: u16,
     // status: u8,
@@ -573,14 +566,7 @@ struct MatchDescRsp {
     // matchlist: Vec<u8>,
 }
 
-impl Command for MatchDescRsp {
-    const ID: u8 = 134;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
-}
-
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ComplexDescRsp {
     srcaddr: u16,
     status: u8,
@@ -589,14 +575,12 @@ struct ComplexDescRsp {
     complexdesclist: Vec<u8>,
 }
 
-impl Command for ComplexDescRsp {
-    const ID: u8 = 135;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for ComplexDescRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct UserDescRsp {
     srcaddr: u16,
     status: u8,
@@ -605,14 +589,12 @@ struct UserDescRsp {
     userdescriptor: Vec<u8>,
 }
 
-impl Command for UserDescRsp {
-    const ID: u8 = 136;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for UserDescRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct UserDescConf {
     srcaddr: u16,
     status: u8,
@@ -626,22 +608,20 @@ impl Command for UserDescConf {
     type Reply = ();
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ServerDiscRsp {
     // srcaddr: u16,
     // status: u8,
     // servermask: u16,
 }
 
-impl Command for ServerDiscRsp {
-    const ID: u8 = 138;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for ServerDiscRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
 /// https://github.com/Koenkk/zigbee2mqtt/issues/3363 {
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct Unknown {}
 
 impl Command for Unknown {
@@ -651,46 +631,40 @@ impl Command for Unknown {
     type Reply = ();
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct EndDeviceBindRsp {
     srcaddr: u16,
     status: u8,
 }
 
-impl Command for EndDeviceBindRsp {
-    const ID: u8 = 160;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for EndDeviceBindRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct BindRsp {
     // srcaddr: u16,
     // status: u8,
 }
 
-impl Command for BindRsp {
-    const ID: u8 = 161;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for BindRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct UnbindRsp {
     // srcaddr: u16,
     // status: u8,
 }
 
-impl Command for UnbindRsp {
-    const ID: u8 = 162;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for UnbindRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtNwkDiscRsp {
     srcaddr: u16,
     status: u8,
@@ -716,21 +690,12 @@ struct Network {
     permit_joining: bool,
 }
 
-impl Command for MgmtNwkDiscRsp {
-    const ID: u8 = 176;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
-
-    fn data_to_vec(&self) -> Result<Vec<u8>, crate::data_format::Error>
-    where
-        Self: Sized,
-    {
-        unimplemented!("only received never send")
-    }
+impl CommandReply for MgmtNwkDiscRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtLqiRsp {
     // srcaddr: u16,
     // status: u8,
@@ -740,14 +705,12 @@ struct MgmtLqiRsp {
     // neighborlqilist: compile_error!("needs custom derive with NeighborLqi type"),
 }
 
-impl Command for MgmtLqiRsp {
-    const ID: u8 = 177;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for MgmtLqiRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtRtgRsp {
     // srcaddr: u16,
     // status: u8,
@@ -757,14 +720,12 @@ struct MgmtRtgRsp {
     // routingtablelist: RoutingTable,
 }
 
-impl Command for MgmtRtgRsp {
-    const ID: u8 = 178;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for MgmtRtgRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtBindRsp {
     // srcaddr: u16,
     // status: u8,
@@ -774,53 +735,45 @@ struct MgmtBindRsp {
     // bindingtablelist: BindTable,
 }
 
-impl Command for MgmtBindRsp {
-    const ID: u8 = 179;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for MgmtBindRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtLeaveRsp {
     // srcaddr: u16,
     // status: u8,
 }
 
-impl Command for MgmtLeaveRsp {
-    const ID: u8 = 180;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for MgmtLeaveRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtDirectJoinRsp {
     srcaddr: u16,
     status: u8,
 }
 
-impl Command for MgmtDirectJoinRsp {
-    const ID: u8 = 181;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for MgmtDirectJoinRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtPermitJoinRsp {
     // srcaddr: u16,
     // status: u8,
 }
 
-impl Command for MgmtPermitJoinRsp {
-    const ID: u8 = 182;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for MgmtPermitJoinRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MgmtNwkUpdateNotify {
     // srcaddr: u16,
     // status: u8,
@@ -838,7 +791,7 @@ impl Command for MgmtNwkUpdateNotify {
     type Reply = ();
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct StateChangeInd {
     state: u8,
 }
@@ -850,7 +803,7 @@ impl Command for StateChangeInd {
     type Reply = ();
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct EndDeviceAnnceInd {
     // srcaddr: u16,
     // nwkaddr: u16,
@@ -865,33 +818,29 @@ impl Command for EndDeviceAnnceInd {
     type Reply = ();
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MatchDescRspSent {
     nwkaddr: u16,
     inclusterlist: Vec<u16>,
 }
 
-impl Command for MatchDescRspSent {
-    const ID: u8 = 194;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for MatchDescRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct StatusErrorRsp {
     srcaddr: u16,
     status: u8,
 }
 
-impl Command for StatusErrorRsp {
-    const ID: u8 = 195;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+impl CommandReply for StatusErrorRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct SrcRtgInd {
     dstaddr: u16,
     relaylist: Vec<u16>,
@@ -904,7 +853,7 @@ impl Command for SrcRtgInd {
     type Reply = ();
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct BeaconNotifyInd {
     //// FIXME
     // beaconlist: Vec<u8>,
@@ -917,7 +866,7 @@ impl Command for BeaconNotifyInd {
     type Reply = ();
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct JoinCnf {
     status: u8,
     deviceaddress: u16,
@@ -931,7 +880,7 @@ impl Command for JoinCnf {
     type Reply = ();
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct NwkDiscoveryCnf {
     status: u8,
 }
@@ -943,7 +892,7 @@ impl Command for NwkDiscoveryCnf {
     type Reply = ();
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ConcentratorIndCb {
     srcaddr: u16,
     extaddr: IeeeAddr,
@@ -957,7 +906,7 @@ impl Command for ConcentratorIndCb {
     type Reply = ();
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct LeaveInd {
     srcaddr: u16,
     extaddr: IeeeAddr,
@@ -973,7 +922,7 @@ impl Command for LeaveInd {
     type Reply = ();
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct SetRejoinParametersReq {
     backoffduration: u32,
     scanduration: u32,
@@ -986,7 +935,7 @@ impl Command for SetRejoinParametersReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct MsgCbIncoming {
     srcaddr: u16,
     wasbroadcast: u8,
@@ -1005,7 +954,7 @@ impl Command for MsgCbIncoming {
     type Reply = ();
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct EndDeviceTimeoutReq {
     parentaddr: u16,
     reqrimeout: u16,
@@ -1018,7 +967,7 @@ impl Command for EndDeviceTimeoutReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct SendData {
     shortaddr: u16,
     transseq: u8,
@@ -1034,7 +983,7 @@ impl Command for SendData {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct NwkAddrOfInterestReq {
     shortaddr: u16,
     nwkaddr: u16,
@@ -1048,7 +997,7 @@ impl Command for NwkAddrOfInterestReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct SecAddLinkKey {
     shortaddr: u16,
     extaddr: IeeeAddr,
@@ -1062,7 +1011,7 @@ impl Command for SecAddLinkKey {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct SecEntryLookupExt {
     extaddr: IeeeAddr,
 }
@@ -1075,6 +1024,11 @@ struct SecEntryLookupExtReply {
     authenticateoption: u8,
 }
 
+impl CommandReply for SecEntryLookupExtReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
+}
+
 impl Command for SecEntryLookupExt {
     const ID: u8 = 67;
     const TYPE: CommandType = CommandType::SREQ;
@@ -1082,7 +1036,7 @@ impl Command for SecEntryLookupExt {
     type Reply = SecEntryLookupExtReply;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct SecDeviceRemove {
     extaddr: IeeeAddr,
 }
@@ -1094,7 +1048,7 @@ impl Command for SecDeviceRemove {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExtRouteDisc {
     dst_addr: u16,
     options: u8,
@@ -1108,7 +1062,7 @@ impl Command for ExtRouteDisc {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExtRouteCheck {
     dstaddr: u16,
     rtstatus: u8,
@@ -1122,7 +1076,7 @@ impl Command for ExtRouteCheck {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExtRemoveGroup {
     endpoint: u8,
     groupid: u16,
@@ -1135,7 +1089,7 @@ impl Command for ExtRemoveGroup {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExtRemoveAllGroup {
     endpoint: u8,
 }
@@ -1147,7 +1101,7 @@ impl Command for ExtRemoveAllGroup {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExtFindAllGroupsEndpoint {
     endpoint: u8,
 }
@@ -1157,6 +1111,11 @@ struct ExtFindAllGroupsEndpointReply {
     grouplist: Vec<u16>,
 }
 
+impl CommandReply for ExtFindAllGroupsEndpointReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
+}
+
 impl Command for ExtFindAllGroupsEndpoint {
     const ID: u8 = 73;
     const TYPE: CommandType = CommandType::SREQ;
@@ -1164,7 +1123,7 @@ impl Command for ExtFindAllGroupsEndpoint {
     type Reply = ExtFindAllGroupsEndpointReply;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExtFindGroup {
     endpoint: u8,
     groupid: u16,
@@ -1178,6 +1137,11 @@ struct ExtFindGroupReply {
     groupname: Vec<u8>,
 }
 
+impl CommandReply for ExtFindGroupReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
+}
+
 impl Command for ExtFindGroup {
     const ID: u8 = 74;
     const TYPE: CommandType = CommandType::SREQ;
@@ -1185,7 +1149,7 @@ impl Command for ExtFindGroup {
     type Reply = ExtFindGroupReply;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExtAddGroup {
     endpoint: u8,
     groupid: u16,
@@ -1200,7 +1164,7 @@ impl Command for ExtAddGroup {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExtCountAllGroups {}
 
 impl Command for ExtCountAllGroups {
@@ -1210,7 +1174,7 @@ impl Command for ExtCountAllGroups {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExtRxIdle {
     setflag: u8,
     setvalue: u8,
@@ -1223,7 +1187,7 @@ impl Command for ExtRxIdle {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExtUpdateNwkKey {
     dstaddr: u16,
     keyseqnum: u8,
@@ -1237,7 +1201,7 @@ impl Command for ExtUpdateNwkKey {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExtSwitchNwkKey {
     dstaddr: u16,
     keyseqnum: u8,
@@ -1250,11 +1214,11 @@ impl Command for ExtSwitchNwkKey {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExtNwkInfo {}
 
 #[derive(Debug, Clone, Deserialize)]
-struct ExtNwkInfoReply {
+struct ExtNwkInfoRsp {
     shortaddr: u16,
     devstate: u8,
     panid: u16,
@@ -1264,14 +1228,19 @@ struct ExtNwkInfoReply {
     channel: u8,
 }
 
+impl CommandReply for ExtNwkInfoRsp {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
+}
+
 impl Command for ExtNwkInfo {
     const ID: u8 = 80;
     const TYPE: CommandType = CommandType::SREQ;
     const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ExtNwkInfoReply;
+    type Reply = ExtNwkInfoRsp;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExtSecApsRemoveReq {
     parentaddr: u16,
     nwkaddr: u16,
@@ -1285,7 +1254,7 @@ impl Command for ExtSecApsRemoveReq {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ForceConcentratorChange {}
 
 impl Command for ForceConcentratorChange {
@@ -1295,7 +1264,7 @@ impl Command for ForceConcentratorChange {
     type Reply = ();
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExtSetParams {
     usemulticast: u8,
 }
@@ -1307,7 +1276,7 @@ impl Command for ExtSetParams {
     type Reply = Status;
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct TcDeviceInd {
     nwkaddr: u16,
     extaddr: IeeeAddr,
@@ -1321,7 +1290,7 @@ impl Command for TcDeviceInd {
     type Reply = ();
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct PermitJoinInd {
     duration: u8,
 }

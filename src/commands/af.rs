@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
-use super::{Command, CommandType, IeeeAddr, Status, Subsystem};
+use super::{Command, CommandReply, CommandType, IeeeAddr, Status, Subsystem};
 
 #[derive(Debug, Clone, Serialize)]
 struct Register {
@@ -136,6 +136,11 @@ struct DataRetrieveReply {
     data: Vec<u8>,
 }
 
+impl CommandReply for DataRetrieveReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
+}
+
 impl Command for DataRetrieve {
     const ID: u8 = 18;
     const TYPE: CommandType = CommandType::SREQ;
@@ -167,6 +172,11 @@ struct ApsfConfigGetReply {
     framedelay: u8,
     windowsize: u8,
     nomean: u8,
+}
+
+impl CommandReply for ApsfConfigGetReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
 impl Command for ApsfConfigGet {

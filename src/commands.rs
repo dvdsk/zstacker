@@ -8,7 +8,6 @@ use crate::data_format;
 
 pub const START_OF_FRAME: u8 = 0xFE;
 
-// TODO set subsystem for all of these
 pub(crate) mod af;
 pub(crate) mod app;
 pub(crate) mod appconfig;
@@ -20,11 +19,19 @@ pub(crate) mod sys;
 pub(crate) mod util;
 pub(crate) mod zdo;
 
+#[derive(Debug, thiserror::Error)]
+#[error("Could not send command: {command}")]
+pub struct CommandError {
+    command: &'static str,
+    #[source]
+    cause: data_format::Error,
+}
+
 pub trait Command: Serialize {
     const ID: u8;
     const TYPE: CommandType;
     const SUBSYSTEM: Subsystem;
-    type Reply: DeserializeOwned;
+    type Reply: CommandReply;
 
     fn data_to_vec(&self) -> Result<Vec<u8>, data_format::Error>
     where
@@ -33,11 +40,14 @@ pub trait Command: Serialize {
         data_format::to_vec(self)
     }
 
-    fn to_frame(&self) -> Result<Vec<u8>, data_format::Error>
+    fn to_frame(&self) -> Result<Vec<u8>, CommandError>
     where
         Self: Sized,
     {
-        let serialized = self.data_to_vec()?;
+        let serialized = self.data_to_vec().map_err(|error| CommandError {
+            command: std::any::type_name::<Self>(),
+            cause: error,
+        })?;
         let frame = [
             serialized.len() as u8,
             Self::SUBSYSTEM as u8 | Self::TYPE as u8,
@@ -56,6 +66,123 @@ pub trait Command: Serialize {
             .chain([checksum])
             .collect())
     }
+}
+
+#[derive(Debug, thiserror::Error)]
+#[error("Failed to read reply ({reply}) to command")]
+pub struct ReplyError {
+    reply: &'static str,
+    #[source]
+    cause: ReplyErrorCause,
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum ReplyErrorCause {
+    #[error("Could not deserialize reply data")]
+    Deserialize(#[source] data_format::Error),
+    #[error("Could not read reply header (4 bytes) from serial")]
+    ReadingHeader(#[source] std::io::Error),
+    #[error("Could not read reply data from serial")]
+    ReadingData(#[source] std::io::Error),
+    #[error("First byte of reply should have been: {START_OF_FRAME}")]
+    ExpectedStartOfFrame,
+    #[error("Second byte of package should be {expected} however we got {got}")]
+    WrongCmd1Field { expected: u8, got: u8 },
+    #[error("Third byte of package should be {expected} however we got {got}")]
+    WrongCmd0Field { expected: u8, got: u8 },
+    #[error("Could not read checksum")]
+    ReadingChecksum(#[source] std::io::Error),
+    #[error("Checksum is not correct")]
+    CheckSumMismatch,
+}
+
+fn from_reader_inner<R: CommandReply>(
+    reader: &mut impl std::io::Read,
+) -> Result<R, ReplyErrorCause> {
+    use ReplyErrorCause as E;
+    let mut reply_header = [0u8; 4];
+    reader
+        .read_exact(&mut reply_header)
+        .map_err(E::ReadingHeader)?;
+
+    // TODO construct CMD0 and CMD1 from org
+    // then probably do away with this again :)
+    // and absorb it in Command
+    let [start_of_frame, length, cmd0, cmd1] = reply_header;
+    if start_of_frame != START_OF_FRAME {
+        return Err(E::ExpectedStartOfFrame);
+    } else if cmd0 != R::CMD0 {
+        return Err(E::WrongCmd0Field {
+            expected: R::CMD1,
+            got: cmd0,
+        });
+    } else if cmd1 != R::CMD1 {
+        return Err(E::WrongCmd1Field {
+            expected: R::CMD1,
+            got: cmd1,
+        });
+    }
+
+    let mut buf = vec![0u8; length as usize + 1];
+    reader.read_exact(&mut buf).map_err(E::ReadingData)?;
+    split_off_and_verify_checksum::<R>(length, &mut buf)?;
+
+    use itertools::Itertools;
+    tracing::debug!(
+        "data: [{}]",
+        buf.iter().map(|byte| format!("{byte:x}")).join(",")
+    );
+
+    let mut data = std::io::Cursor::new(buf);
+    let reply = data_format::from_reader(&mut data).map_err(E::Deserialize)?;
+
+    Ok(reply)
+}
+
+fn split_off_and_verify_checksum<R: CommandReply>(
+    length: u8,
+    buf: &mut Vec<u8>,
+) -> Result<(), ReplyErrorCause> {
+    let expected_checksum =
+        buf.pop().expect("read_exact only Ok if the buffer is full");
+    let frame = [length, R::CMD0, R::CMD1]
+        .into_iter()
+        .chain(buf.iter().copied());
+    let calculated_checksum = frame
+        .reduce(|checksum, byte| checksum ^ byte)
+        .expect("never empty");
+    if expected_checksum != calculated_checksum {
+        return Err(ReplyErrorCause::CheckSumMismatch);
+    }
+    Ok(())
+}
+
+pub trait CommandReply: DeserializeOwned {
+    const CMD0: u8;
+    const CMD1: u8;
+
+    fn from_reader(
+        reader: &mut impl std::io::Read,
+    ) -> Result<Self, ReplyError> {
+        from_reader_inner(reader).map_err(|cause| ReplyError {
+            reply: std::any::type_name::<Self>(),
+            cause,
+        })
+    }
+}
+
+impl CommandReply for () {
+    const CMD0: u8 = 0;
+    const CMD1: u8 = 0;
+
+    fn from_reader(_: &mut impl std::io::Read) -> Result<Self, ReplyError> {
+        Ok(())
+    }
+}
+
+impl CommandReply for Status {
+    const CMD0: u8 = 0x67;
+    const CMD1: u8 = 0x23;
 }
 
 /// The status parameter that is returned from the `ZNP` device
@@ -112,9 +239,21 @@ pub enum Status {
 #[derive(Clone, Copy, Debug, Serialize_repr)]
 #[repr(u8)]
 pub enum CommandType {
+    /// A POLL command is used to retrieve queued data. Third command is only
+    /// applicable to `SPI` transport. For a `POLL` command the subsystem and
+    /// Id are set to zero and data length is zero.
     POLL = 0x00,
+    /// A synchronous request that requires an immediate response. For example,
+    /// a function call with a return value would use an `SREQ` command.
     SREQ = 0x20,
+    /// AREQ: An asynchronous request. For example, a callback event or a
+    /// function call with no return value would use an `AREQ` command.
     AREQ = 0x40,
+    /// A synchronous response. This type of command is only sent in response
+    /// to an `SREQ` command. For an `SRSP` command the subsystem and Id are set to
+    /// the same values as the corresponding `SREQ`. The length of an `SRSP` is
+    /// generally nonzero, so an `SRSP` with length=0 can be used to indicate an
+    /// error.
     SRSP = 0x60,
 }
 
@@ -154,13 +293,13 @@ pub enum DeviceState {
     DeviceLostInfoAboutParent = 0x0A,
 }
 
-#[derive(Clone, Copy, Debug, Deserialize_repr, Serialize_repr)]
+#[derive(Clone, Copy, Debug, strum::EnumIter)]
 #[repr(u8)]
 pub enum DeviceType {
     None = 0,
     Coordinator = 1,
     Router = 2,
-    EndDevice = 4,
+    EndDevice = 3,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -172,24 +311,24 @@ struct ShortAddr(u16);
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Endpoint(u8);
 
-/// See: Z-Stack Monitor and Test API section 3.12.2.16 revision 1.14
-/// Note this is not serialized like this in the wire format
-/// Can not use serde to get this over the wire. Overwrite the default
-/// `Command::data_to_vec` implementation instead.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct NeighborLqi {
-    /// Extended PAN ID of the neighbor device
-    extended_pan_id: u64,
-    /// Network extended address
-    extended_address: IeeeAddr,
-    network_address: ShortAddr,
-    device_type: DeviceType, // 19th byte bits 1-0
-    rx_on_when_idle: bool,   // 19th byte bits 3-2
-    relationship: u8,        // 19th byte bits 6-4
-    permit_joining: u8,      // 20th byte bits 1-0
-    depth: u8,
-    lqi: u8,
-}
+// /// See: Z-Stack Monitor and Test API section 3.12.2.16 revision 1.14
+// /// Note this is not serialized like this in the wire format
+// /// Can not use serde to get this over the wire. Overwrite the default
+// /// `Command::data_to_vec` implementation instead.
+// #[derive(Debug, Clone)]
+// struct NeighborLqi {
+//     /// Extended PAN ID of the neighbor device
+//     extended_pan_id: u64,
+//     /// Network extended address
+//     extended_address: IeeeAddr,
+//     network_address: ShortAddr,
+//     device_type: DeviceType, // 19th byte bits 1-0
+//     rx_on_when_idle: bool,   // 19th byte bits 3-2
+//     relationship: u8,        // 19th byte bits 6-4
+//     permit_joining: u8,      // 20th byte bits 1-0
+//     depth: u8,
+//     lqi: u8,
+// }
 
 #[derive(Debug, Clone, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]

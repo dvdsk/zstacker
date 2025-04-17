@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
-use super::{Command, CommandType, IeeeAddr, Status, Subsystem};
+use super::{Command, CommandReply, CommandType, IeeeAddr, Status, Subsystem};
 
 #[derive(Debug, Clone, Serialize)]
 struct SystemReset {}
@@ -80,6 +80,11 @@ struct ReadConfigurationReply {
     value: Vec<u8>,
 }
 
+impl CommandReply for ReadConfigurationReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
+}
+
 impl Command for ReadConfiguration {
     const ID: u8 = 4;
     const TYPE: CommandType = CommandType::SREQ;
@@ -110,6 +115,11 @@ struct GetDeviceInfo {
 struct GetDeviceInfoReply {
     param: u8,
     value: [u8; 8],
+}
+
+impl CommandReply for GetDeviceInfoReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
 impl Command for GetDeviceInfo {

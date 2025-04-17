@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use serde::{Serialize, Deserialize};
 
-use super::{Command, CommandType, Status, Subsystem, IeeeAddr};
+use super::{Command, CommandReply, CommandType, Status, Subsystem, IeeeAddr};
 
 #[derive(Debug, Clone, Serialize)]
 struct ResetReq {
@@ -143,6 +143,11 @@ struct GetReq {
 struct GetReqReply {
 	status: u8,
 	data: [u8; 16],
+}
+
+impl CommandReply for GetReqReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
 impl Command for GetReq {

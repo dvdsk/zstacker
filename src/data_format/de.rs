@@ -240,7 +240,7 @@ impl<'de, R: Read> de::Deserializer<'de> for &mut Deserializer<R> {
     where
         V: Visitor<'de>,
     {
-        Err(Error::UnitNotSupported)
+        Err(Error::UnitDeserNotSupported)
     }
 
     // Unit struct means a named value containing no data.
@@ -401,7 +401,6 @@ impl<'de, 'a, R: Read> SeqAccess<'de> for KnownLenSenquence<'a, R> {
             return Ok(None);
         }
         self.left -= 1;
-        dbg!(self.left);
         seed.deserialize(&mut *self.de).map(Some)
     }
 }

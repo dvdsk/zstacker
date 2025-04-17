@@ -92,14 +92,14 @@ impl Command for BdbSetTcRequireKeyExchange {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct BdbComissioningNotifcation {
+struct BdbComissioningNotification {
     status: u8,
 }
-impl Command for BdbComissioningNotifcation {
+impl Command for BdbComissioningNotification {
     const ID: u8 = 128;
     const TYPE: CommandType = CommandType::AREQ;
     const SUBSYSTEM: Subsystem = Subsystem::AppConfig;
-    type Reply = Status;
+    type Reply = ();
 }
 
 #[derive(Debug, Clone, Serialize)]

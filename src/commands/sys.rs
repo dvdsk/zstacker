@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
-use super::{Command, CommandType, IeeeAddr, Status, Subsystem};
+use super::{Command, CommandReply, CommandType, IeeeAddr, Status, Subsystem};
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct ResetReq {
@@ -18,11 +18,30 @@ impl Command for ResetReq {
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct Ping;
 
-/// Defines which parts of the API are supported by the device. 
+#[derive(Debug, Clone, Deserialize)]
+pub(crate) struct PingReply {
+    #[serde(deserialize_with = "capabilities_from_u16")]
+    pub(crate) capabilities: Vec<Capability>,
+}
+
+impl CommandReply for PingReply {
+    const CMD0: u8 = 0x61; // placeholder
+    const CMD1: u8 = 0x01; // placeholder
+}
+
+impl Command for Ping {
+    const ID: u8 = 1;
+    const TYPE: CommandType = CommandType::SREQ;
+    const SUBSYSTEM: Subsystem = Subsystem::Sys;
+    type Reply = PingReply;
+}
+
+/// Defines which parts of the API are supported by the device.
 /// These correspond to the modules in [`crate::commands`].
 #[derive(Debug, Clone, Copy, strum::EnumIter)]
+#[repr(u16)]
 pub enum Capability {
-    /// Can interact at system level such as reset, 
+    /// Can interact at system level such as reset,
     /// read/write memory, read/write extended address, etc.
     Sys = 0x0001,
     Mac = 0x0002,
@@ -52,19 +71,6 @@ where
         .collect())
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub(crate) struct PingReply {
-    #[serde(deserialize_with = "capabilities_from_u16")]
-    pub(crate) capabilities: Vec<Capability>,
-}
-
-impl Command for Ping {
-    const ID: u8 = 1;
-    const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sys;
-    type Reply = PingReply;
-}
-
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct Version;
 
@@ -76,6 +82,11 @@ pub(crate) struct VersionReply {
     minorrel: u8,
     maintrel: u8,
     revision: u32,
+}
+
+impl CommandReply for VersionReply {
+    const CMD0: u8 = 0x21;
+    const CMD1: u8 = 0x02;
 }
 
 impl Command for Version {
@@ -105,6 +116,11 @@ pub(crate) struct GetExtAddrReply {
     extaddress: IeeeAddr,
 }
 
+impl CommandReply for GetExtAddrReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
+}
+
 impl Command for GetExtAddr {
     const ID: u8 = 4;
     const TYPE: CommandType = CommandType::SREQ;
@@ -123,6 +139,11 @@ pub(crate) struct RamReadReply {
     status: u8,
     len: u8,
     value: Vec<u8>,
+}
+
+impl CommandReply for RamReadReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
 impl Command for RamRead {
@@ -172,6 +193,11 @@ pub(crate) struct OsalNvReadReply {
     status: u8,
     len: u8,
     value: Vec<u8>,
+}
+
+impl CommandReply for OsalNvReadReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
 impl Command for OsalNvRead {
@@ -229,6 +255,11 @@ pub(crate) struct RandomReply {
     value: u16,
 }
 
+impl CommandReply for RandomReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
+}
+
 impl Command for Random {
     const ID: u8 = 12;
     const TYPE: CommandType = CommandType::SREQ;
@@ -245,6 +276,11 @@ pub(crate) struct AdcRead {
 #[derive(Debug, Clone, Deserialize)]
 pub(crate) struct AdcReadReply {
     value: u16,
+}
+
+impl CommandReply for AdcReadReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
 impl Command for AdcRead {
@@ -265,6 +301,11 @@ pub(crate) struct GpioReply {
     value: u8,
 }
 
+impl CommandReply for GpioReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
+}
+
 impl Command for Gpio {
     const ID: u8 = 14;
     const TYPE: CommandType = CommandType::SREQ;
@@ -281,6 +322,11 @@ pub(crate) struct StackTune {
 #[derive(Debug, Clone, Deserialize)]
 pub(crate) struct StackTuneReply {
     value: u8,
+}
+
+impl CommandReply for StackTuneReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
 impl Command for StackTune {
@@ -322,6 +368,11 @@ pub(crate) struct GetTimeReply {
     year: u16,
 }
 
+impl CommandReply for GetTimeReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
+}
+
 impl Command for GetTime {
     const ID: u8 = 17;
     const TYPE: CommandType = CommandType::SREQ;
@@ -352,6 +403,11 @@ pub(crate) struct OsalNvLengthReply {
     length: u16,
 }
 
+impl CommandReply for OsalNvLengthReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
+}
+
 impl Command for OsalNvLength {
     const ID: u8 = 19;
     const TYPE: CommandType = CommandType::SREQ;
@@ -367,6 +423,11 @@ pub(crate) struct SetTxPower {
 #[derive(Debug, Clone, Deserialize)]
 pub(crate) struct SetTxPowerReply {
     txpower: u8,
+}
+
+impl CommandReply for SetTxPowerReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
 impl Command for SetTxPower {
@@ -422,6 +483,11 @@ pub(crate) struct ZdiagsClearStatsReply {
     sysclock: u32,
 }
 
+impl CommandReply for ZdiagsClearStatsReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
+}
+
 impl Command for ZdiagsClearStats {
     const ID: u8 = 24;
     const TYPE: CommandType = CommandType::SREQ;
@@ -437,6 +503,11 @@ pub(crate) struct ZdiagsGetStats {
 #[derive(Debug, Clone, Deserialize)]
 pub(crate) struct ZdiagsGetStatsReply {
     attributevalue: u32,
+}
+
+impl CommandReply for ZdiagsGetStatsReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
 impl Command for ZdiagsGetStats {
@@ -464,6 +535,11 @@ pub(crate) struct ZdiagsSaveStatsToNvReply {
     sysclock: u32,
 }
 
+impl CommandReply for ZdiagsSaveStatsToNvReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
+}
+
 impl Command for ZdiagsSaveStatsToNv {
     const ID: u8 = 27;
     const TYPE: CommandType = CommandType::SREQ;
@@ -482,6 +558,11 @@ pub(crate) struct OsalNvReadExtReply {
     status: u8,
     len: u8,
     value: Vec<u8>,
+}
+
+impl CommandReply for OsalNvReadExtReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
 impl Command for OsalNvReadExt {
@@ -547,6 +628,11 @@ pub(crate) struct NvLengthReply {
     len: u8,
 }
 
+impl CommandReply for NvLengthReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
+}
+
 impl Command for NvLength {
     const ID: u8 = 50;
     const TYPE: CommandType = CommandType::SREQ;
@@ -568,6 +654,11 @@ pub(crate) struct NvReadReply {
     status: u8,
     len: u8,
     value: Vec<u8>,
+}
+
+impl CommandReply for NvReadReply {
+    const CMD0: u8 = 0; // placeholder
+    const CMD1: u8 = 0; // placeholder
 }
 
 impl Command for NvRead {

@@ -124,8 +124,9 @@ impl ser::Serializer for &mut Serializer {
         Err(super::Error::SomeNotSupported)
     }
 
+    // Empty commands are unit so their data len is zero
     fn serialize_unit(self) -> Result<()> {
-        Err(super::Error::UnitNotSupported)
+        Ok(())
     }
 
     // Unit struct means a named value containing no data.
@@ -150,7 +151,11 @@ impl ser::Serializer for &mut Serializer {
 
     // As is done here, serializers are encouraged to treat newtype structs as
     // insignificant wrappers around the data they contain.
-    fn serialize_newtype_struct<T>(self, _name: &'static str, value: &T) -> Result<()>
+    fn serialize_newtype_struct<T>(
+        self,
+        _name: &'static str,
+        value: &T,
+    ) -> Result<()>
     where
         T: ?Sized + Serialize,
     {
@@ -226,7 +231,11 @@ impl ser::Serializer for &mut Serializer {
         Err(Error::MapsUnsupported)
     }
 
-    fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
+    fn serialize_struct(
+        self,
+        _name: &'static str,
+        _len: usize,
+    ) -> Result<Self::SerializeStruct> {
         Ok(self)
     }
 
@@ -422,7 +431,11 @@ mod tests {
             buf[offset + 1] = ((short >> 8) & 0xFF) as u8;
         }
 
-        pub fn encode_short_slice(shorts: &[u16], buf: &mut [u8], offset: usize) {
+        pub fn encode_short_slice(
+            shorts: &[u16],
+            buf: &mut [u8],
+            offset: usize,
+        ) {
             let buf_len = buf.len();
 
             if offset >= buf_len || offset + (shorts.len() * 2) >= buf_len {
@@ -439,7 +452,8 @@ mod tests {
         let app_num_in_clusters = app_in_cluster_list.len() as u8;
         let app_num_out_clusters = app_out_cluster_list.len() as u8;
 
-        let data_len = 0x09 + (app_num_in_clusters * 2) + (app_num_out_clusters * 2);
+        let data_len =
+            0x09 + (app_num_in_clusters * 2) + (app_num_out_clusters * 2);
         let mut data: [u8; 256] = [0; 256];
         data[0] = end_point;
         encode_short(app_prof_id, &mut data, 1);

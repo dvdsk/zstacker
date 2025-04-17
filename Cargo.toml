@@ -18,6 +18,9 @@ serde = { version = "1", features = ["derive"] }
 serde_repr = "0.1.20"
 strum = { version = "0.27.1", features = ["derive"] }
 tracing = "0.1.41"
+itertools = "0.14.0"
 
 [dev-dependencies]
+color-eyre = "0.6.3"
 serialport = "4.2.2"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
