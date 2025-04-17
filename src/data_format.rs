@@ -1,6 +1,6 @@
-//! This is a `serde` implementation for the `zpn` general frame format
+//! This is a `serde` implementation for the `zpn` data format
 //! 
-//! The general frame format is
+//! The data format is send in a `zstack` frame:
 //! ```
 //! n bytes: | 1       | 2       | 0-250
 //!          | Length  | Command | Data

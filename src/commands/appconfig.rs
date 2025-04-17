@@ -3,7 +3,7 @@
 use serde::Serialize;
 use serde_repr::Serialize_repr;
 
-use super::{Command, CommandType, IeeeAddr, Status, Subsystem};
+use super::{AsyncRequest, SyncRequest, CommandType, IeeeAddr, Status, SubSystem};
 
 #[derive(Clone, Copy, Debug, Serialize_repr)]
 #[repr(u8)]
@@ -30,10 +30,10 @@ impl Serialize for AddInstallCode {
     }
 }
 
-impl Command for AddInstallCode {
+impl SyncRequest for AddInstallCode {
     const ID: u8 = 4;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::AppConfig;
+    const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
     type Reply = Status;
 
     fn data_to_vec(&self) -> Result<Vec<u8>, crate::data_format::Error>
@@ -60,10 +60,10 @@ impl Command for AddInstallCode {
 struct BdbStartCommissioning {
     mode: u8,
 }
-impl Command for BdbStartCommissioning {
+impl SyncRequest for BdbStartCommissioning {
     const ID: u8 = 5;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::AppConfig;
+    const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
     type Reply = Status;
 }
 
@@ -73,10 +73,10 @@ struct BdbSetChannel {
     channel: u32,
 }
 
-impl Command for BdbSetChannel {
+impl SyncRequest for BdbSetChannel {
     const ID: u8 = 8;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::AppConfig;
+    const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
     type Reply = Status;
 }
 
@@ -84,10 +84,10 @@ impl Command for BdbSetChannel {
 struct BdbSetTcRequireKeyExchange {
     value: u8,
 }
-impl Command for BdbSetTcRequireKeyExchange {
+impl SyncRequest for BdbSetTcRequireKeyExchange {
     const ID: u8 = 9;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::AppConfig;
+    const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
     type Reply = Status;
 }
 
@@ -95,20 +95,19 @@ impl Command for BdbSetTcRequireKeyExchange {
 struct BdbComissioningNotification {
     status: u8,
 }
-impl Command for BdbComissioningNotification {
+
+impl AsyncRequest for BdbComissioningNotification {
     const ID: u8 = 128;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::AppConfig;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
 }
 
 #[derive(Debug, Clone, Serialize)]
 struct SetNwkFrameCounter {
     value: u32,
 }
-impl Command for SetNwkFrameCounter {
+impl SyncRequest for SetNwkFrameCounter {
     const ID: u8 = 255;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::AppConfig;
+    const SUBSYSTEM: SubSystem = SubSystem::AppConfig;
     type Reply = Status;
 }

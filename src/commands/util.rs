@@ -1,17 +1,17 @@
 use serde::{Deserialize, Serialize};
 
 use super::{
-    Command, CommandReply, CommandType, DeviceState, DeviceType, IeeeAddr,
-    ShortAddr, Subsystem,
+    SyncRequest, SyncReply, CommandType, DeviceState, DeviceType, IeeeAddr,
+    ShortAddr, SubSystem,
 };
 
 #[derive(Debug, Clone, Serialize)]
 pub struct GetDeviceInfo;
 
-impl Command for GetDeviceInfo {
+impl SyncRequest for GetDeviceInfo {
     const ID: u8 = 0;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Util;
+    const SUBSYSTEM: SubSystem = SubSystem::Util;
     type Reply = DeviceInfo;
 }
 
@@ -27,7 +27,7 @@ pub struct DeviceInfo {
     assoc_devices: Vec<u16>,
 }
 
-impl CommandReply for DeviceInfo {
+impl SyncReply for DeviceInfo {
     const CMD0: u8 = 0x67;
     const CMD1: u8 = 0x00;
 }

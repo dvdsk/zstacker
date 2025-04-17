@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
-use super::{Command, CommandReply, CommandType, IeeeAddr, Status, Subsystem};
+use super::{AsyncRequest, SyncRequest, SyncReply, CommandType, IeeeAddr, Status, SubSystem};
 
 #[derive(Debug, Clone, Serialize)]
 struct Register {
@@ -13,10 +13,10 @@ struct Register {
     appinclusterlist: Vec<u16>,
 }
 
-impl Command for Register {
+impl SyncRequest for Register {
     const ID: u8 = 0;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Af;
+    const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
 
@@ -33,10 +33,10 @@ struct DataRequest {
     data: Vec<u8>,
 }
 
-impl Command for DataRequest {
+impl SyncRequest for DataRequest {
     const ID: u8 = 1;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Af;
+    const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
 
@@ -55,10 +55,10 @@ struct DataRequestExt {
     data: Vec<u8>,
 }
 
-impl Command for DataRequestExt {
+impl SyncRequest for DataRequestExt {
     const ID: u8 = 2;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Af;
+    const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
 
@@ -76,10 +76,10 @@ struct DataRequestSrcRtg {
     data: Vec<u8>,
 }
 
-impl Command for DataRequestSrcRtg {
+impl SyncRequest for DataRequestSrcRtg {
     const ID: u8 = 3;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Af;
+    const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
 
@@ -88,10 +88,10 @@ struct Delete {
     endpoint: u8,
 }
 
-impl Command for Delete {
+impl SyncRequest for Delete {
     const ID: u8 = 4;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Af;
+    const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
 
@@ -101,10 +101,10 @@ struct InterPanCtl {
     data: Vec<u8>,
 }
 
-impl Command for InterPanCtl {
+impl SyncRequest for InterPanCtl {
     const ID: u8 = 16;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Af;
+    const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
 
@@ -115,10 +115,10 @@ struct DataStore {
     data: Vec<u8>,
 }
 
-impl Command for DataStore {
+impl SyncRequest for DataStore {
     const ID: u8 = 17;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Af;
+    const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
 
@@ -136,15 +136,15 @@ struct DataRetrieveReply {
     data: Vec<u8>,
 }
 
-impl CommandReply for DataRetrieveReply {
+impl SyncReply for DataRetrieveReply {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
 
-impl Command for DataRetrieve {
+impl SyncRequest for DataRetrieve {
     const ID: u8 = 18;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Af;
+    const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = DataRetrieveReply;
 }
 
@@ -155,10 +155,10 @@ struct ApsfConfigSet {
     windowsize: u8,
 }
 
-impl Command for ApsfConfigSet {
+impl SyncRequest for ApsfConfigSet {
     const ID: u8 = 19;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Af;
+    const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = Status;
 }
 
@@ -174,15 +174,15 @@ struct ApsfConfigGetReply {
     nomean: u8,
 }
 
-impl CommandReply for ApsfConfigGetReply {
+impl SyncReply for ApsfConfigGetReply {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
 
-impl Command for ApsfConfigGet {
+impl SyncRequest for ApsfConfigGet {
     const ID: u8 = 20;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Af;
+    const SUBSYSTEM: SubSystem = SubSystem::Af;
     type Reply = ApsfConfigGetReply;
 }
 
@@ -193,11 +193,9 @@ struct DataConfirm {
     transid: u8,
 }
 
-impl Command for DataConfirm {
+impl AsyncRequest for DataConfirm {
     const ID: u8 = 128;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Af;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Af;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -216,11 +214,9 @@ struct IncomingMsg {
     data: Vec<u8>,
 }
 
-impl Command for IncomingMsg {
+impl AsyncRequest for IncomingMsg {
     const ID: u8 = 129;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Af;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Af;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -241,11 +237,9 @@ struct IncomingMsgExt {
     data: Vec<u8>,
 }
 
-impl Command for IncomingMsgExt {
+impl AsyncRequest for IncomingMsgExt {
     const ID: u8 = 130;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Af;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Af;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -257,9 +251,7 @@ struct ReflectError {
     dstaddr: u16,
 }
 
-impl Command for ReflectError {
+impl AsyncRequest for ReflectError {
     const ID: u8 = 131;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Af;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Af;
 }

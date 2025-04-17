@@ -27,11 +27,11 @@ pub struct CommandError {
     cause: data_format::Error,
 }
 
-pub trait Command: Serialize {
+pub trait SyncRequest: Serialize {
     const ID: u8;
     const TYPE: CommandType;
-    const SUBSYSTEM: Subsystem;
-    type Reply: CommandReply;
+    const SUBSYSTEM: SubSystem;
+    type Reply: SyncReply;
 
     fn data_to_vec(&self) -> Result<Vec<u8>, data_format::Error>
     where
@@ -68,6 +68,34 @@ pub trait Command: Serialize {
     }
 }
 
+pub trait AsyncRequest: Serialize {
+    const ID: u8;
+    const SUBSYSTEM: SubSystem;
+
+    fn data_to_vec(&self) -> Result<Vec<u8>, data_format::Error>
+    where
+        Self: Sized,
+    {
+        data_format::to_vec(self)
+    }
+
+    fn to_frame(&self) -> Result<Vec<u8>, CommandError>
+    where
+        Self: Sized,
+    {
+        todo!();
+    }
+}
+
+pub trait AsyncReply: DeserializeOwned {
+    const ID: u8;
+    const SUBSYSTEM: SubSystem;
+
+    fn from_reader(_: &mut impl std::io::Read) -> Result<Self, ReplyError> {
+        todo!()
+    }
+}
+
 #[derive(Debug, thiserror::Error)]
 #[error("Failed to read reply ({reply}) to command")]
 pub struct ReplyError {
@@ -96,7 +124,7 @@ pub enum ReplyErrorCause {
     CheckSumMismatch,
 }
 
-fn from_reader_inner<R: CommandReply>(
+fn from_reader_inner<R: SyncReply>(
     reader: &mut impl std::io::Read,
 ) -> Result<R, ReplyErrorCause> {
     use ReplyErrorCause as E;
@@ -139,7 +167,7 @@ fn from_reader_inner<R: CommandReply>(
     Ok(reply)
 }
 
-fn split_off_and_verify_checksum<R: CommandReply>(
+fn split_off_and_verify_checksum<R: SyncReply>(
     length: u8,
     buf: &mut Vec<u8>,
 ) -> Result<(), ReplyErrorCause> {
@@ -157,7 +185,7 @@ fn split_off_and_verify_checksum<R: CommandReply>(
     Ok(())
 }
 
-pub trait CommandReply: DeserializeOwned {
+pub trait SyncReply: DeserializeOwned {
     const CMD0: u8;
     const CMD1: u8;
 
@@ -171,7 +199,7 @@ pub trait CommandReply: DeserializeOwned {
     }
 }
 
-impl CommandReply for () {
+impl SyncReply for () {
     const CMD0: u8 = 0;
     const CMD1: u8 = 0;
 
@@ -180,7 +208,7 @@ impl CommandReply for () {
     }
 }
 
-impl CommandReply for Status {
+impl SyncReply for Status {
     const CMD0: u8 = 0x67;
     const CMD1: u8 = 0x23;
 }
@@ -236,7 +264,7 @@ pub enum Status {
     ZMacNoACK = 0xe9,
 }
 
-#[derive(Clone, Copy, Debug, Serialize_repr)]
+#[derive(Clone, Copy, Debug, strum::FromRepr)]
 #[repr(u8)]
 pub enum CommandType {
     /// A POLL command is used to retrieve queued data. Third command is only
@@ -257,9 +285,9 @@ pub enum CommandType {
     SRSP = 0x60,
 }
 
-#[derive(Clone, Copy, Debug, Serialize_repr)]
+#[derive(Clone, Copy, Debug, strum::FromRepr)]
 #[repr(u8)]
-pub enum Subsystem {
+pub enum SubSystem {
     Reserved = 0x00,
     Sys = 0x01,
     /// Media access control

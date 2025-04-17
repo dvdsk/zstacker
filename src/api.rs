@@ -2,7 +2,7 @@ use std::io::{Read, Write};
 
 use tracing::info;
 
-use crate::commands::{self, Command, CommandError, ReplyError};
+use crate::commands::{self, SyncRequest, CommandError, ReplyError};
 
 pub fn start_coordinator(
     adaptor: &mut Adaptor<impl Serial>,
@@ -84,11 +84,11 @@ pub enum SendCommandError {
 }
 
 impl<S: Serial> Adaptor<S> {
-    fn send_command<C: Command>(
+    fn send_command<C: SyncRequest>(
         &mut self,
         cmd: C,
     ) -> Result<C::Reply, SendCommandError> {
-        use crate::commands::CommandReply;
+        use crate::commands::SyncReply;
         let frame = cmd.to_frame().map_err(SendCommandError::Serializing)?;
         self.serial
             .write(&frame)

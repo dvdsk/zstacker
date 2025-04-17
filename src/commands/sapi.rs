@@ -1,25 +1,23 @@
 #![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
-use super::{Command, CommandReply, CommandType, IeeeAddr, Status, Subsystem};
+use super::{AsyncRequest, SyncRequest, SyncReply, CommandType, IeeeAddr, Status, SubSystem};
 
 #[derive(Debug, Clone, Serialize)]
 struct SystemReset {}
 
-impl Command for SystemReset {
+impl AsyncRequest for SystemReset {
     const ID: u8 = 9;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
 }
 
 #[derive(Debug, Clone, Serialize)]
 struct StartRequest {}
 
-impl Command for StartRequest {
+impl SyncRequest for StartRequest {
     const ID: u8 = 0;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = ();
 }
 
@@ -30,10 +28,10 @@ struct BindDevice {
     destination: IeeeAddr,
 }
 
-impl Command for BindDevice {
+impl SyncRequest for BindDevice {
     const ID: u8 = 1;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = ();
 }
 
@@ -42,10 +40,10 @@ struct AllowBind {
     timeout: u8,
 }
 
-impl Command for AllowBind {
+impl SyncRequest for AllowBind {
     const ID: u8 = 2;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = ();
 }
 
@@ -60,10 +58,10 @@ struct SendDataRequest {
     payloadvalue: Vec<u8>,
 }
 
-impl Command for SendDataRequest {
+impl SyncRequest for SendDataRequest {
     const ID: u8 = 3;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = ();
 }
 
@@ -80,15 +78,15 @@ struct ReadConfigurationReply {
     value: Vec<u8>,
 }
 
-impl CommandReply for ReadConfigurationReply {
+impl SyncReply for ReadConfigurationReply {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
 
-impl Command for ReadConfiguration {
+impl SyncRequest for ReadConfiguration {
     const ID: u8 = 4;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = ReadConfigurationReply;
 }
 
@@ -99,10 +97,10 @@ struct WriteConfiguration {
     value: Vec<u8>,
 }
 
-impl Command for WriteConfiguration {
+impl SyncRequest for WriteConfiguration {
     const ID: u8 = 5;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = Status;
 }
 
@@ -117,15 +115,15 @@ struct GetDeviceInfoReply {
     value: [u8; 8],
 }
 
-impl CommandReply for GetDeviceInfoReply {
+impl SyncReply for GetDeviceInfoReply {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
 
-impl Command for GetDeviceInfo {
+impl SyncRequest for GetDeviceInfo {
     const ID: u8 = 6;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = GetDeviceInfoReply;
 }
 
@@ -134,10 +132,10 @@ struct FindDeviceRequest {
     search_key: IeeeAddr,
 }
 
-impl Command for FindDeviceRequest {
+impl SyncRequest for FindDeviceRequest {
     const ID: u8 = 7;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = ();
 }
 
@@ -147,10 +145,10 @@ struct PermitJoiningRequest {
     timeout: u8,
 }
 
-impl Command for PermitJoiningRequest {
+impl SyncRequest for PermitJoiningRequest {
     const ID: u8 = 8;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
     type Reply = Status;
 }
 
@@ -159,11 +157,9 @@ struct StartConfirm {
     status: u8,
 }
 
-impl Command for StartConfirm {
+impl AsyncRequest for StartConfirm {
     const ID: u8 = 128;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -172,11 +168,9 @@ struct BindConfirm {
     status: u8,
 }
 
-impl Command for BindConfirm {
+impl AsyncRequest for BindConfirm {
     const ID: u8 = 129;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -184,11 +178,9 @@ struct AllowBindConfirm {
     source: u16,
 }
 
-impl Command for AllowBindConfirm {
+impl AsyncRequest for AllowBindConfirm {
     const ID: u8 = 130;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -197,11 +189,9 @@ struct SendDataConfirm {
     status: u8,
 }
 
-impl Command for SendDataConfirm {
+impl AsyncRequest for SendDataConfirm {
     const ID: u8 = 131;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -211,11 +201,9 @@ struct FindDeviceConfirm {
     result: IeeeAddr,
 }
 
-impl Command for FindDeviceConfirm {
+impl AsyncRequest for FindDeviceConfirm {
     const ID: u8 = 133;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -226,9 +214,7 @@ struct ReceiveDataIndication {
     data: Vec<u8>,
 }
 
-impl Command for ReceiveDataIndication {
+impl AsyncRequest for ReceiveDataIndication {
     const ID: u8 = 135;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Sapi;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Sapi;
 }

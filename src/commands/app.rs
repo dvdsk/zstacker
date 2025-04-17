@@ -1,6 +1,8 @@
+#![allow(dead_code)]
+
 use serde::Serialize;
 
-use super::{Command, CommandType, Status, Subsystem};
+use super::{AsyncRequest, SyncRequest, CommandType, Status, SubSystem};
 
 #[derive(Debug, Clone, Serialize)]
 struct Msg {
@@ -12,10 +14,10 @@ struct Msg {
 	message: Vec<u8>,
 }
 
-impl Command for Msg {
+impl SyncRequest for Msg {
 	const ID: u8 = 0;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::App;
+	const SUBSYSTEM: SubSystem = SubSystem::App;
 	type Reply = Status;
 }
 
@@ -27,10 +29,10 @@ struct UserTest {
 	param2: u16,
 }
 
-impl Command for UserTest {
+impl SyncRequest for UserTest {
 	const ID: u8 = 1;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::App;
+	const SUBSYSTEM: SubSystem = SubSystem::App;
 	type Reply = Status;
 }
 
@@ -43,10 +45,8 @@ struct ZllTlInd {
 	version: u8,
 }
 
-impl Command for ZllTlInd {
+impl AsyncRequest for ZllTlInd {
 	const ID: u8 = 129;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::App;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::App;
 }
 

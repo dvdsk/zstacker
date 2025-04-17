@@ -1,17 +1,17 @@
 #![allow(dead_code)]
 use serde::{Serialize, Deserialize};
 
-use super::{Command, CommandReply, CommandType, Status, Subsystem, IeeeAddr};
+use super::{AsyncRequest, SyncRequest, SyncReply, CommandType, IeeeAddr, Status, SubSystem};
 
 #[derive(Debug, Clone, Serialize)]
 struct ResetReq {
 	setdefault: u8,
 }
 
-impl Command for ResetReq {
+impl SyncRequest for ResetReq {
 	const ID: u8 = 1;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -19,10 +19,10 @@ impl Command for ResetReq {
 struct Init {
 }
 
-impl Command for Init {
+impl SyncRequest for Init {
 	const ID: u8 = 2;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -47,10 +47,10 @@ struct StartReq {
 	beaconkeyindex: u8,
 }
 
-impl Command for StartReq {
+impl SyncRequest for StartReq {
 	const ID: u8 = 3;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -61,10 +61,10 @@ struct SyncReq {
 	trackbeacon: u8,
 }
 
-impl Command for SyncReq {
+impl SyncRequest for SyncReq {
 	const ID: u8 = 4;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -86,10 +86,10 @@ struct DataReq {
 	msdu: Vec<u8>,
 }
 
-impl Command for DataReq {
+impl SyncRequest for DataReq {
 	const ID: u8 = 5;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -107,10 +107,10 @@ struct AssociateReq {
 	keyindex: u8,
 }
 
-impl Command for AssociateReq {
+impl SyncRequest for AssociateReq {
 	const ID: u8 = 6;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -127,10 +127,10 @@ struct DisassociateReq {
 	keyindex: u8,
 }
 
-impl Command for DisassociateReq {
+impl SyncRequest for DisassociateReq {
 	const ID: u8 = 7;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -145,15 +145,15 @@ struct GetReqReply {
 	data: [u8; 16],
 }
 
-impl CommandReply for GetReqReply {
+impl SyncReply for GetReqReply {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
 
-impl Command for GetReq {
+impl SyncRequest for GetReq {
 	const ID: u8 = 8;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = GetReqReply;
 }
 
@@ -163,10 +163,10 @@ struct SetReq {
 	attributevalue: Vec<u8>,
 }
 
-impl Command for SetReq {
+impl SyncRequest for SetReq {
 	const ID: u8 = 9;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -183,10 +183,10 @@ struct ScanReq {
 	keyindex: u8,
 }
 
-impl Command for ScanReq {
+impl SyncRequest for ScanReq {
 	const ID: u8 = 12;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -201,10 +201,10 @@ struct PollReq {
 	keyindex: u8,
 }
 
-impl Command for PollReq {
+impl SyncRequest for PollReq {
 	const ID: u8 = 13;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -213,10 +213,10 @@ struct PurgeReq {
 	msduhandle: u8,
 }
 
-impl Command for PurgeReq {
+impl SyncRequest for PurgeReq {
 	const ID: u8 = 14;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -225,10 +225,10 @@ struct SetRxGainReq {
 	mode: u8,
 }
 
-impl Command for SetRxGainReq {
+impl SyncRequest for SetRxGainReq {
 	const ID: u8 = 15;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -239,10 +239,10 @@ struct SecurityGetReq {
 	index2: u8,
 }
 
-impl Command for SecurityGetReq {
+impl SyncRequest for SecurityGetReq {
 	const ID: u8 = 48;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -252,10 +252,10 @@ struct SecuritySetReq {
 	attributevalue: Vec<u8>,
 }
 
-impl Command for SecuritySetReq {
+impl SyncRequest for SecuritySetReq {
 	const ID: u8 = 49;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -266,10 +266,10 @@ struct AssociateRsp {
 	assocstatus: u8,
 }
 
-impl Command for AssociateRsp {
+impl SyncRequest for AssociateRsp {
 	const ID: u8 = 80;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -280,10 +280,10 @@ struct OrphanRsp {
 	associatedmember: u8,
 }
 
-impl Command for OrphanRsp {
+impl SyncRequest for OrphanRsp {
 	const ID: u8 = 81;
 	const TYPE: CommandType = CommandType::SREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 	type Reply = Status;
 }
 
@@ -299,11 +299,9 @@ struct SyncLossInd {
 	keyindex: u8,
 }
 
-impl Command for SyncLossInd {
+impl AsyncRequest for SyncLossInd {
 	const ID: u8 = 128;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -316,11 +314,9 @@ struct AssociateInd {
 	keyindex: u8,
 }
 
-impl Command for AssociateInd {
+impl AsyncRequest for AssociateInd {
 	const ID: u8 = 129;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -333,11 +329,9 @@ struct AssociateCnf {
 	keyindex: u8,
 }
 
-impl Command for AssociateCnf {
+impl AsyncRequest for AssociateCnf {
 	const ID: u8 = 130;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -362,11 +356,9 @@ struct BeaconNotifyInd {
 	nsdu: Vec<u8>,
 }
 
-impl Command for BeaconNotifyInd {
+impl AsyncRequest for BeaconNotifyInd {
 	const ID: u8 = 131;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -377,11 +369,9 @@ struct DataCnf {
 	timestamp2: u16,
 }
 
-impl Command for DataCnf {
+impl AsyncRequest for DataCnf {
 	const ID: u8 = 132;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -406,11 +396,9 @@ struct DataInd {
 	data: Vec<u8>,
 }
 
-impl Command for DataInd {
+impl AsyncRequest for DataInd {
 	const ID: u8 = 133;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -423,11 +411,9 @@ struct DisassociateInd {
 	keyindex: u8,
 }
 
-impl Command for DisassociateInd {
+impl AsyncRequest for DisassociateInd {
 	const ID: u8 = 134;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -438,11 +424,9 @@ struct DisassociateCnf {
 	devicepanid: u16,
 }
 
-impl Command for DisassociateCnf {
+impl AsyncRequest for DisassociateCnf {
 	const ID: u8 = 135;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -454,11 +438,9 @@ struct OrphanInd {
 	keyindex: u8,
 }
 
-impl Command for OrphanInd {
+impl AsyncRequest for OrphanInd {
 	const ID: u8 = 138;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -466,11 +448,9 @@ struct PollCnf {
 	status: u8,
 }
 
-impl Command for PollCnf {
+impl AsyncRequest for PollCnf {
 	const ID: u8 = 139;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -485,11 +465,9 @@ struct ScanCnf {
 	resultlist: Vec<u8>,
 }
 
-impl Command for ScanCnf {
+impl AsyncRequest for ScanCnf {
 	const ID: u8 = 140;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -507,11 +485,9 @@ struct CommStatusInd {
 	keyindex: u8,
 }
 
-impl Command for CommStatusInd {
+impl AsyncRequest for CommStatusInd {
 	const ID: u8 = 141;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -519,11 +495,9 @@ struct StartCnf {
 	status: u8,
 }
 
-impl Command for StartCnf {
+impl AsyncRequest for StartCnf {
 	const ID: u8 = 142;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -531,11 +505,9 @@ struct RxEnableCnf {
 	status: u8,
 }
 
-impl Command for RxEnableCnf {
+impl AsyncRequest for RxEnableCnf {
 	const ID: u8 = 143;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -544,10 +516,8 @@ struct PurgeCnf {
 	handle: u8,
 }
 
-impl Command for PurgeCnf {
+impl AsyncRequest for PurgeCnf {
 	const ID: u8 = 144;
-	const TYPE: CommandType = CommandType::AREQ;
-	const SUBSYSTEM: Subsystem = Subsystem::Mac;
-	type Reply = ();
+	const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
 

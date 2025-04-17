@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use serde::Serialize;
 
-use super::{Command, CommandType, Status, Subsystem};
+use super::{AsyncRequest, SyncRequest, CommandType, Status, SubSystem};
 
 #[derive(Debug, Clone, Serialize)]
 struct SetThreshold {
@@ -9,10 +9,10 @@ struct SetThreshold {
     threshold: u8,
 }
 
-impl Command for SetThreshold {
+impl SyncRequest for SetThreshold {
     const ID: u8 = 0;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Debug;
+    const SUBSYSTEM: SubSystem = SubSystem::Debug;
     type Reply = Status;
 }
 
@@ -22,9 +22,7 @@ struct Msg {
     string: Vec<u8>,
 }
 
-impl Command for Msg {
+impl AsyncRequest for Msg {
     const ID: u8 = 128;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Debug;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Debug;
 }

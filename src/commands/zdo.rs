@@ -1,7 +1,10 @@
 #![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
-use super::{Command, CommandReply, CommandType, IeeeAddr, Status, Subsystem};
+use super::{
+    AsyncRequest, SyncRequest, SyncReply, CommandType, IeeeAddr, Status,
+    SubSystem,
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct NwkAddrReq {
@@ -10,10 +13,10 @@ struct NwkAddrReq {
     // startindex: u8,
 }
 
-impl Command for NwkAddrReq {
+impl SyncRequest for NwkAddrReq {
     const ID: u8 = 0;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -24,10 +27,10 @@ struct IeeeAddrReq {
     // startindex: u8,
 }
 
-impl Command for IeeeAddrReq {
+impl SyncRequest for IeeeAddrReq {
     const ID: u8 = 1;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -37,10 +40,10 @@ struct NodeDescReq {
     // nwkaddrofinterest: u16,
 }
 
-impl Command for NodeDescReq {
+impl SyncRequest for NodeDescReq {
     const ID: u8 = 2;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -50,10 +53,10 @@ struct PowerDescReq {
     // nwkaddrofinterest: u16,
 }
 
-impl Command for PowerDescReq {
+impl SyncRequest for PowerDescReq {
     const ID: u8 = 3;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -64,10 +67,10 @@ struct SimpleDescReq {
     // endpoint: u8,
 }
 
-impl Command for SimpleDescReq {
+impl SyncRequest for SimpleDescReq {
     const ID: u8 = 4;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -77,10 +80,10 @@ struct ActiveEpReq {
     // nwkaddrofinterest: u16,
 }
 
-impl Command for ActiveEpReq {
+impl SyncRequest for ActiveEpReq {
     const ID: u8 = 5;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -92,10 +95,10 @@ struct MatchDescReq {
     // inclusterlist: Vec<u16>,
 }
 
-impl Command for MatchDescReq {
+impl SyncRequest for MatchDescReq {
     const ID: u8 = 6;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -105,10 +108,10 @@ struct ComplexDescReq {
     nwkaddrofinterest: u16,
 }
 
-impl Command for ComplexDescReq {
+impl SyncRequest for ComplexDescReq {
     const ID: u8 = 7;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -118,10 +121,10 @@ struct UserDescReq {
     nwkaddrofinterest: u16,
 }
 
-impl Command for UserDescReq {
+impl SyncRequest for UserDescReq {
     const ID: u8 = 8;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -132,10 +135,10 @@ struct EndDeviceAnnce {
     capability: u8,
 }
 
-impl Command for EndDeviceAnnce {
+impl SyncRequest for EndDeviceAnnce {
     const ID: u8 = 10;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -147,10 +150,10 @@ struct UserDescSet {
     userdescriptor: Vec<u8>,
 }
 
-impl Command for UserDescSet {
+impl SyncRequest for UserDescSet {
     const ID: u8 = 11;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -159,10 +162,10 @@ struct ServerDiscReq {
     // servermask: u16,
 }
 
-impl Command for ServerDiscReq {
+impl SyncRequest for ServerDiscReq {
     const ID: u8 = 12;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -176,10 +179,10 @@ struct EndDeviceBindReq {
     inclusterlist: Vec<u16>,
 }
 
-impl Command for EndDeviceBindReq {
+impl SyncRequest for EndDeviceBindReq {
     const ID: u8 = 32;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -194,10 +197,10 @@ struct BindReq {
     // dstendpoint: u8,
 }
 
-impl Command for BindReq {
+impl SyncRequest for BindReq {
     const ID: u8 = 33;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -212,10 +215,10 @@ struct UnbindReq {
     // dstendpoint: u8,
 }
 
-impl Command for UnbindReq {
+impl SyncRequest for UnbindReq {
     const ID: u8 = 34;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -226,10 +229,10 @@ struct SetLinkKey {
     linkkey: Vec<u8>,
 }
 
-impl Command for SetLinkKey {
+impl SyncRequest for SetLinkKey {
     const ID: u8 = 35;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -238,10 +241,10 @@ struct RemoveLinkKey {
     ieeeaddr: IeeeAddr,
 }
 
-impl Command for RemoveLinkKey {
+impl SyncRequest for RemoveLinkKey {
     const ID: u8 = 36;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -257,15 +260,15 @@ struct GetLinkKeyReply {
     linkkeydata: [u8; 16],
 }
 
-impl CommandReply for GetLinkKeyReply {
+impl SyncReply for GetLinkKeyReply {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
 
-impl Command for GetLinkKey {
+impl SyncRequest for GetLinkKey {
     const ID: u8 = 37;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = GetLinkKeyReply;
 }
 
@@ -275,10 +278,10 @@ struct NwkDiscoveryReq {
     scanduration: u8,
 }
 
-impl Command for NwkDiscoveryReq {
+impl SyncRequest for NwkDiscoveryReq {
     const ID: u8 = 38;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -292,10 +295,10 @@ struct JoinReq {
     stackprofile: u8,
 }
 
-impl Command for JoinReq {
+impl SyncRequest for JoinReq {
     const ID: u8 = 39;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -307,10 +310,10 @@ struct MgmtNwkDiscReq {
     startindex: u8,
 }
 
-impl Command for MgmtNwkDiscReq {
+impl SyncRequest for MgmtNwkDiscReq {
     const ID: u8 = 48;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -320,10 +323,10 @@ struct MgmtLqiReq {
     // startindex: u8,
 }
 
-impl Command for MgmtLqiReq {
+impl SyncRequest for MgmtLqiReq {
     const ID: u8 = 49;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -333,10 +336,10 @@ struct MgmtRtgReq {
     // startindex: u8,
 }
 
-impl Command for MgmtRtgReq {
+impl SyncRequest for MgmtRtgReq {
     const ID: u8 = 50;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -346,10 +349,10 @@ struct MgmtBindReq {
     // startindex: u8,
 }
 
-impl Command for MgmtBindReq {
+impl SyncRequest for MgmtBindReq {
     const ID: u8 = 51;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -360,10 +363,10 @@ struct MgmtLeaveReq {
     // removechildrenRejoin: u8,
 }
 
-impl Command for MgmtLeaveReq {
+impl SyncRequest for MgmtLeaveReq {
     const ID: u8 = 52;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -374,10 +377,10 @@ struct MgmtDirectJoinReq {
     capinfo: u8,
 }
 
-impl Command for MgmtDirectJoinReq {
+impl SyncRequest for MgmtDirectJoinReq {
     const ID: u8 = 53;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -389,10 +392,10 @@ struct MgmtPermitJoinReq {
     // tcsignificance: u8,
 }
 
-impl Command for MgmtPermitJoinReq {
+impl SyncRequest for MgmtPermitJoinReq {
     const ID: u8 = 54;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -407,10 +410,10 @@ struct MgmtNwkUpdateReq {
     // nwkmanageraddr: u16,
 }
 
-impl Command for MgmtNwkUpdateReq {
+impl SyncRequest for MgmtNwkUpdateReq {
     const ID: u8 = 55; // the spec says 0x38 but TI used 0x37 see https://github.com/Koenkk/zigbee-herdsman/issues/1237
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -419,10 +422,10 @@ struct MsgCbRegister {
     clusterid: u16,
 }
 
-impl Command for MsgCbRegister {
+impl SyncRequest for MsgCbRegister {
     const ID: u8 = 62;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -431,10 +434,10 @@ struct MsgCbRemove {
     clusterid: u16,
 }
 
-impl Command for MsgCbRemove {
+impl SyncRequest for MsgCbRemove {
     const ID: u8 = 63;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -443,10 +446,10 @@ struct StartupFromApp {
     startdelay: u16,
 }
 
-impl Command for StartupFromApp {
+impl SyncRequest for StartupFromApp {
     const ID: u8 = 64;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -455,11 +458,9 @@ struct AutoFindDestination {
     endpoint: u8,
 }
 
-impl Command for AutoFindDestination {
+impl AsyncRequest for AutoFindDestination {
     const ID: u8 = 65;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -472,7 +473,7 @@ struct NwkAddrRsp {
     // assocdevlist: Vec<u16>,
 }
 
-impl CommandReply for NwkAddrRsp {
+impl SyncReply for NwkAddrRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -486,7 +487,7 @@ struct IeeeAddrRsp {
     // assocdevlist: Vec<u16>,
 }
 
-impl CommandReply for IeeeAddrRsp {
+impl SyncReply for IeeeAddrRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -507,7 +508,7 @@ struct NodeDescRsp {
     // descriptorcap: u8,
 }
 
-impl CommandReply for NodeDescRsp {
+impl SyncReply for NodeDescRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -521,7 +522,7 @@ struct PowerDescRsp {
     // currentpowersrc_currentpowersrclevel: u8,
 }
 
-impl CommandReply for PowerDescRsp {
+impl SyncReply for PowerDescRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -539,7 +540,7 @@ struct SimpleDescRsp {
     // inclusterlist: Vec<u16>,
 }
 
-impl CommandReply for SimpleDescRsp {
+impl SyncReply for SimpleDescRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -552,7 +553,7 @@ struct ActiveEpRsp {
     // activeeplist: Vec<u8>,
 }
 
-impl CommandReply for ActiveEpRsp {
+impl SyncReply for ActiveEpRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -575,7 +576,7 @@ struct ComplexDescRsp {
     complexdesclist: Vec<u8>,
 }
 
-impl CommandReply for ComplexDescRsp {
+impl SyncReply for ComplexDescRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -589,7 +590,7 @@ struct UserDescRsp {
     userdescriptor: Vec<u8>,
 }
 
-impl CommandReply for UserDescRsp {
+impl SyncReply for UserDescRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -601,11 +602,9 @@ struct UserDescConf {
     nwkaddr: u16,
 }
 
-impl Command for UserDescConf {
+impl AsyncRequest for UserDescConf {
     const ID: u8 = 137;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -615,7 +614,7 @@ struct ServerDiscRsp {
     // servermask: u16,
 }
 
-impl CommandReply for ServerDiscRsp {
+impl SyncReply for ServerDiscRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -624,11 +623,9 @@ impl CommandReply for ServerDiscRsp {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Unknown {}
 
-impl Command for Unknown {
+impl AsyncRequest for Unknown {
     const ID: u8 = 159;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -637,7 +634,7 @@ struct EndDeviceBindRsp {
     status: u8,
 }
 
-impl CommandReply for EndDeviceBindRsp {
+impl SyncReply for EndDeviceBindRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -648,7 +645,7 @@ struct BindRsp {
     // status: u8,
 }
 
-impl CommandReply for BindRsp {
+impl SyncReply for BindRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -659,7 +656,7 @@ struct UnbindRsp {
     // status: u8,
 }
 
-impl CommandReply for UnbindRsp {
+impl SyncReply for UnbindRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -690,7 +687,7 @@ struct Network {
     permit_joining: bool,
 }
 
-impl CommandReply for MgmtNwkDiscRsp {
+impl SyncReply for MgmtNwkDiscRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -705,7 +702,7 @@ struct MgmtLqiRsp {
     // neighborlqilist: compile_error!("needs custom derive with NeighborLqi type"),
 }
 
-impl CommandReply for MgmtLqiRsp {
+impl SyncReply for MgmtLqiRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -720,7 +717,7 @@ struct MgmtRtgRsp {
     // routingtablelist: RoutingTable,
 }
 
-impl CommandReply for MgmtRtgRsp {
+impl SyncReply for MgmtRtgRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -735,7 +732,7 @@ struct MgmtBindRsp {
     // bindingtablelist: BindTable,
 }
 
-impl CommandReply for MgmtBindRsp {
+impl SyncReply for MgmtBindRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -746,7 +743,7 @@ struct MgmtLeaveRsp {
     // status: u8,
 }
 
-impl CommandReply for MgmtLeaveRsp {
+impl SyncReply for MgmtLeaveRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -757,7 +754,7 @@ struct MgmtDirectJoinRsp {
     status: u8,
 }
 
-impl CommandReply for MgmtDirectJoinRsp {
+impl SyncReply for MgmtDirectJoinRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -768,7 +765,7 @@ struct MgmtPermitJoinRsp {
     // status: u8,
 }
 
-impl CommandReply for MgmtPermitJoinRsp {
+impl SyncReply for MgmtPermitJoinRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -784,11 +781,9 @@ struct MgmtNwkUpdateNotify {
     // energyvalues: Vec<u8>,
 }
 
-impl Command for MgmtNwkUpdateNotify {
+impl AsyncRequest for MgmtNwkUpdateNotify {
     const ID: u8 = 184;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -796,11 +791,9 @@ struct StateChangeInd {
     state: u8,
 }
 
-impl Command for StateChangeInd {
+impl AsyncRequest for StateChangeInd {
     const ID: u8 = 192;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -811,11 +804,9 @@ struct EndDeviceAnnceInd {
     // capabilities: u8,
 }
 
-impl Command for EndDeviceAnnceInd {
+impl AsyncRequest for EndDeviceAnnceInd {
     const ID: u8 = 193;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -824,7 +815,7 @@ struct MatchDescRspSent {
     inclusterlist: Vec<u16>,
 }
 
-impl CommandReply for MatchDescRsp {
+impl SyncReply for MatchDescRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -835,7 +826,7 @@ struct StatusErrorRsp {
     status: u8,
 }
 
-impl CommandReply for StatusErrorRsp {
+impl SyncReply for StatusErrorRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
@@ -846,11 +837,9 @@ struct SrcRtgInd {
     relaylist: Vec<u16>,
 }
 
-impl Command for SrcRtgInd {
+impl AsyncRequest for SrcRtgInd {
     const ID: u8 = 196;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -859,11 +848,9 @@ struct BeaconNotifyInd {
     // beaconlist: Vec<u8>,
 }
 
-impl Command for BeaconNotifyInd {
+impl AsyncRequest for BeaconNotifyInd {
     const ID: u8 = 197;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -873,11 +860,9 @@ struct JoinCnf {
     parentaddress: u16,
 }
 
-impl Command for JoinCnf {
+impl AsyncRequest for JoinCnf {
     const ID: u8 = 198;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -885,11 +870,9 @@ struct NwkDiscoveryCnf {
     status: u8,
 }
 
-impl Command for NwkDiscoveryCnf {
+impl AsyncRequest for NwkDiscoveryCnf {
     const ID: u8 = 199;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -899,11 +882,9 @@ struct ConcentratorIndCb {
     pkt_cost: u8,
 }
 
-impl Command for ConcentratorIndCb {
+impl AsyncRequest for ConcentratorIndCb {
     const ID: u8 = 200;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -915,11 +896,9 @@ struct LeaveInd {
     rejoin: u8,
 }
 
-impl Command for LeaveInd {
+impl AsyncRequest for LeaveInd {
     const ID: u8 = 201;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -928,10 +907,10 @@ struct SetRejoinParametersReq {
     scanduration: u32,
 }
 
-impl Command for SetRejoinParametersReq {
+impl SyncRequest for SetRejoinParametersReq {
     const ID: u8 = 204;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -947,11 +926,9 @@ struct MsgCbIncoming {
     // msgdata: Vec<u8>,
 }
 
-impl Command for MsgCbIncoming {
+impl AsyncRequest for MsgCbIncoming {
     const ID: u8 = 255;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -960,10 +937,10 @@ struct EndDeviceTimeoutReq {
     reqrimeout: u16,
 }
 
-impl Command for EndDeviceTimeoutReq {
+impl SyncRequest for EndDeviceTimeoutReq {
     const ID: u8 = 13;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -976,10 +953,10 @@ struct SendData {
     buf: Vec<u8>,
 }
 
-impl Command for SendData {
+impl SyncRequest for SendData {
     const ID: u8 = 40;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -990,10 +967,10 @@ struct NwkAddrOfInterestReq {
     cmd: u8,
 }
 
-impl Command for NwkAddrOfInterestReq {
+impl SyncRequest for NwkAddrOfInterestReq {
     const ID: u8 = 41;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -1004,10 +981,10 @@ struct SecAddLinkKey {
     linkkey: Vec<u8>,
 }
 
-impl Command for SecAddLinkKey {
+impl SyncRequest for SecAddLinkKey {
     const ID: u8 = 66;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -1024,15 +1001,15 @@ struct SecEntryLookupExtReply {
     authenticateoption: u8,
 }
 
-impl CommandReply for SecEntryLookupExtReply {
+impl SyncReply for SecEntryLookupExtReply {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
 
-impl Command for SecEntryLookupExt {
+impl SyncRequest for SecEntryLookupExt {
     const ID: u8 = 67;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = SecEntryLookupExtReply;
 }
 
@@ -1041,10 +1018,10 @@ struct SecDeviceRemove {
     extaddr: IeeeAddr,
 }
 
-impl Command for SecDeviceRemove {
+impl SyncRequest for SecDeviceRemove {
     const ID: u8 = 68;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -1055,10 +1032,10 @@ struct ExtRouteDisc {
     radius: u8,
 }
 
-impl Command for ExtRouteDisc {
+impl SyncRequest for ExtRouteDisc {
     const ID: u8 = 69;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -1069,10 +1046,10 @@ struct ExtRouteCheck {
     options: u8,
 }
 
-impl Command for ExtRouteCheck {
+impl SyncRequest for ExtRouteCheck {
     const ID: u8 = 70;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -1082,10 +1059,10 @@ struct ExtRemoveGroup {
     groupid: u16,
 }
 
-impl Command for ExtRemoveGroup {
+impl SyncRequest for ExtRemoveGroup {
     const ID: u8 = 71;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -1094,10 +1071,10 @@ struct ExtRemoveAllGroup {
     endpoint: u8,
 }
 
-impl Command for ExtRemoveAllGroup {
+impl SyncRequest for ExtRemoveAllGroup {
     const ID: u8 = 72;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -1111,15 +1088,15 @@ struct ExtFindAllGroupsEndpointReply {
     grouplist: Vec<u16>,
 }
 
-impl CommandReply for ExtFindAllGroupsEndpointReply {
+impl SyncReply for ExtFindAllGroupsEndpointReply {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
 
-impl Command for ExtFindAllGroupsEndpoint {
+impl SyncRequest for ExtFindAllGroupsEndpoint {
     const ID: u8 = 73;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = ExtFindAllGroupsEndpointReply;
 }
 
@@ -1137,15 +1114,15 @@ struct ExtFindGroupReply {
     groupname: Vec<u8>,
 }
 
-impl CommandReply for ExtFindGroupReply {
+impl SyncReply for ExtFindGroupReply {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
 
-impl Command for ExtFindGroup {
+impl SyncRequest for ExtFindGroup {
     const ID: u8 = 74;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = ExtFindGroupReply;
 }
 
@@ -1157,20 +1134,20 @@ struct ExtAddGroup {
     groupname: Vec<u8>,
 }
 
-impl Command for ExtAddGroup {
+impl SyncRequest for ExtAddGroup {
     const ID: u8 = 75;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct ExtCountAllGroups {}
 
-impl Command for ExtCountAllGroups {
+impl SyncRequest for ExtCountAllGroups {
     const ID: u8 = 76;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -1180,10 +1157,10 @@ struct ExtRxIdle {
     setvalue: u8,
 }
 
-impl Command for ExtRxIdle {
+impl SyncRequest for ExtRxIdle {
     const ID: u8 = 77;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -1194,10 +1171,10 @@ struct ExtUpdateNwkKey {
     key: Vec<u8>,
 }
 
-impl Command for ExtUpdateNwkKey {
+impl SyncRequest for ExtUpdateNwkKey {
     const ID: u8 = 78;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -1207,10 +1184,10 @@ struct ExtSwitchNwkKey {
     keyseqnum: u8,
 }
 
-impl Command for ExtSwitchNwkKey {
+impl SyncRequest for ExtSwitchNwkKey {
     const ID: u8 = 79;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -1228,15 +1205,15 @@ struct ExtNwkInfoRsp {
     channel: u8,
 }
 
-impl CommandReply for ExtNwkInfoRsp {
+impl SyncReply for ExtNwkInfoRsp {
     const CMD0: u8 = 0; // placeholder
     const CMD1: u8 = 0; // placeholder
 }
 
-impl Command for ExtNwkInfo {
+impl SyncRequest for ExtNwkInfo {
     const ID: u8 = 80;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = ExtNwkInfoRsp;
 }
 
@@ -1247,20 +1224,20 @@ struct ExtSecApsRemoveReq {
     extaddr: IeeeAddr,
 }
 
-impl Command for ExtSecApsRemoveReq {
+impl SyncRequest for ExtSecApsRemoveReq {
     const ID: u8 = 81;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct ForceConcentratorChange {}
 
-impl Command for ForceConcentratorChange {
+impl SyncRequest for ForceConcentratorChange {
     const ID: u8 = 82;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = ();
 }
 
@@ -1269,10 +1246,10 @@ struct ExtSetParams {
     usemulticast: u8,
 }
 
-impl Command for ExtSetParams {
+impl SyncRequest for ExtSetParams {
     const ID: u8 = 83;
     const TYPE: CommandType = CommandType::SREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = Status;
 }
 
@@ -1283,11 +1260,9 @@ struct TcDeviceInd {
     parentaddr: u16,
 }
 
-impl Command for TcDeviceInd {
+impl AsyncRequest for TcDeviceInd {
     const ID: u8 = 202;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1295,9 +1270,7 @@ struct PermitJoinInd {
     duration: u8,
 }
 
-impl Command for PermitJoinInd {
+impl AsyncRequest for PermitJoinInd {
     const ID: u8 = 203;
-    const TYPE: CommandType = CommandType::AREQ;
-    const SUBSYSTEM: Subsystem = Subsystem::Zdo;
-    type Reply = ();
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
 }
