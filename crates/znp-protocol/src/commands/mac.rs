@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use super::{basic_reply, AsyncRequest, IeeeAddr, SubSystem, SyncReply, SyncRequest};
+use super::command_types::AsyncNotify;
+use super::{basic_reply, IeeeAddr, SubSystem, SyncReply, SyncRequest};
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ResetReq {
@@ -311,7 +312,7 @@ pub struct SyncLossInd {
     pub keyindex: u8,
 }
 
-impl AsyncRequest for SyncLossInd {
+impl AsyncNotify for SyncLossInd {
     const ID: u8 = 128;
     const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
@@ -326,7 +327,7 @@ pub struct AssociateInd {
     pub keyindex: u8,
 }
 
-impl AsyncRequest for AssociateInd {
+impl AsyncNotify for AssociateInd {
     const ID: u8 = 129;
     const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
@@ -341,7 +342,7 @@ pub struct AssociateCnf {
     pub keyindex: u8,
 }
 
-impl AsyncRequest for AssociateCnf {
+impl AsyncNotify for AssociateCnf {
     const ID: u8 = 130;
     const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
@@ -368,7 +369,7 @@ pub struct BeaconNotifyInd {
     pub nsdu: Vec<u8>,
 }
 
-impl AsyncRequest for BeaconNotifyInd {
+impl AsyncNotify for BeaconNotifyInd {
     const ID: u8 = 131;
     const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
@@ -381,7 +382,7 @@ pub struct DataCnf {
     pub timestamp2: u16,
 }
 
-impl AsyncRequest for DataCnf {
+impl AsyncNotify for DataCnf {
     const ID: u8 = 132;
     const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
@@ -408,7 +409,7 @@ pub struct DataInd {
     pub data: Vec<u8>,
 }
 
-impl AsyncRequest for DataInd {
+impl AsyncNotify for DataInd {
     const ID: u8 = 133;
     const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
@@ -423,7 +424,7 @@ pub struct DisassociateInd {
     pub keyindex: u8,
 }
 
-impl AsyncRequest for DisassociateInd {
+impl AsyncNotify for DisassociateInd {
     const ID: u8 = 134;
     const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
@@ -436,7 +437,7 @@ pub struct DisassociateCnf {
     pub devicepanid: u16,
 }
 
-impl AsyncRequest for DisassociateCnf {
+impl AsyncNotify for DisassociateCnf {
     const ID: u8 = 135;
     const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
@@ -450,7 +451,7 @@ pub struct OrphanInd {
     pub keyindex: u8,
 }
 
-impl AsyncRequest for OrphanInd {
+impl AsyncNotify for OrphanInd {
     const ID: u8 = 138;
     const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
@@ -460,7 +461,7 @@ pub struct PollCnf {
     pub status: u8,
 }
 
-impl AsyncRequest for PollCnf {
+impl AsyncNotify for PollCnf {
     const ID: u8 = 139;
     const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
@@ -477,7 +478,7 @@ pub struct ScanCnf {
     pub resultlist: Vec<u8>,
 }
 
-impl AsyncRequest for ScanCnf {
+impl AsyncNotify for ScanCnf {
     const ID: u8 = 140;
     const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
@@ -497,7 +498,7 @@ pub struct CommStatusInd {
     pub keyindex: u8,
 }
 
-impl AsyncRequest for CommStatusInd {
+impl AsyncNotify for CommStatusInd {
     const ID: u8 = 141;
     const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
@@ -507,7 +508,7 @@ pub struct StartCnf {
     pub status: u8,
 }
 
-impl AsyncRequest for StartCnf {
+impl AsyncNotify for StartCnf {
     const ID: u8 = 142;
     const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
@@ -517,7 +518,7 @@ pub struct RxEnableCnf {
     pub status: u8,
 }
 
-impl AsyncRequest for RxEnableCnf {
+impl AsyncNotify for RxEnableCnf {
     const ID: u8 = 143;
     const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }
@@ -528,7 +529,7 @@ pub struct PurgeCnf {
     pub handle: u8,
 }
 
-impl AsyncRequest for PurgeCnf {
+impl AsyncNotify for PurgeCnf {
     const ID: u8 = 144;
     const SUBSYSTEM: SubSystem = SubSystem::Mac;
 }

@@ -9,7 +9,9 @@ use crate::framing::CommandInfo;
 pub const START_OF_FRAME: u8 = 0xFE;
 
 mod command_types;
-pub use command_types::{AsyncReply, AsyncRequest, SyncReply, SyncRequest};
+pub use command_types::{
+    AsyncNotify, AsyncReply, AsyncRequest, SyncReply, SyncRequest,
+};
 
 pub mod af;
 pub mod app;
@@ -44,6 +46,9 @@ macro_rules! basic_reply {
             pub fn is_err(&self) -> bool {
                 !self.is_ok()
             }
+            pub fn map_err<E>(&self, err: E) -> Result<(), E> {
+                Err(err)
+            }
         }
 
         impl SyncReply for $reply_name {
@@ -53,6 +58,7 @@ macro_rules! basic_reply {
 }
 pub(crate) use basic_reply;
 
+#[expect(unused_macros, reason = "requests that use this are commented out")]
 macro_rules! empty_reply {
     ($request_name:ident, $reply_name:ident) => {
         #[derive(Debug, Clone, Deserialize)]
@@ -63,6 +69,10 @@ macro_rules! empty_reply {
         }
     };
 }
+#[expect(
+    unused_imports,
+    reason = "request that use this are commented out"
+)]
 pub(crate) use empty_reply;
 
 #[derive(Debug, thiserror::Error)]
@@ -139,7 +149,7 @@ fn from_reader_inner<R: SyncReply>(
     split_off_and_verify_checksum::<R>(length, &mut buf)?;
 
     use itertools::Itertools;
-    tracing::debug!(
+    tracing::trace!(
         "data: [{}]",
         buf.iter().map(|byte| format!("{byte:x}")).join(",")
     );

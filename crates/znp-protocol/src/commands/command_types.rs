@@ -71,6 +71,7 @@ pub trait SyncReply: DeserializeOwned {
 pub trait AsyncRequest: Serialize {
     const ID: u8;
     const SUBSYSTEM: SubSystem;
+    type Reply: AsyncReply;
 
     fn data_to_vec(&self) -> Result<Vec<u8>, data_format::Error>
     where
@@ -87,9 +88,20 @@ pub trait AsyncRequest: Serialize {
     }
 }
 
+/// Send by the device in response to a state change.
+///
+/// # Note
+/// that state change could very well be caused by an AsyncRequest
+pub trait AsyncNotify {
+    const ID: u8;
+    const SUBSYSTEM: SubSystem;
+}
+
+/// Only send by the device in response to a AsyncRequest
 pub trait AsyncReply: DeserializeOwned {
     const ID: u8;
     const SUBSYSTEM: SubSystem;
+    type Request: AsyncRequest;
 
     fn from_reader(_: &mut impl std::io::Read) -> Result<Self, ReplyError> {
         todo!()

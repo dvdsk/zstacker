@@ -37,6 +37,7 @@ pub fn check_connection_to_adapter(
 fn start_as_coordinator_if_needed(
     adaptor: &mut Adaptor<impl Serial>,
 ) -> Result<(), StartUpError> {
+    use commands::zdo::StartupFromAppReply;
     loop {
         let device_info = adaptor
             .send_command(commands::util::GetDeviceInfo)
@@ -47,10 +48,19 @@ fn start_as_coordinator_if_needed(
             DeviceState::StartingAsZBCoordinator => {
                 thread::sleep(Duration::from_millis(50))
             }
-            other => {
-                // adaptor.send_command(commands::zdo::Start)
-                todo!()
-            },
+            _ => {
+                let rsp = adaptor
+                    .send_command(commands::zdo::StartupFromApp {
+                        startdelay: 0,
+                    })
+                    .map_err(StartUpError::RequestStartup)?;
+                match rsp {
+                    StartupFromAppReply::RestoredNetworkState => (),
+                    _ => {
+                        return Err(StartUpError::NetworkRecoverFailed);
+                    }
+                }
+            }
         }
     }
     let version = adaptor
@@ -61,9 +71,15 @@ fn start_as_coordinator_if_needed(
 }
 
 fn add_to_green_power_group(
-    _adaptor: &mut Adaptor<impl Serial>,
+    adaptor: &mut Adaptor<impl Serial>,
 ) -> Result<(), StartUpError> {
-    todo!()
+    let res = adaptor.send_command(commands::zdo::ExtFindGroup {
+        endpoint: 242,
+        groupid: 2948,
+    }).map_err(StartUpError::AddingToGreenPowerGroup)?;
+    dbg!(res);
+
+    Ok(())
 }
 
 fn register_endpoints(

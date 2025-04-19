@@ -27,8 +27,8 @@ pub enum CommandIDError {
 impl CommandInfo {
     pub fn serialize(&self) -> [u8; 2] {
         let mut res = [0u8; 2];
-        res[1] = self.id;
         res[0] = self.ty as u8 | self.sub_system as u8;
+        res[1] = self.id;
         res
     }
 

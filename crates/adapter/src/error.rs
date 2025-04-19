@@ -15,6 +15,12 @@ pub enum StartUpError {
     NotRunningAsCoordinator(DeviceState),
     #[error("Could not register endpoint")]
     RegisterEndpoints(#[source] RegisterEndpointsError),
+    #[error("Could not request device to start in the network")]
+    RequestStartup(#[source] SendCommandError),
+    #[error("Device did not recover existing network")]
+    NetworkRecoverFailed,
+    #[error("Could not add device to green power group")]
+    AddingToGreenPowerGroup(#[source] SendCommandError),
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -34,7 +40,7 @@ pub enum SendCommandError {
 }
 
 #[derive(Debug, thiserror::Error)]
-pub enum RegisterEndpointsError{
+pub enum RegisterEndpointsError {
     #[error("Error sending command or receiving reply")]
     Io(SendCommandError),
     #[error("Device returned status failed")]
