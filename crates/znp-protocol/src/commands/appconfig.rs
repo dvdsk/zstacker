@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_repr::Serialize_repr;
 
 use super::{
-    AsyncRequest, IeeeAddr, SubSystem, SyncReply, SyncRequest,
+    basic_reply, AsyncRequest, IeeeAddr, SubSystem, SyncReply, SyncRequest
 };
 
 #[derive(Clone, Copy, Debug, Serialize_repr)]

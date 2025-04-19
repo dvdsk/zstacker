@@ -20,8 +20,7 @@ pub mod mac;
 pub mod sapi;
 pub mod sys;
 pub mod util;
-// // Most of these are wrong
-// pub(crate) mod zdo;
+pub mod zdo;
 
 #[derive(Debug, Clone, Copy, Deserialize_repr)]
 #[repr(u8)]

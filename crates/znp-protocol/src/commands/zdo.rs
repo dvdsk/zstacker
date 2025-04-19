@@ -1,16 +1,15 @@
 #![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
-use super::{
-    AsyncRequest, SyncRequest, SyncReply, IeeeAddr, Status,
-    SubSystem,
-};
+use super::{AsyncRequest, IeeeAddr, SubSystem, SyncReply, SyncRequest};
+
+use super::BasicStatus as Status;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct NwkAddrReq {
-    // ieeeaddr: IeeeAddr,
-    // reqtype: u8,
-    // startindex: u8,
+pub struct NwkAddrReq {
+    pub ieeeaddr: IeeeAddr,
+    pub reqtype: u8,
+    pub startindex: u8,
 }
 
 impl SyncRequest for NwkAddrReq {
@@ -20,10 +19,10 @@ impl SyncRequest for NwkAddrReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct IeeeAddrReq {
-    // shortaddr: u16,
-    // reqtype: u8,
-    // startindex: u8,
+pub struct IeeeAddrReq {
+    pub shortaddr: u16,
+    pub reqtype: u8,
+    pub startindex: u8,
 }
 
 impl SyncRequest for IeeeAddrReq {
@@ -33,9 +32,9 @@ impl SyncRequest for IeeeAddrReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct NodeDescReq {
-    // dstaddr: u16,
-    // nwkaddrofinterest: u16,
+pub struct NodeDescReq {
+    pub dstaddr: u16,
+    pub nwkaddrofinterest: u16,
 }
 
 impl SyncRequest for NodeDescReq {
@@ -45,9 +44,9 @@ impl SyncRequest for NodeDescReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct PowerDescReq {
-    // dstaddr: u16,
-    // nwkaddrofinterest: u16,
+pub struct PowerDescReq {
+    pub dstaddr: u16,
+    pub nwkaddrofinterest: u16,
 }
 
 impl SyncRequest for PowerDescReq {
@@ -57,10 +56,10 @@ impl SyncRequest for PowerDescReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct SimpleDescReq {
-    // dstaddr: u16,
-    // nwkaddrofinterest: u16,
-    // endpoint: u8,
+pub struct SimpleDescReq {
+    pub dstaddr: u16,
+    pub nwkaddrofinterest: u16,
+    pub endpoint: u8,
 }
 
 impl SyncRequest for SimpleDescReq {
@@ -70,9 +69,9 @@ impl SyncRequest for SimpleDescReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ActiveEpReq {
-    // dstaddr: u16,
-    // nwkaddrofinterest: u16,
+pub struct ActiveEpReq {
+    pub dstaddr: u16,
+    pub nwkaddrofinterest: u16,
 }
 
 impl SyncRequest for ActiveEpReq {
@@ -82,11 +81,11 @@ impl SyncRequest for ActiveEpReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MatchDescReq {
-    // dstaddr: u16,
-    // nwkaddrofinterest: u16,
-    // profileid: u16,
-    // inclusterlist: Vec<u16>,
+pub struct MatchDescReq {
+    pub dstaddr: u16,
+    pub nwkaddrofinterest: u16,
+    pub profileid: u16,
+    pub inclusterlist: Vec<u16>,
 }
 
 impl SyncRequest for MatchDescReq {
@@ -96,9 +95,9 @@ impl SyncRequest for MatchDescReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ComplexDescReq {
-    dstaddr: u16,
-    nwkaddrofinterest: u16,
+pub struct ComplexDescReq {
+    pub dstaddr: u16,
+    pub nwkaddrofinterest: u16,
 }
 
 impl SyncRequest for ComplexDescReq {
@@ -108,9 +107,9 @@ impl SyncRequest for ComplexDescReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct UserDescReq {
-    dstaddr: u16,
-    nwkaddrofinterest: u16,
+pub struct UserDescReq {
+    pub dstaddr: u16,
+    pub nwkaddrofinterest: u16,
 }
 
 impl SyncRequest for UserDescReq {
@@ -120,10 +119,10 @@ impl SyncRequest for UserDescReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct EndDeviceAnnce {
-    nwkaddr: u16,
-    ieeeaddr: IeeeAddr,
-    capability: u8,
+pub struct EndDeviceAnnce {
+    pub nwkaddr: u16,
+    pub ieeeaddr: IeeeAddr,
+    pub capability: u8,
 }
 
 impl SyncRequest for EndDeviceAnnce {
@@ -133,11 +132,11 @@ impl SyncRequest for EndDeviceAnnce {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct UserDescSet {
-    dstaddr: u16,
-    nwkaddrofinterest: u16,
-    descriptor_len: u8,
-    userdescriptor: Vec<u8>,
+pub struct UserDescSet {
+    pub dstaddr: u16,
+    pub nwkaddrofinterest: u16,
+    pub descriptor_len: u8,
+    pub userdescriptor: Vec<u8>,
 }
 
 impl SyncRequest for UserDescSet {
@@ -147,8 +146,8 @@ impl SyncRequest for UserDescSet {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ServerDiscReq {
-    // servermask: u16,
+pub struct ServerDiscReq {
+    pub servermask: u16,
 }
 
 impl SyncRequest for ServerDiscReq {
@@ -158,13 +157,13 @@ impl SyncRequest for ServerDiscReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct EndDeviceBindReq {
-    dstaddr: u16,
-    localcoord: u16,
-    localieee: IeeeAddr,
-    endpoint: u8,
-    profileid: u16,
-    inclusterlist: Vec<u16>,
+pub struct EndDeviceBindReq {
+    pub dstaddr: u16,
+    pub localcoord: u16,
+    pub localieee: IeeeAddr,
+    pub endpoint: u8,
+    pub profileid: u16,
+    pub inclusterlist: Vec<u16>,
 }
 
 impl SyncRequest for EndDeviceBindReq {
@@ -174,14 +173,14 @@ impl SyncRequest for EndDeviceBindReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct BindReq {
-    // dstaddr: u16,
-    // srcaddr: IeeeAddr,
-    // srcendpoint: u8,
-    // clusterid: u16,
-    // dstaddrmode: u8,
-    // dstaddress: IeeeAddr,
-    // dstendpoint: u8,
+pub struct BindReq {
+    pub dstaddr: u16,
+    pub srcaddr: IeeeAddr,
+    pub srcendpoint: u8,
+    pub clusterid: u16,
+    pub dstaddrmode: u8,
+    pub dstaddress: IeeeAddr,
+    pub dstendpoint: u8,
 }
 
 impl SyncRequest for BindReq {
@@ -191,14 +190,14 @@ impl SyncRequest for BindReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct UnbindReq {
-    // dstaddr: u16,
-    // srcaddr: IeeeAddr,
-    // srcendpoint: u8,
-    // clusterid: u16,
-    // dstaddrmode: u8,
-    // dstaddress: IeeeAddr,
-    // dstendpoint: u8,
+pub struct UnbindReq {
+    pub dstaddr: u16,
+    pub srcaddr: IeeeAddr,
+    pub srcendpoint: u8,
+    pub clusterid: u16,
+    pub dstaddrmode: u8,
+    pub dstaddress: IeeeAddr,
+    pub dstendpoint: u8,
 }
 
 impl SyncRequest for UnbindReq {
@@ -208,10 +207,10 @@ impl SyncRequest for UnbindReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct SetLinkKey {
-    shortaddr: u16,
-    ieeeaddr: IeeeAddr,
-    linkkey: Vec<u8>,
+pub struct SetLinkKey {
+    pub shortaddr: u16,
+    pub ieeeaddr: IeeeAddr,
+    pub linkkey: Vec<u8>,
 }
 
 impl SyncRequest for SetLinkKey {
@@ -221,8 +220,8 @@ impl SyncRequest for SetLinkKey {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct RemoveLinkKey {
-    ieeeaddr: IeeeAddr,
+pub struct RemoveLinkKey {
+    pub ieeeaddr: IeeeAddr,
 }
 
 impl SyncRequest for RemoveLinkKey {
@@ -232,15 +231,15 @@ impl SyncRequest for RemoveLinkKey {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct GetLinkKey {
-    ieeeaddr: IeeeAddr,
+pub struct GetLinkKey {
+    pub ieeeaddr: IeeeAddr,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct GetLinkKeyReply {
-    status: u8,
-    ieeeaddr: IeeeAddr,
-    linkkeydata: [u8; 16],
+pub struct GetLinkKeyReply {
+    pub status: u8,
+    pub ieeeaddr: IeeeAddr,
+    pub linkkeydata: [u8; 16],
 }
 
 impl SyncReply for GetLinkKeyReply {
@@ -255,9 +254,9 @@ impl SyncRequest for GetLinkKey {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct NwkDiscoveryReq {
-    scanchannels: u32,
-    scanduration: u8,
+pub struct NwkDiscoveryReq {
+    pub scanchannels: u32,
+    pub scanduration: u8,
 }
 
 impl SyncRequest for NwkDiscoveryReq {
@@ -267,13 +266,13 @@ impl SyncRequest for NwkDiscoveryReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct JoinReq {
-    logicalchannel: u8,
-    panid: u16,
-    extendedpanid: IeeeAddr,
-    chosenparent: u16,
-    parentdepth: u8,
-    stackprofile: u8,
+pub struct JoinReq {
+    pub logicalchannel: u8,
+    pub panid: u16,
+    pub extendedpanid: IeeeAddr,
+    pub chosenparent: u16,
+    pub parentdepth: u8,
+    pub stackprofile: u8,
 }
 
 impl SyncRequest for JoinReq {
@@ -283,11 +282,11 @@ impl SyncRequest for JoinReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtNwkDiscReq {
-    dstaddr: u16,
-    scanchannels: u32,
-    scanduration: u8,
-    startindex: u8,
+pub struct MgmtNwkDiscReq {
+    pub dstaddr: u16,
+    pub scanchannels: u32,
+    pub scanduration: u8,
+    pub startindex: u8,
 }
 
 impl SyncRequest for MgmtNwkDiscReq {
@@ -297,9 +296,9 @@ impl SyncRequest for MgmtNwkDiscReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtLqiReq {
-    // dstaddr: u16,
-    // startindex: u8,
+pub struct MgmtLqiReq {
+    pub dstaddr: u16,
+    pub startindex: u8,
 }
 
 impl SyncRequest for MgmtLqiReq {
@@ -309,9 +308,9 @@ impl SyncRequest for MgmtLqiReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtRtgReq {
-    // dstaddr: u16,
-    // startindex: u8,
+pub struct MgmtRtgReq {
+    pub dstaddr: u16,
+    pub startindex: u8,
 }
 
 impl SyncRequest for MgmtRtgReq {
@@ -321,9 +320,9 @@ impl SyncRequest for MgmtRtgReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtBindReq {
-    // dstaddr: u16,
-    // startindex: u8,
+pub struct MgmtBindReq {
+    pub dstaddr: u16,
+    pub startindex: u8,
 }
 
 impl SyncRequest for MgmtBindReq {
@@ -333,10 +332,10 @@ impl SyncRequest for MgmtBindReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtLeaveReq {
-    // dstaddr: u16,
-    // deviceaddress: IeeeAddr,
-    // removechildrenRejoin: u8,
+pub struct MgmtLeaveReq {
+    pub dstaddr: u16,
+    pub deviceaddress: IeeeAddr,
+    pub removechildrenRejoin: u8,
 }
 
 impl SyncRequest for MgmtLeaveReq {
@@ -346,10 +345,10 @@ impl SyncRequest for MgmtLeaveReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtDirectJoinReq {
-    dstaddr: u16,
-    deviceaddr: IeeeAddr,
-    capinfo: u8,
+pub struct MgmtDirectJoinReq {
+    pub dstaddr: u16,
+    pub deviceaddr: IeeeAddr,
+    pub capinfo: u8,
 }
 
 impl SyncRequest for MgmtDirectJoinReq {
@@ -359,11 +358,11 @@ impl SyncRequest for MgmtDirectJoinReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtPermitJoinReq {
-    // addrmode: u8,
-    // dstaddr: u16,
-    // duration: u8,
-    // tcsignificance: u8,
+pub struct MgmtPermitJoinReq {
+    pub addrmode: u8,
+    pub dstaddr: u16,
+    pub duration: u8,
+    pub tcsignificance: u8,
 }
 
 impl SyncRequest for MgmtPermitJoinReq {
@@ -373,14 +372,14 @@ impl SyncRequest for MgmtPermitJoinReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtNwkUpdateReq {
-    // dstaddr: u16,
-    // dstaddrmode: u8,
-    // channelmask: u32,
-    // scanduration: u8,
-    //     // TODO: below two have various combinations of present/not present depending on scanduration
-    // scancount: u8,
-    // nwkmanageraddr: u16,
+pub struct MgmtNwkUpdateReq {
+    pub dstaddr: u16,
+    pub dstaddrmode: u8,
+    pub channelmask: u32,
+    pub scanduration: u8,
+    // TODO: below two have various combinations of present/not present depending on scanduration
+    pub scancount: u8,
+    pub nwkmanageraddr: u16,
 }
 
 impl SyncRequest for MgmtNwkUpdateReq {
@@ -390,8 +389,8 @@ impl SyncRequest for MgmtNwkUpdateReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MsgCbRegister {
-    clusterid: u16,
+pub struct MsgCbRegister {
+    pub clusterid: u16,
 }
 
 impl SyncRequest for MsgCbRegister {
@@ -401,8 +400,8 @@ impl SyncRequest for MsgCbRegister {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MsgCbRemove {
-    clusterid: u16,
+pub struct MsgCbRemove {
+    pub clusterid: u16,
 }
 
 impl SyncRequest for MsgCbRemove {
@@ -412,8 +411,8 @@ impl SyncRequest for MsgCbRemove {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct StartupFromApp {
-    startdelay: u16,
+pub struct StartupFromApp {
+    pub startdelay: u16,
 }
 
 impl SyncRequest for StartupFromApp {
@@ -423,8 +422,8 @@ impl SyncRequest for StartupFromApp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct AutoFindDestination {
-    endpoint: u8,
+pub struct AutoFindDestination {
+    pub endpoint: u8,
 }
 
 impl AsyncRequest for AutoFindDestination {
@@ -433,13 +432,13 @@ impl AsyncRequest for AutoFindDestination {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct NwkAddrRsp {
-    // status: u8,
+pub struct NwkAddrRsp {
+    pub status: u8,
     // Parse the ieeeaddr as it is needed for ZNP waitFor (see zStackAdapter.requestNetworkAddress())
-    // ieeeaddr: IeeeAddr,
-    // nwkaddr: u16,
-    // startindex: u8,
-    // assocdevlist: Vec<u16>,
+    pub ieeeaddr: IeeeAddr,
+    pub nwkaddr: u16,
+    pub startindex: u8,
+    pub assocdevlist: Vec<u16>,
 }
 
 impl SyncReply for NwkAddrRsp {
@@ -448,12 +447,12 @@ impl SyncReply for NwkAddrRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct IeeeAddrRsp {
-    // status: u8,
-    // ieeeaddr: IeeeAddr,
-    // nwkaddr: u16,
-    // startindex: u8,
-    // assocdevlist: Vec<u16>,
+pub struct IeeeAddrRsp {
+    pub status: u8,
+    pub ieeeaddr: IeeeAddr,
+    pub nwkaddr: u16,
+    pub startindex: u8,
+    pub assocdevlist: Vec<u16>,
 }
 
 impl SyncReply for IeeeAddrRsp {
@@ -462,19 +461,19 @@ impl SyncReply for IeeeAddrRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct NodeDescRsp {
-    // srcaddr: u16,
-    // status: u8,
-    // nwkaddr: u16,
-    // logicaltype_cmplxdescavai_userdescavai: u8,
-    // apsflags_freqband: u8,
-    // maccapflags: u8,
-    // manufacturercode: u16,
-    // maxbuffersize: u8,
-    // maxintransfersize: u16,
-    // servermask: u16,
-    // maxouttransfersize: u16,
-    // descriptorcap: u8,
+pub struct NodeDescRsp {
+    pub srcaddr: u16,
+    pub status: u8,
+    pub nwkaddr: u16,
+    pub logicaltype_cmplxdescavai_userdescavai: u8,
+    pub apsflags_freqband: u8,
+    pub maccapflags: u8,
+    pub manufacturercode: u16,
+    pub maxbuffersize: u8,
+    pub maxintransfersize: u16,
+    pub servermask: u16,
+    pub maxouttransfersize: u16,
+    pub descriptorcap: u8,
 }
 
 impl SyncReply for NodeDescRsp {
@@ -483,12 +482,12 @@ impl SyncReply for NodeDescRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct PowerDescRsp {
-    // srcaddr: u16,
-    // status: u8,
-    // nwkaddr: u16,
-    // currentpowermode_avaipowersrc: u8,
-    // currentpowersrc_currentpowersrclevel: u8,
+pub struct PowerDescRsp {
+    pub srcaddr: u16,
+    pub status: u8,
+    pub nwkaddr: u16,
+    pub currentpowermode_avaipowersrc: u8,
+    pub currentpowersrc_currentpowersrclevel: u8,
 }
 
 impl SyncReply for PowerDescRsp {
@@ -497,16 +496,16 @@ impl SyncReply for PowerDescRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct SimpleDescRsp {
-    // srcaddr: u16,
-    // status: u8,
-    // nwkaddr: u16,
-    // len: u8,
-    // endpoint: u8,
-    // profileid: u16,
-    // deviceid: u16,
-    // deviceversion: u8,
-    // inclusterlist: Vec<u16>,
+pub struct SimpleDescRsp {
+    pub srcaddr: u16,
+    pub status: u8,
+    pub nwkaddr: u16,
+    pub len: u8,
+    pub endpoint: u8,
+    pub profileid: u16,
+    pub deviceid: u16,
+    pub deviceversion: u8,
+    pub inclusterlist: Vec<u16>,
 }
 
 impl SyncReply for SimpleDescRsp {
@@ -515,11 +514,11 @@ impl SyncReply for SimpleDescRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ActiveEpRsp {
-    // srcaddr: u16,
-    // status: u8,
-    // nwkaddr: u16,
-    // activeeplist: Vec<u8>,
+pub struct ActiveEpRsp {
+    pub srcaddr: u16,
+    pub status: u8,
+    pub nwkaddr: u16,
+    pub activeeplist: Vec<u8>,
 }
 
 impl SyncReply for ActiveEpRsp {
@@ -528,21 +527,21 @@ impl SyncReply for ActiveEpRsp {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct MatchDescRsp {
-    // srcaddr: u16,
-    // status: u8,
-    // nwkaddr: u16,
-    // matchlength: u8,
-    // matchlist: Vec<u8>,
+pub struct MatchDescRsp {
+    pub srcaddr: u16,
+    pub status: u8,
+    pub nwkaddr: u16,
+    pub matchlength: u8,
+    pub matchlist: Vec<u8>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ComplexDescRsp {
-    srcaddr: u16,
-    status: u8,
-    nwkaddr: u16,
-    complexlength: u8,
-    complexdesclist: Vec<u8>,
+pub struct ComplexDescRsp {
+    pub srcaddr: u16,
+    pub status: u8,
+    pub nwkaddr: u16,
+    pub complexlength: u8,
+    pub complexdesclist: Vec<u8>,
 }
 
 impl SyncReply for ComplexDescRsp {
@@ -551,12 +550,12 @@ impl SyncReply for ComplexDescRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct UserDescRsp {
-    srcaddr: u16,
-    status: u8,
-    nwkaddr: u16,
-    userlength: u8,
-    userdescriptor: Vec<u8>,
+pub struct UserDescRsp {
+    pub srcaddr: u16,
+    pub status: u8,
+    pub nwkaddr: u16,
+    pub userlength: u8,
+    pub userdescriptor: Vec<u8>,
 }
 
 impl SyncReply for UserDescRsp {
@@ -565,10 +564,10 @@ impl SyncReply for UserDescRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct UserDescConf {
-    srcaddr: u16,
-    status: u8,
-    nwkaddr: u16,
+pub struct UserDescConf {
+    pub srcaddr: u16,
+    pub status: u8,
+    pub nwkaddr: u16,
 }
 
 impl AsyncRequest for UserDescConf {
@@ -577,10 +576,10 @@ impl AsyncRequest for UserDescConf {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ServerDiscRsp {
-    // srcaddr: u16,
-    // status: u8,
-    // servermask: u16,
+pub struct ServerDiscRsp {
+    pub srcaddr: u16,
+    pub status: u8,
+    pub servermask: u16,
 }
 
 impl SyncReply for ServerDiscRsp {
@@ -590,7 +589,7 @@ impl SyncReply for ServerDiscRsp {
 
 /// https://github.com/Koenkk/zigbee2mqtt/issues/3363 {
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct Unknown {}
+pub struct Unknown {}
 
 impl AsyncRequest for Unknown {
     const ID: u8 = 159;
@@ -598,9 +597,9 @@ impl AsyncRequest for Unknown {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct EndDeviceBindRsp {
-    srcaddr: u16,
-    status: u8,
+pub struct EndDeviceBindRsp {
+    pub srcaddr: u16,
+    pub status: u8,
 }
 
 impl SyncReply for EndDeviceBindRsp {
@@ -609,9 +608,9 @@ impl SyncReply for EndDeviceBindRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct BindRsp {
-    // srcaddr: u16,
-    // status: u8,
+pub struct BindRsp {
+    pub srcaddr: u16,
+    pub status: u8,
 }
 
 impl SyncReply for BindRsp {
@@ -620,9 +619,9 @@ impl SyncReply for BindRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct UnbindRsp {
-    // srcaddr: u16,
-    // status: u8,
+pub struct UnbindRsp {
+    pub srcaddr: u16,
+    pub status: u8,
 }
 
 impl SyncReply for UnbindRsp {
@@ -631,12 +630,12 @@ impl SyncReply for UnbindRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtNwkDiscRsp {
-    srcaddr: u16,
-    status: u8,
-    networkcount: u8,
-    startindex: u8,
-    networklist: Vec<Network>,
+pub struct MgmtNwkDiscRsp {
+    pub srcaddr: u16,
+    pub status: u8,
+    pub networkcount: u8,
+    pub startindex: u8,
+    pub networklist: Vec<Network>,
 }
 
 /// See: Z-Stack Monitor and Test API section 3.12.2.15 revision 1.14
@@ -644,16 +643,16 @@ struct MgmtNwkDiscRsp {
 /// Can not use serde to get this over the wire. Overwrite the default
 /// `Command::data_to_vec` implementation instead.
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct Network {
+pub struct Network {
     // PAN ID of the neighbor device
-    pan_id: u16,
+    pub pan_id: u16,
     // The current logical channel occupied by the network.
-    logical_channel: u8,
-    stack_profile: u8,     // 4th byte bits 3-0
-    zigbee_version: u8,    // 4th byte bits 7-4
-    beacon_order: u8,      // 4th byte bits 3-0
-    super_frame_order: u8, // 5th byte bits 7-4
-    permit_joining: bool,
+    pub logical_channel: u8,
+    pub stack_profile: u8,     // 4th byte bits 3-0
+    pub zigbee_version: u8,    // 4th byte bits 7-4
+    pub beacon_order: u8,      // 4th byte bits 3-0
+    pub super_frame_order: u8, // 5th byte bits 7-4
+    pub permit_joining: bool,
 }
 
 impl SyncReply for MgmtNwkDiscRsp {
@@ -662,13 +661,14 @@ impl SyncReply for MgmtNwkDiscRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtLqiRsp {
-    // srcaddr: u16,
-    // status: u8,
-    // neighbortableentries: u8,
-    // startindex: u8,
-    // neighborlqilistcount: u8,
-    // neighborlqilist: compile_error!("needs custom derive with NeighborLqi type"),
+pub struct MgmtLqiRsp {
+    pub srcaddr: u16,
+    pub status: u8,
+    pub neighbortableentries: u8,
+    pub startindex: u8,
+    pub neighborlqilistcount: u8,
+    pub neighborlqilist:
+        compile_error!("needs custom derive with NeighborLqi type"),
 }
 
 impl SyncReply for MgmtLqiRsp {
@@ -677,13 +677,13 @@ impl SyncReply for MgmtLqiRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtRtgRsp {
-    // srcaddr: u16,
-    // status: u8,
-    // routingtableentries: u8,
-    // startindex: u8,
-    // routingtablelistcount: u8,
-    // routingtablelist: RoutingTable,
+pub struct MgmtRtgRsp {
+    pub srcaddr: u16,
+    pub status: u8,
+    pub routingtableentries: u8,
+    pub startindex: u8,
+    pub routingtablelistcount: u8,
+    pub routingtablelist: RoutingTable,
 }
 
 impl SyncReply for MgmtRtgRsp {
@@ -692,13 +692,13 @@ impl SyncReply for MgmtRtgRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtBindRsp {
-    // srcaddr: u16,
-    // status: u8,
-    // bindingtableentries: u8,
-    // startindex: u8,
-    // bindingtablelistcount: u8,
-    // bindingtablelist: BindTable,
+pub struct MgmtBindRsp {
+    pub srcaddr: u16,
+    pub status: u8,
+    pub bindingtableentries: u8,
+    pub startindex: u8,
+    pub bindingtablelistcount: u8,
+    pub bindingtablelist: BindTable,
 }
 
 impl SyncReply for MgmtBindRsp {
@@ -707,9 +707,9 @@ impl SyncReply for MgmtBindRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtLeaveRsp {
-    // srcaddr: u16,
-    // status: u8,
+pub struct MgmtLeaveRsp {
+    pub srcaddr: u16,
+    pub status: u8,
 }
 
 impl SyncReply for MgmtLeaveRsp {
@@ -718,9 +718,9 @@ impl SyncReply for MgmtLeaveRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtDirectJoinRsp {
-    srcaddr: u16,
-    status: u8,
+pub struct MgmtDirectJoinRsp {
+    pub srcaddr: u16,
+    pub status: u8,
 }
 
 impl SyncReply for MgmtDirectJoinRsp {
@@ -729,9 +729,9 @@ impl SyncReply for MgmtDirectJoinRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtPermitJoinRsp {
-    // srcaddr: u16,
-    // status: u8,
+pub struct MgmtPermitJoinRsp {
+    pub srcaddr: u16,
+    pub status: u8,
 }
 
 impl SyncReply for MgmtPermitJoinRsp {
@@ -740,14 +740,14 @@ impl SyncReply for MgmtPermitJoinRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MgmtNwkUpdateNotify {
-    // srcaddr: u16,
-    // status: u8,
-    // scannedchannels: u32,
-    // totaltrans: u16,
-    // transfails: u16,
-    // energylength: u8,
-    // energyvalues: Vec<u8>,
+pub struct MgmtNwkUpdateNotify {
+    pub srcaddr: u16,
+    pub status: u8,
+    pub scannedchannels: u32,
+    pub totaltrans: u16,
+    pub transfails: u16,
+    pub energylength: u8,
+    pub energyvalues: Vec<u8>,
 }
 
 impl AsyncRequest for MgmtNwkUpdateNotify {
@@ -756,8 +756,8 @@ impl AsyncRequest for MgmtNwkUpdateNotify {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct StateChangeInd {
-    state: u8,
+pub struct StateChangeInd {
+    pub state: u8,
 }
 
 impl AsyncRequest for StateChangeInd {
@@ -766,11 +766,11 @@ impl AsyncRequest for StateChangeInd {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct EndDeviceAnnceInd {
-    // srcaddr: u16,
-    // nwkaddr: u16,
-    // ieeeaddr: IeeeAddr,
-    // capabilities: u8,
+pub struct EndDeviceAnnceInd {
+    pub srcaddr: u16,
+    pub nwkaddr: u16,
+    pub ieeeaddr: IeeeAddr,
+    pub capabilities: u8,
 }
 
 impl AsyncRequest for EndDeviceAnnceInd {
@@ -779,9 +779,9 @@ impl AsyncRequest for EndDeviceAnnceInd {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MatchDescRspSent {
-    nwkaddr: u16,
-    inclusterlist: Vec<u16>,
+pub struct MatchDescRspSent {
+    pub nwkaddr: u16,
+    pub inclusterlist: Vec<u16>,
 }
 
 impl SyncReply for MatchDescRsp {
@@ -790,9 +790,9 @@ impl SyncReply for MatchDescRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct StatusErrorRsp {
-    srcaddr: u16,
-    status: u8,
+pub struct StatusErrorRsp {
+    pub srcaddr: u16,
+    pub status: u8,
 }
 
 impl SyncReply for StatusErrorRsp {
@@ -801,9 +801,9 @@ impl SyncReply for StatusErrorRsp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct SrcRtgInd {
-    dstaddr: u16,
-    relaylist: Vec<u16>,
+pub struct SrcRtgInd {
+    pub dstaddr: u16,
+    pub relaylist: Vec<u16>,
 }
 
 impl AsyncRequest for SrcRtgInd {
@@ -812,9 +812,9 @@ impl AsyncRequest for SrcRtgInd {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct BeaconNotifyInd {
+pub struct BeaconNotifyInd {
     //// FIXME
-    // beaconlist: Vec<u8>,
+    pub beaconlist: Vec<u8>,
 }
 
 impl AsyncRequest for BeaconNotifyInd {
@@ -823,10 +823,10 @@ impl AsyncRequest for BeaconNotifyInd {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct JoinCnf {
-    status: u8,
-    deviceaddress: u16,
-    parentaddress: u16,
+pub struct JoinCnf {
+    pub status: u8,
+    pub deviceaddress: u16,
+    pub parentaddress: u16,
 }
 
 impl AsyncRequest for JoinCnf {
@@ -835,8 +835,8 @@ impl AsyncRequest for JoinCnf {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct NwkDiscoveryCnf {
-    status: u8,
+pub struct NwkDiscoveryCnf {
+    pub status: u8,
 }
 
 impl AsyncRequest for NwkDiscoveryCnf {
@@ -845,10 +845,10 @@ impl AsyncRequest for NwkDiscoveryCnf {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ConcentratorIndCb {
-    srcaddr: u16,
-    extaddr: IeeeAddr,
-    pkt_cost: u8,
+pub struct ConcentratorIndCb {
+    pub srcaddr: u16,
+    pub extaddr: IeeeAddr,
+    pub pkt_cost: u8,
 }
 
 impl AsyncRequest for ConcentratorIndCb {
@@ -857,12 +857,12 @@ impl AsyncRequest for ConcentratorIndCb {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct LeaveInd {
-    srcaddr: u16,
-    extaddr: IeeeAddr,
-    request: u8,
-    removechildren: u8,
-    rejoin: u8,
+pub struct LeaveInd {
+    pub srcaddr: u16,
+    pub extaddr: IeeeAddr,
+    pub request: u8,
+    pub removechildren: u8,
+    pub rejoin: u8,
 }
 
 impl AsyncRequest for LeaveInd {
@@ -871,9 +871,9 @@ impl AsyncRequest for LeaveInd {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct SetRejoinParametersReq {
-    backoffduration: u32,
-    scanduration: u32,
+pub struct SetRejoinParametersReq {
+    pub backoffduration: u32,
+    pub scanduration: u32,
 }
 
 impl SyncRequest for SetRejoinParametersReq {
@@ -883,15 +883,15 @@ impl SyncRequest for SetRejoinParametersReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct MsgCbIncoming {
-    srcaddr: u16,
-    wasbroadcast: u8,
-    clusterid: u16,
-    securityuse: u8,
-    seqnum: u8,
-    macdstaddr: u16,
-    //// FIXME
-    // msgdata: Vec<u8>,
+pub struct MsgCbIncoming {
+    pub srcaddr: u16,
+    pub wasbroadcast: u8,
+    pub clusterid: u16,
+    pub securityuse: u8,
+    pub seqnum: u8,
+    pub macdstaddr: u16,
+    // FIXME
+    pub msgdata: Vec<u8>,
 }
 
 impl AsyncRequest for MsgCbIncoming {
@@ -900,9 +900,9 @@ impl AsyncRequest for MsgCbIncoming {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct EndDeviceTimeoutReq {
-    parentaddr: u16,
-    reqrimeout: u16,
+pub struct EndDeviceTimeoutReq {
+    pub parentaddr: u16,
+    pub reqrimeout: u16,
 }
 
 impl SyncRequest for EndDeviceTimeoutReq {
@@ -912,12 +912,12 @@ impl SyncRequest for EndDeviceTimeoutReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct SendData {
-    shortaddr: u16,
-    transseq: u8,
-    cmd: u16,
-    len: u8,
-    buf: Vec<u8>,
+pub struct SendData {
+    pub shortaddr: u16,
+    pub transseq: u8,
+    pub cmd: u16,
+    pub len: u8,
+    pub buf: Vec<u8>,
 }
 
 impl SyncRequest for SendData {
@@ -927,10 +927,10 @@ impl SyncRequest for SendData {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct NwkAddrOfInterestReq {
-    shortaddr: u16,
-    nwkaddr: u16,
-    cmd: u8,
+pub struct NwkAddrOfInterestReq {
+    pub shortaddr: u16,
+    pub nwkaddr: u16,
+    pub cmd: u8,
 }
 
 impl SyncRequest for NwkAddrOfInterestReq {
@@ -940,10 +940,10 @@ impl SyncRequest for NwkAddrOfInterestReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct SecAddLinkKey {
-    shortaddr: u16,
-    extaddr: IeeeAddr,
-    linkkey: Vec<u8>,
+pub struct SecAddLinkKey {
+    pub shortaddr: u16,
+    pub extaddr: IeeeAddr,
+    pub linkkey: Vec<u8>,
 }
 
 impl SyncRequest for SecAddLinkKey {
@@ -953,16 +953,16 @@ impl SyncRequest for SecAddLinkKey {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct SecEntryLookupExt {
-    extaddr: IeeeAddr,
+pub struct SecEntryLookupExt {
+    pub extaddr: IeeeAddr,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct SecEntryLookupExtReply {
-    status: u8,
-    ami: u16,
-    keynvid: u16,
-    authenticateoption: u8,
+pub struct SecEntryLookupExtReply {
+    pub status: u8,
+    pub ami: u16,
+    pub keynvid: u16,
+    pub authenticateoption: u8,
 }
 
 impl SyncReply for SecEntryLookupExtReply {
@@ -977,8 +977,8 @@ impl SyncRequest for SecEntryLookupExt {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct SecDeviceRemove {
-    extaddr: IeeeAddr,
+pub struct SecDeviceRemove {
+    pub extaddr: IeeeAddr,
 }
 
 impl SyncRequest for SecDeviceRemove {
@@ -988,10 +988,10 @@ impl SyncRequest for SecDeviceRemove {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ExtRouteDisc {
-    dst_addr: u16,
-    options: u8,
-    radius: u8,
+pub struct ExtRouteDisc {
+    pub dst_addr: u16,
+    pub options: u8,
+    pub radius: u8,
 }
 
 impl SyncRequest for ExtRouteDisc {
@@ -1001,10 +1001,10 @@ impl SyncRequest for ExtRouteDisc {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ExtRouteCheck {
-    dstaddr: u16,
-    rtstatus: u8,
-    options: u8,
+pub struct ExtRouteCheck {
+    pub dstaddr: u16,
+    pub rtstatus: u8,
+    pub options: u8,
 }
 
 impl SyncRequest for ExtRouteCheck {
@@ -1014,9 +1014,9 @@ impl SyncRequest for ExtRouteCheck {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ExtRemoveGroup {
-    endpoint: u8,
-    groupid: u16,
+pub struct ExtRemoveGroup {
+    pub endpoint: u8,
+    pub groupid: u16,
 }
 
 impl SyncRequest for ExtRemoveGroup {
@@ -1026,8 +1026,8 @@ impl SyncRequest for ExtRemoveGroup {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ExtRemoveAllGroup {
-    endpoint: u8,
+pub struct ExtRemoveAllGroup {
+    pub endpoint: u8,
 }
 
 impl SyncRequest for ExtRemoveAllGroup {
@@ -1037,13 +1037,13 @@ impl SyncRequest for ExtRemoveAllGroup {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ExtFindAllGroupsEndpoint {
-    endpoint: u8,
+pub struct ExtFindAllGroupsEndpoint {
+    pub endpoint: u8,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct ExtFindAllGroupsEndpointReply {
-    grouplist: Vec<u16>,
+pub struct ExtFindAllGroupsEndpointReply {
+    pub grouplist: Vec<u16>,
 }
 
 impl SyncReply for ExtFindAllGroupsEndpointReply {
@@ -1058,17 +1058,17 @@ impl SyncRequest for ExtFindAllGroupsEndpoint {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ExtFindGroup {
-    endpoint: u8,
-    groupid: u16,
+pub struct ExtFindGroup {
+    pub endpoint: u8,
+    pub groupid: u16,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct ExtFindGroupReply {
-    status: u8,
-    groupid: u16,
-    namelen: u8,
-    groupname: Vec<u8>,
+pub struct ExtFindGroupReply {
+    pub status: u8,
+    pub groupid: u16,
+    pub namelen: u8,
+    pub groupname: Vec<u8>,
 }
 
 impl SyncReply for ExtFindGroupReply {
@@ -1083,11 +1083,11 @@ impl SyncRequest for ExtFindGroup {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ExtAddGroup {
-    endpoint: u8,
-    groupid: u16,
-    namelen: u8,
-    groupname: Vec<u8>,
+pub struct ExtAddGroup {
+    pub endpoint: u8,
+    pub groupid: u16,
+    pub namelen: u8,
+    pub groupname: Vec<u8>,
 }
 
 impl SyncRequest for ExtAddGroup {
@@ -1097,7 +1097,7 @@ impl SyncRequest for ExtAddGroup {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ExtCountAllGroups {}
+pub struct ExtCountAllGroups {}
 
 impl SyncRequest for ExtCountAllGroups {
     const ID: u8 = 76;
@@ -1106,9 +1106,9 @@ impl SyncRequest for ExtCountAllGroups {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ExtRxIdle {
-    setflag: u8,
-    setvalue: u8,
+pub struct ExtRxIdle {
+    pub setflag: u8,
+    pub setvalue: u8,
 }
 
 impl SyncRequest for ExtRxIdle {
@@ -1118,10 +1118,10 @@ impl SyncRequest for ExtRxIdle {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ExtUpdateNwkKey {
-    dstaddr: u16,
-    keyseqnum: u8,
-    key: Vec<u8>,
+pub struct ExtUpdateNwkKey {
+    pub dstaddr: u16,
+    pub keyseqnum: u8,
+    pub key: Vec<u8>,
 }
 
 impl SyncRequest for ExtUpdateNwkKey {
@@ -1131,9 +1131,9 @@ impl SyncRequest for ExtUpdateNwkKey {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ExtSwitchNwkKey {
-    dstaddr: u16,
-    keyseqnum: u8,
+pub struct ExtSwitchNwkKey {
+    pub dstaddr: u16,
+    pub keyseqnum: u8,
 }
 
 impl SyncRequest for ExtSwitchNwkKey {
@@ -1143,17 +1143,17 @@ impl SyncRequest for ExtSwitchNwkKey {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ExtNwkInfo {}
+pub struct ExtNwkInfo {}
 
 #[derive(Debug, Clone, Deserialize)]
-struct ExtNwkInfoRsp {
-    shortaddr: u16,
-    devstate: u8,
-    panid: u16,
-    parentaddr: u16,
-    extendedpanid: IeeeAddr,
-    parentextaddr: IeeeAddr,
-    channel: u8,
+pub struct ExtNwkInfoRsp {
+    pub shortaddr: u16,
+    pub devstate: u8,
+    pub panid: u16,
+    pub parentaddr: u16,
+    pub extendedpanid: IeeeAddr,
+    pub parentextaddr: IeeeAddr,
+    pub channel: u8,
 }
 
 impl SyncReply for ExtNwkInfoRsp {
@@ -1168,10 +1168,10 @@ impl SyncRequest for ExtNwkInfo {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ExtSecApsRemoveReq {
-    parentaddr: u16,
-    nwkaddr: u16,
-    extaddr: IeeeAddr,
+pub struct ExtSecApsRemoveReq {
+    pub parentaddr: u16,
+    pub nwkaddr: u16,
+    pub extaddr: IeeeAddr,
 }
 
 impl SyncRequest for ExtSecApsRemoveReq {
@@ -1181,7 +1181,7 @@ impl SyncRequest for ExtSecApsRemoveReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ForceConcentratorChange {}
+pub struct ForceConcentratorChange {}
 
 impl SyncRequest for ForceConcentratorChange {
     const ID: u8 = 82;
@@ -1190,8 +1190,8 @@ impl SyncRequest for ForceConcentratorChange {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ExtSetParams {
-    usemulticast: u8,
+pub struct ExtSetParams {
+    pub usemulticast: u8,
 }
 
 impl SyncRequest for ExtSetParams {
@@ -1201,10 +1201,10 @@ impl SyncRequest for ExtSetParams {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct TcDeviceInd {
-    nwkaddr: u16,
-    extaddr: IeeeAddr,
-    parentaddr: u16,
+pub struct TcDeviceInd {
+    pub nwkaddr: u16,
+    pub extaddr: IeeeAddr,
+    pub parentaddr: u16,
 }
 
 impl AsyncRequest for TcDeviceInd {
@@ -1213,8 +1213,8 @@ impl AsyncRequest for TcDeviceInd {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct PermitJoinInd {
-    duration: u8,
+pub struct PermitJoinInd {
+    pub duration: u8,
 }
 
 impl AsyncRequest for PermitJoinInd {

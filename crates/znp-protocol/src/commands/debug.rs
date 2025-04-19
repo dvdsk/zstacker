@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{AsyncRequest, SubSystem, SyncReply, SyncRequest};
+use super::{basic_reply, AsyncRequest, SubSystem, SyncReply, SyncRequest};
 
 #[derive(Debug, Clone, Serialize)]
 pub struct SetThreshold {

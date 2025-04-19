@@ -47,7 +47,10 @@ fn start_as_coordinator_if_needed(
             DeviceState::StartingAsZBCoordinator => {
                 thread::sleep(Duration::from_millis(50))
             }
-            other => return Err(StartUpError::NotRunningAsCoordinator(other)),
+            other => {
+                // adaptor.send_command(commands::zdo::Start)
+                todo!()
+            },
         }
     }
     let version = adaptor
