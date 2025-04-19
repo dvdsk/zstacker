@@ -1,12 +1,11 @@
-#![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
 use super::{AsyncRequest, Status, SubSystem, SyncReply, SyncRequest};
 
 #[derive(Debug, Clone, Serialize)]
-struct SetThreshold {
-    componentid: u8,
-    threshold: u8,
+pub struct SetThreshold {
+    pub componentid: u8,
+    pub threshold: u8,
 }
 
 impl SyncRequest for SetThreshold {
@@ -16,16 +15,16 @@ impl SyncRequest for SetThreshold {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct SetThresholdReply(Status);
+pub struct SetThresholdReply(pub Status);
 
 impl SyncReply for SetThresholdReply {
     type Request = SetThreshold;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct Msg {
-    length: u8,
-    string: Vec<u8>,
+pub struct Msg {
+    pub length: u8,
+    pub string: Vec<u8>,
 }
 
 impl AsyncRequest for Msg {

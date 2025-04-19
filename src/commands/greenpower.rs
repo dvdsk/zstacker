@@ -1,17 +1,16 @@
-#![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
 use super::{IeeeAddr, Status, SubSystem, SyncReply, SyncRequest};
 
 #[derive(Debug, Clone, Serialize)]
-struct SecReq {
-    application_id: u8,
-    src_id: u32,
-    gdp_ieee_addr: IeeeAddr,
-    endpoint: u8,
-    gpdf_security_level: u8,
-    gpdf_security_frame_counter: u8,
-    dgp_stub_handle: u8,
+pub struct SecReq {
+    pub application_id: u8,
+    pub src_id: u32,
+    pub gdp_ieee_addr: IeeeAddr,
+    pub endpoint: u8,
+    pub gpdf_security_level: u8,
+    pub gpdf_security_frame_counter: u8,
+    pub dgp_stub_handle: u8,
 }
 
 impl SyncRequest for SecReq {
@@ -21,7 +20,7 @@ impl SyncRequest for SecReq {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct SecReqReply(Status);
+pub struct SecReqReply(pub Status);
 
 impl SyncReply for SecReqReply {
     type Request = SecReq;

@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use serde::{Deserialize, Serialize};
 use serde_repr::Serialize_repr;
 
@@ -16,9 +14,9 @@ pub enum InstallCodeFormat {
 
 #[derive(Debug, Clone)]
 pub struct AddInstallCode {
-    format: InstallCodeFormat,
-    addr: IeeeAddr,
-    code: Vec<u8>,
+    pub format: InstallCodeFormat,
+    pub addr: IeeeAddr,
+    pub code: Vec<u8>,
 }
 
 impl Serialize for AddInstallCode {
@@ -58,15 +56,15 @@ impl SyncRequest for AddInstallCode {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct AddInstallCodeReply(Status);
+pub struct AddInstallCodeReply(pub Status);
 
 impl SyncReply for AddInstallCodeReply {
     type Request = AddInstallCode;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct BdbStartCommissioning {
-    mode: u8,
+pub struct BdbStartCommissioning {
+    pub mode: u8,
 }
 
 impl SyncRequest for BdbStartCommissioning {
@@ -76,16 +74,16 @@ impl SyncRequest for BdbStartCommissioning {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct BdbStartCommissioningReply(Status);
+pub struct BdbStartCommissioningReply(pub Status);
 
 impl SyncReply for BdbStartCommissioningReply {
     type Request = BdbStartCommissioning;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct BdbSetChannel {
-    is_primary: u8,
-    channel: u32,
+pub struct BdbSetChannel {
+    pub is_primary: u8,
+    pub channel: u32,
 }
 
 impl SyncRequest for BdbSetChannel {
@@ -95,15 +93,15 @@ impl SyncRequest for BdbSetChannel {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct BdbSetChannelReply(Status);
+pub struct BdbSetChannelReply(pub Status);
 
 impl SyncReply for BdbSetChannelReply {
     type Request = BdbSetChannel;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct BdbSetTcRequireKeyExchange {
-    value: u8,
+pub struct BdbSetTcRequireKeyExchange {
+    pub value: u8,
 }
 impl SyncRequest for BdbSetTcRequireKeyExchange {
     const ID: u8 = 9;
@@ -112,15 +110,15 @@ impl SyncRequest for BdbSetTcRequireKeyExchange {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct BdbSetTcRequireKeyExchangeReply(Status);
+pub struct BdbSetTcRequireKeyExchangeReply(pub Status);
 
 impl SyncReply for BdbSetTcRequireKeyExchangeReply {
     type Request = BdbSetTcRequireKeyExchange;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct BdbComissioningNotification {
-    status: u8,
+pub struct BdbComissioningNotification {
+    pub status: u8,
 }
 
 impl AsyncRequest for BdbComissioningNotification {
@@ -129,8 +127,8 @@ impl AsyncRequest for BdbComissioningNotification {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct SetNwkFrameCounter {
-    value: u32,
+pub struct SetNwkFrameCounter {
+    pub value: u32,
 }
 
 impl SyncRequest for SetNwkFrameCounter {
@@ -140,7 +138,7 @@ impl SyncRequest for SetNwkFrameCounter {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct SetNwkFrameCounterReply(Status);
+pub struct SetNwkFrameCounterReply(pub Status);
 
 impl SyncReply for SetNwkFrameCounterReply {
     type Request = SetNwkFrameCounter;

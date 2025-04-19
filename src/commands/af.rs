@@ -1,16 +1,17 @@
-#![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
-use super::{AsyncRequest, SyncRequest, SyncReply, IeeeAddr, Status, SubSystem};
+use super::{
+    AsyncRequest, IeeeAddr, Status, SubSystem, SyncReply, SyncRequest,
+};
 
 #[derive(Debug, Clone, Serialize)]
-struct Register {
-    endpoint: u8,
-    appprofid: u16,
-    appdeviceid: u16,
-    appdevver: u8,
-    latencyreq: u8,
-    appinclusterlist: Vec<u16>,
+pub struct Register {
+    pub endpoint: u8,
+    pub appprofid: u16,
+    pub appdeviceid: u16,
+    pub appdevver: u8,
+    pub latencyreq: u8,
+    pub appinclusterlist: Vec<u16>,
 }
 
 impl SyncRequest for Register {
@@ -20,23 +21,23 @@ impl SyncRequest for Register {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct RegisterReply(Status);
+pub struct RegisterReply(pub Status);
 
 impl SyncReply for RegisterReply {
     type Request = Register;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct DataRequest {
-    dstaddr: u16,
-    destendpoint: u8,
-    srcendpoint: u8,
-    clusterid: u16,
-    transid: u8,
-    options: u8,
-    radius: u8,
-    len: u8,
-    data: Vec<u8>,
+pub struct DataRequest {
+    pub dstaddr: u16,
+    pub destendpoint: u8,
+    pub srcendpoint: u8,
+    pub clusterid: u16,
+    pub transid: u8,
+    pub options: u8,
+    pub radius: u8,
+    pub len: u8,
+    pub data: Vec<u8>,
 }
 
 impl SyncRequest for DataRequest {
@@ -46,25 +47,25 @@ impl SyncRequest for DataRequest {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct DataRequestReply(Status);
+pub struct DataRequestReply(pub Status);
 
 impl SyncReply for DataRequestReply {
     type Request = DataRequest;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct DataRequestExt {
-    dstaddrmode: u8,
-    dstaddr: IeeeAddr,
-    destendpoint: u8,
-    dstpanid: u16,
-    srcendpoint: u8,
-    clusterid: u16,
-    transid: u8,
-    options: u8,
-    radius: u8,
-    len: u16,
-    data: Vec<u8>,
+pub struct DataRequestExt {
+    pub dstaddrmode: u8,
+    pub dstaddr: IeeeAddr,
+    pub destendpoint: u8,
+    pub dstpanid: u16,
+    pub srcendpoint: u8,
+    pub clusterid: u16,
+    pub transid: u8,
+    pub options: u8,
+    pub radius: u8,
+    pub len: u16,
+    pub data: Vec<u8>,
 }
 
 impl SyncRequest for DataRequestExt {
@@ -74,24 +75,24 @@ impl SyncRequest for DataRequestExt {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct DataRequestExtReply(Status);
+pub struct DataRequestExtReply(pub Status);
 
 impl SyncReply for DataRequestExtReply {
     type Request = DataRequestExt;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct DataRequestSrcRtg {
-    dstaddr: u16,
-    destendpoint: u8,
-    srcendpoint: u8,
-    clusterid: u16,
-    transid: u8,
-    options: u8,
-    radius: u8,
-    relaylist: Vec<u16>,
-    len: u8,
-    data: Vec<u8>,
+pub struct DataRequestSrcRtg {
+    pub dstaddr: u16,
+    pub destendpoint: u8,
+    pub srcendpoint: u8,
+    pub clusterid: u16,
+    pub transid: u8,
+    pub options: u8,
+    pub radius: u8,
+    pub relaylist: Vec<u16>,
+    pub len: u8,
+    pub data: Vec<u8>,
 }
 
 impl SyncRequest for DataRequestSrcRtg {
@@ -101,15 +102,15 @@ impl SyncRequest for DataRequestSrcRtg {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct DataRequestSrcRtgReply(Status);
+pub struct DataRequestSrcRtgReply(pub Status);
 
 impl SyncReply for DataRequestSrcRtgReply {
     type Request = DataRequestSrcRtg;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct Delete {
-    endpoint: u8,
+pub struct Delete {
+    pub endpoint: u8,
 }
 
 impl SyncRequest for Delete {
@@ -119,16 +120,16 @@ impl SyncRequest for Delete {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct DeleteReply(Status);
+pub struct DeleteReply(pub Status);
 
 impl SyncReply for DeleteReply {
     type Request = Delete;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct InterPanCtl {
-    cmd: u8,
-    data: Vec<u8>,
+pub struct InterPanCtl {
+    pub cmd: u8,
+    pub data: Vec<u8>,
 }
 
 impl SyncRequest for InterPanCtl {
@@ -138,17 +139,17 @@ impl SyncRequest for InterPanCtl {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct InterPanCtlReply(Status);
+pub struct InterPanCtlReply(pub Status);
 
 impl SyncReply for InterPanCtlReply {
     type Request = InterPanCtl;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct DataStore {
-    index: u16,
-    length: u8,
-    data: Vec<u8>,
+pub struct DataStore {
+    pub index: u16,
+    pub length: u8,
+    pub data: Vec<u8>,
 }
 
 impl SyncRequest for DataStore {
@@ -158,24 +159,24 @@ impl SyncRequest for DataStore {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct DataStoreReply(Status);
+pub struct DataStoreReply(pub Status);
 
 impl SyncReply for DataStoreReply {
     type Request = DataStore;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct DataRetrieve {
-    timestamp: u32,
-    index: u16,
-    length: u8,
+pub struct DataRetrieve {
+    pub timestamp: u32,
+    pub index: u16,
+    pub length: u8,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct DataRetrieveReply {
-    status: u8,
-    length: u8,
-    data: Vec<u8>,
+pub struct DataRetrieveReply {
+    pub status: u8,
+    pub length: u8,
+    pub data: Vec<u8>,
 }
 
 impl SyncReply for DataRetrieveReply {
@@ -189,10 +190,10 @@ impl SyncRequest for DataRetrieve {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct ApsfConfigSet {
-    endpoint: u8,
-    framedelay: u8,
-    windowsize: u8,
+pub struct ApsfConfigSet {
+    pub endpoint: u8,
+    pub framedelay: u8,
+    pub windowsize: u8,
 }
 
 impl SyncRequest for ApsfConfigSet {
@@ -202,22 +203,22 @@ impl SyncRequest for ApsfConfigSet {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct ApsfConfigSetReply(Status);
+pub struct ApsfConfigSetReply(pub Status);
 
 impl SyncReply for ApsfConfigSetReply {
     type Request = ApsfConfigSet;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct ApsfConfigGet {
-    endpoint: u8,
+pub struct ApsfConfigGet {
+    pub endpoint: u8,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct ApsfConfigGetReply {
-    framedelay: u8,
-    windowsize: u8,
-    nomean: u8,
+pub struct ApsfConfigGetReply {
+    pub framedelay: u8,
+    pub windowsize: u8,
+    pub nomean: u8,
 }
 
 impl SyncReply for ApsfConfigGetReply {
@@ -231,10 +232,10 @@ impl SyncRequest for ApsfConfigGet {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct DataConfirm {
-    status: u8,
-    endpoint: u8,
-    transid: u8,
+pub struct DataConfirm {
+    pub status: u8,
+    pub endpoint: u8,
+    pub transid: u8,
 }
 
 impl AsyncRequest for DataConfirm {
@@ -243,19 +244,19 @@ impl AsyncRequest for DataConfirm {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct IncomingMsg {
-    groupid: u16,
-    clusterid: u16,
-    srcaddr: u16,
-    srcendpoint: u8,
-    dstendpoint: u8,
-    wasbroadcast: u8,
-    linkquality: u8,
-    securityuse: u8,
-    timestamp: u32,
-    transseqnumber: u8,
-    len: u8,
-    data: Vec<u8>,
+pub struct IncomingMsg {
+    pub groupid: u16,
+    pub clusterid: u16,
+    pub srcaddr: u16,
+    pub srcendpoint: u8,
+    pub dstendpoint: u8,
+    pub wasbroadcast: u8,
+    pub linkquality: u8,
+    pub securityuse: u8,
+    pub timestamp: u32,
+    pub transseqnumber: u8,
+    pub len: u8,
+    pub data: Vec<u8>,
 }
 
 impl AsyncRequest for IncomingMsg {
@@ -264,21 +265,21 @@ impl AsyncRequest for IncomingMsg {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct IncomingMsgExt {
-    groupid: u16,
-    clusterid: u16,
-    srcaddrmode: u8,
-    srcaddr: IeeeAddr,
-    srcendpoint: u8,
-    srcpanid: u16,
-    dstendpoint: u8,
-    wasbroadcast: u8,
-    linkquality: u8,
-    securityuse: u8,
-    timestamp: u32,
-    transseqnumber: u8,
-    len: u16,
-    data: Vec<u8>,
+pub struct IncomingMsgExt {
+    pub groupid: u16,
+    pub clusterid: u16,
+    pub srcaddrmode: u8,
+    pub srcaddr: IeeeAddr,
+    pub srcendpoint: u8,
+    pub srcpanid: u16,
+    pub dstendpoint: u8,
+    pub wasbroadcast: u8,
+    pub linkquality: u8,
+    pub securityuse: u8,
+    pub timestamp: u32,
+    pub transseqnumber: u8,
+    pub len: u16,
+    pub data: Vec<u8>,
 }
 
 impl AsyncRequest for IncomingMsgExt {
@@ -287,12 +288,12 @@ impl AsyncRequest for IncomingMsgExt {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct ReflectError {
-    status: u8,
-    endpoint: u8,
-    transid: u8,
-    dstaddrmode: u8,
-    dstaddr: u16,
+pub struct ReflectError {
+    pub status: u8,
+    pub endpoint: u8,
+    pub transid: u8,
+    pub dstaddrmode: u8,
+    pub dstaddr: u16,
 }
 
 impl AsyncRequest for ReflectError {

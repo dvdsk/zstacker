@@ -1,23 +1,27 @@
 use std::iter;
 
-use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::data_format;
+use crate::framing::CommandInfo;
 
 pub const START_OF_FRAME: u8 = 0xFE;
 
-pub(crate) mod af;
-pub(crate) mod app;
-pub(crate) mod appconfig;
-pub(crate) mod debug;
-pub(crate) mod greenpower;
-pub(crate) mod mac;
-pub(crate) mod sapi;
-pub(crate) mod sys;
-pub(crate) mod util;
-pub(crate) mod zdo;
+mod command_types;
+pub use command_types::{AsyncReply, AsyncRequest, SyncReply, SyncRequest};
+
+pub mod af;
+pub mod app;
+pub mod appconfig;
+pub mod debug;
+pub mod greenpower;
+pub mod mac;
+pub mod sapi;
+pub mod sys;
+pub mod util;
+// most of these are wrong
+// pub(crate) mod zdo;
 
 #[derive(Debug, thiserror::Error)]
 #[error("Could not send command: {command}")]
@@ -25,74 +29,6 @@ pub struct CommandError {
     command: &'static str,
     #[source]
     cause: data_format::Error,
-}
-
-pub trait SyncRequest: Serialize {
-    const ID: u8;
-    const SUBSYSTEM: SubSystem;
-    type Reply: SyncReply;
-
-    fn data_to_vec(&self) -> Result<Vec<u8>, data_format::Error>
-    where
-        Self: Sized,
-    {
-        data_format::to_vec(self)
-    }
-
-    fn to_frame(&self) -> Result<Vec<u8>, CommandError>
-    where
-        Self: Sized,
-    {
-        let serialized = self.data_to_vec().map_err(|error| CommandError {
-            command: std::any::type_name::<Self>(),
-            cause: error,
-        })?;
-        let frame = [
-            serialized.len() as u8,
-            Self::SUBSYSTEM as u8 | CommandType::SREQ as u8,
-            Self::ID,
-        ]
-        .into_iter()
-        .chain(serialized);
-
-        let checksum = frame
-            .clone()
-            .reduce(|checksum, byte| checksum ^ byte)
-            .expect("never empty");
-
-        Ok(iter::once(START_OF_FRAME)
-            .chain(frame)
-            .chain([checksum])
-            .collect())
-    }
-}
-
-pub trait AsyncRequest: Serialize {
-    const ID: u8;
-    const SUBSYSTEM: SubSystem;
-
-    fn data_to_vec(&self) -> Result<Vec<u8>, data_format::Error>
-    where
-        Self: Sized,
-    {
-        data_format::to_vec(self)
-    }
-
-    fn to_frame(&self) -> Result<Vec<u8>, CommandError>
-    where
-        Self: Sized,
-    {
-        todo!();
-    }
-}
-
-pub trait AsyncReply: DeserializeOwned {
-    const ID: u8;
-    const SUBSYSTEM: SubSystem;
-
-    fn from_reader(_: &mut impl std::io::Read) -> Result<Self, ReplyError> {
-        todo!()
-    }
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -121,6 +57,16 @@ pub enum ReplyErrorCause {
     ReadingChecksum(#[source] std::io::Error),
     #[error("Checksum is not correct")]
     CheckSumMismatch,
+    #[error("Expected a synchronous reply, got: {0:?}")]
+    ExpectedSynchrousReply(CommandType),
+    #[error(
+        "Expected a reply for subsystem: {expected:?} however got one for {got:?}"
+    )]
+    WrongSubSystem { expected: SubSystem, got: SubSystem },
+    #[error(
+        "Expected a reply for command: {expected} however got one for {got}"
+    )]
+    WrongId { expected: u8, got: u8 },
 }
 
 fn from_reader_inner<R: SyncReply>(
@@ -135,18 +81,21 @@ fn from_reader_inner<R: SyncReply>(
     // TODO construct CMD0 and CMD1 from org
     // then probably do away with this again :)
     // and absorb it in Command
-    let [start_of_frame, length, cmd0, cmd1] = reply_header;
-    if start_of_frame != START_OF_FRAME {
+    let [START_OF_FRAME, length, cmd0, cmd1] = reply_header else {
         return Err(E::ExpectedStartOfFrame);
-    } else if cmd0 != R::CMD0 {
-        return Err(E::WrongCmd0Field {
-            expected: R::CMD1,
-            got: cmd0,
+    };
+    let info = CommandInfo::deserialize([cmd0, cmd1]).unwrap();
+    if info.ty != CommandType::SRSP {
+        return Err(E::ExpectedSynchrousReply(info.ty));
+    } else if info.sub_system != R::Request::SUBSYSTEM {
+        return Err(E::WrongSubSystem {
+            expected: R::Request::SUBSYSTEM,
+            got: info.sub_system,
         });
-    } else if cmd1 != R::CMD1 {
-        return Err(E::WrongCmd1Field {
-            expected: R::CMD1,
-            got: cmd1,
+    } else if info.id != R::Request::ID {
+        return Err(E::WrongId {
+            expected: R::Request::ID,
+            got: info.id,
         });
     }
 
@@ -172,8 +121,9 @@ fn split_off_and_verify_checksum<R: SyncReply>(
 ) -> Result<(), ReplyErrorCause> {
     let expected_checksum =
         buf.pop().expect("read_exact only Ok if the buffer is full");
-    let frame = [length, R::CMD0, R::CMD1]
-        .into_iter()
+    let expected_meta = R::META.serialize();
+    let frame = iter::once(length)
+        .chain(expected_meta)
         .chain(buf.iter().copied());
     let calculated_checksum = frame
         .reduce(|checksum, byte| checksum ^ byte)
@@ -182,19 +132,6 @@ fn split_off_and_verify_checksum<R: SyncReply>(
         return Err(ReplyErrorCause::CheckSumMismatch);
     }
     Ok(())
-}
-
-pub trait SyncReply: DeserializeOwned {
-    type Request: SyncRequest;
-
-    fn from_reader(
-        reader: &mut impl std::io::Read,
-    ) -> Result<Self, ReplyError> {
-        from_reader_inner(reader).map_err(|cause| ReplyError {
-            reply: std::any::type_name::<Self>(),
-            cause,
-        })
-    }
 }
 
 /// The status parameter that is returned from the `ZNP` device
@@ -248,7 +185,7 @@ pub enum Status {
     ZMacNoACK = 0xe9,
 }
 
-#[derive(Clone, Copy, Debug, strum::FromRepr)]
+#[derive(Clone, Copy, Debug, strum::FromRepr, PartialEq, Eq)]
 #[repr(u8)]
 pub enum CommandType {
     /// A POLL command is used to retrieve queued data. Third command is only
@@ -269,7 +206,7 @@ pub enum CommandType {
     SRSP = 0x60,
 }
 
-#[derive(Clone, Copy, Debug, strum::FromRepr)]
+#[derive(Clone, Copy, Debug, strum::FromRepr, PartialEq, Eq)]
 #[repr(u8)]
 pub enum SubSystem {
     Reserved = 0x00,
@@ -315,13 +252,13 @@ pub enum DeviceType {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct IeeeAddr(u64);
+pub struct IeeeAddr(u64);
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct ShortAddr(u16);
+pub struct ShortAddr(u16);
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct Endpoint(u8);
+pub struct Endpoint(u8);
 
 // /// See: Z-Stack Monitor and Test API section 3.12.2.16 revision 1.14
 // /// Note this is not serialized like this in the wire format
@@ -344,7 +281,7 @@ struct Endpoint(u8);
 
 #[derive(Debug, Clone, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
-enum RouterStatus {
+pub enum RouterStatus {
     Active = 0,
     DiscoveryUnderway = 1,
     DiscoveryFailed = 2,
@@ -353,19 +290,19 @@ enum RouterStatus {
 
 /// See: Z-Stack Monitor and Test API section 3.12.2.17 revision 1.14
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct RoutingTable {
-    destination_address: ShortAddr,
-    status: RouterStatus,
-    next_hop: ShortAddr,
+pub struct RoutingTable {
+    pub destination_address: ShortAddr,
+    pub status: RouterStatus,
+    pub next_hop: ShortAddr,
 }
 
 /// See Z-Stack Monitor and Test API section 3.12.2.18 revision 1.14
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct BindTable {
-    src: IeeeAddr,
-    src_endpoint: Endpoint,
-    cluster_id: u8,
-    dst_addr_mode: u8,
-    dst: IeeeAddr,
-    dst_endpoint: Endpoint,
+pub struct BindTable {
+    pub src: IeeeAddr,
+    pub src_endpoint: Endpoint,
+    pub cluster_id: u8,
+    pub dst_addr_mode: u8,
+    pub dst: IeeeAddr,
+    pub dst_endpoint: Endpoint,
 }

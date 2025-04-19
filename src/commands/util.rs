@@ -17,18 +17,16 @@ impl SyncRequest for GetDeviceInfo {
 #[allow(dead_code)]
 #[derive(Debug, Clone, Deserialize)]
 pub struct DeviceInfo {
-    status: u8,
-    ieee_addr: IeeeAddr,
-    short_addr: ShortAddr,
+    pub status: u8,
+    pub ieee_addr: IeeeAddr,
+    pub short_addr: ShortAddr,
     #[serde(deserialize_with = "device_type_from_u8")]
-    can_operate_as: Vec<DeviceType>, // bits 1-0
-    device_state: DeviceState,
-    assoc_devices: Vec<u16>,
+    pub can_operate_as: Vec<DeviceType>, // bits 1-0
+    pub device_state: DeviceState,
+    pub assoc_devices: Vec<u16>,
 }
 
 impl SyncReply for DeviceInfo {
-    const CMD0: u8 = 0x67;
-    const CMD1: u8 = 0x00;
     type Request = GetDeviceInfo;
 }
 

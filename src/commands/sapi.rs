@@ -1,10 +1,11 @@
-#![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
-use super::{AsyncRequest, SyncRequest, SyncReply, IeeeAddr, Status, SubSystem};
+use super::{
+    AsyncRequest, IeeeAddr, Status, SubSystem, SyncReply, SyncRequest,
+};
 
 #[derive(Debug, Clone, Serialize)]
-struct SystemReset {}
+pub struct SystemReset {}
 
 impl AsyncRequest for SystemReset {
     const ID: u8 = 9;
@@ -12,66 +13,94 @@ impl AsyncRequest for SystemReset {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct StartRequest {}
+pub struct StartRequest {}
 
 impl SyncRequest for StartRequest {
     const ID: u8 = 0;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
-    type Reply = ();
+    type Reply = StartRequestReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct StartRequestReply;
+impl SyncReply for StartRequestReply {
+    type Request = StartRequest;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct BindDevice {
-    action: u8,
-    commandid: u16,
-    destination: IeeeAddr,
+pub struct BindDevice {
+    pub action: u8,
+    pub commandid: u16,
+    pub destination: IeeeAddr,
 }
 
 impl SyncRequest for BindDevice {
     const ID: u8 = 1;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
-    type Reply = ();
+    type Reply = BindDeviceReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct BindDeviceReply;
+
+impl SyncReply for BindDeviceReply {
+    type Request = BindDevice;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct AllowBind {
-    timeout: u8,
+pub struct AllowBind {
+    pub timeout: u8,
 }
 
 impl SyncRequest for AllowBind {
     const ID: u8 = 2;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
-    type Reply = ();
+    type Reply = AllowBindReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct AllowBindReply;
+
+impl SyncReply for AllowBindReply {
+    type Request = AllowBind;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct SendDataRequest {
-    destination: u16,
-    commandid: u16,
-    handle: u8,
-    txoptions: u8,
-    radius: u8,
-    payloadlen: u8,
-    payloadvalue: Vec<u8>,
+pub struct SendDataRequest {
+    pub destination: u16,
+    pub commandid: u16,
+    pub handle: u8,
+    pub txoptions: u8,
+    pub radius: u8,
+    pub payloadlen: u8,
+    pub payloadvalue: Vec<u8>,
 }
 
 impl SyncRequest for SendDataRequest {
     const ID: u8 = 3;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
-    type Reply = ();
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct ReadConfiguration {
-    configid: u8,
+    type Reply = SendDataRequestReply;
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct ReadConfigurationReply {
-    status: u8,
-    configid: u8,
-    len: u8,
-    value: Vec<u8>,
+pub struct SendDataRequestReply;
+
+impl SyncReply for SendDataRequestReply {
+    type Request = SendDataRequest;
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ReadConfiguration {
+    pub configid: u8,
+}
+
+#[allow(dead_code)]
+#[derive(Debug, Clone, Deserialize)]
+pub struct ReadConfigurationReply {
+    pub status: u8,
+    pub configid: u8,
+    pub len: u8,
+    pub value: Vec<u8>,
 }
 
 impl SyncReply for ReadConfigurationReply {
@@ -85,27 +114,34 @@ impl SyncRequest for ReadConfiguration {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct WriteConfiguration {
-    configid: u8,
-    len: u8,
-    value: Vec<u8>,
+pub struct WriteConfiguration {
+    pub configid: u8,
+    pub len: u8,
+    pub value: Vec<u8>,
 }
 
 impl SyncRequest for WriteConfiguration {
     const ID: u8 = 5;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
-    type Reply = Status;
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct GetDeviceInfo {
-    param: u8,
+    type Reply = WriteConfigurationReply;
 }
 
 #[derive(Debug, Clone, Deserialize)]
-struct GetDeviceInfoReply {
-    param: u8,
-    value: [u8; 8],
+pub struct WriteConfigurationReply(pub Status);
+
+impl SyncReply for WriteConfigurationReply {
+    type Request = WriteConfiguration;
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct GetDeviceInfo {
+    pub param: u8,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct GetDeviceInfoReply {
+    pub param: u8,
+    pub value: [u8; 8],
 }
 
 impl SyncReply for GetDeviceInfoReply {
@@ -119,31 +155,45 @@ impl SyncRequest for GetDeviceInfo {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct FindDeviceRequest {
-    search_key: IeeeAddr,
+pub struct FindDeviceRequest {
+    pub search_key: IeeeAddr,
 }
 
 impl SyncRequest for FindDeviceRequest {
     const ID: u8 = 7;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
-    type Reply = ();
+    type Reply = FindDeviceRequestReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct FindDeviceRequestReply;
+
+impl SyncReply for FindDeviceRequestReply {
+    type Request = FindDeviceRequest;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct PermitJoiningRequest {
-    destination: u16,
-    timeout: u8,
+pub struct PermitJoiningRequest {
+    pub destination: u16,
+    pub timeout: u8,
 }
 
 impl SyncRequest for PermitJoiningRequest {
     const ID: u8 = 8;
     const SUBSYSTEM: SubSystem = SubSystem::Sapi;
-    type Reply = Status;
+    type Reply = PermitJoiningRequestReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct PermitJoiningRequestReply(pub Status);
+
+impl SyncReply for PermitJoiningRequestReply {
+    type Request = PermitJoiningRequest;
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct StartConfirm {
-    status: u8,
+pub struct StartConfirm {
+    pub status: u8,
 }
 
 impl AsyncRequest for StartConfirm {
@@ -152,9 +202,9 @@ impl AsyncRequest for StartConfirm {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct BindConfirm {
-    commandid: u16,
-    status: u8,
+pub struct BindConfirm {
+    pub commandid: u16,
+    pub status: u8,
 }
 
 impl AsyncRequest for BindConfirm {
@@ -163,8 +213,8 @@ impl AsyncRequest for BindConfirm {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct AllowBindConfirm {
-    source: u16,
+pub struct AllowBindConfirm {
+    pub source: u16,
 }
 
 impl AsyncRequest for AllowBindConfirm {
@@ -173,9 +223,9 @@ impl AsyncRequest for AllowBindConfirm {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct SendDataConfirm {
-    handle: u8,
-    status: u8,
+pub struct SendDataConfirm {
+    pub handle: u8,
+    pub status: u8,
 }
 
 impl AsyncRequest for SendDataConfirm {
@@ -184,10 +234,10 @@ impl AsyncRequest for SendDataConfirm {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct FindDeviceConfirm {
-    searchtype: u8,
-    searchkey: u16,
-    result: IeeeAddr,
+pub struct FindDeviceConfirm {
+    pub searchtype: u8,
+    pub searchkey: u16,
+    pub result: IeeeAddr,
 }
 
 impl AsyncRequest for FindDeviceConfirm {
@@ -196,11 +246,11 @@ impl AsyncRequest for FindDeviceConfirm {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct ReceiveDataIndication {
-    source: u16,
-    command: u16,
-    len: u16,
-    data: Vec<u8>,
+pub struct ReceiveDataIndication {
+    pub source: u16,
+    pub command: u16,
+    pub len: u16,
+    pub data: Vec<u8>,
 }
 
 impl AsyncRequest for ReceiveDataIndication {

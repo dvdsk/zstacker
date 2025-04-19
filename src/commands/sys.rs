@@ -1,11 +1,11 @@
-#![allow(dead_code)]
+use super::{
+    AsyncRequest, IeeeAddr, Status, SubSystem, SyncReply, SyncRequest,
+};
 use serde::{Deserialize, Serialize};
 
-use super::{AsyncRequest, SyncRequest, SyncReply, IeeeAddr, Status, SubSystem};
-
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct ResetReq {
-    ty: u8,
+pub struct ResetReq {
+    pub ty: u8,
 }
 
 impl AsyncRequest for ResetReq {
@@ -14,17 +14,16 @@ impl AsyncRequest for ResetReq {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct Ping;
+pub struct Ping;
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct PingReply {
+pub struct PingReply {
     #[serde(deserialize_with = "capabilities_from_u16")]
     pub(crate) capabilities: Vec<Capability>,
 }
 
 impl SyncReply for PingReply {
-    const CMD0: u8 = 0x61; // placeholder
-    const CMD1: u8 = 0x01; // placeholder
+    type Request = Ping;
 }
 
 impl SyncRequest for Ping {
@@ -69,21 +68,20 @@ where
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct Version;
+pub struct Version;
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct VersionReply {
-    transportrev: u8,
-    product: u8,
-    majorrel: u8,
-    minorrel: u8,
-    maintrel: u8,
-    revision: u32,
+pub struct VersionReply {
+    pub transportrev: u8,
+    pub product: u8,
+    pub majorrel: u8,
+    pub minorrel: u8,
+    pub maintrel: u8,
+    pub revision: u32,
 }
 
 impl SyncReply for VersionReply {
-    const CMD0: u8 = 0x21;
-    const CMD1: u8 = 0x02;
+    type Request = Version;
 }
 
 impl SyncRequest for Version {
@@ -93,27 +91,32 @@ impl SyncRequest for Version {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct SetExtAddr {
-    extaddress: IeeeAddr,
+pub struct SetExtAddr {
+    pub extaddress: IeeeAddr,
 }
 
 impl SyncRequest for SetExtAddr {
     const ID: u8 = 3;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
+    type Reply = SetExtAddrReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct SetExtAddrReply(pub Status);
+impl SyncReply for SetExtAddrReply {
+    type Request = SetExtAddr;
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct GetExtAddr;
+pub struct GetExtAddr;
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct GetExtAddrReply {
-    extaddress: IeeeAddr,
+pub struct GetExtAddrReply {
+    pub extaddress: IeeeAddr,
 }
 
 impl SyncReply for GetExtAddrReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = GetExtAddr;
 }
 
 impl SyncRequest for GetExtAddr {
@@ -123,21 +126,20 @@ impl SyncRequest for GetExtAddr {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct RamRead {
-    address: u16,
-    len: u8,
+pub struct RamRead {
+    pub address: u16,
+    pub len: u8,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct RamReadReply {
-    status: u8,
-    len: u8,
-    value: Vec<u8>,
+pub struct RamReadReply {
+    pub status: u8,
+    pub len: u8,
+    pub value: Vec<u8>,
 }
 
 impl SyncReply for RamReadReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = RamRead;
 }
 
 impl SyncRequest for RamRead {
@@ -147,48 +149,59 @@ impl SyncRequest for RamRead {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct RamWrite {
-    address: u16,
-    len: u8,
-    value: Vec<u8>,
+pub struct RamWrite {
+    pub address: u16,
+    pub len: u8,
+    pub value: Vec<u8>,
 }
 
 impl SyncRequest for RamWrite {
     const ID: u8 = 6;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
+    type Reply = RamWriteReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct RamWriteReply(pub Status);
+impl SyncReply for RamWriteReply {
+    type Request = RamWrite;
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct OsalNvItemInit {
-    id: u16,
-    len: u16,
-    initlen: u8,
-    initvalue: Vec<u8>,
+pub struct OsalNvItemInit {
+    pub id: u16,
+    pub len: u16,
+    pub initlen: u8,
+    pub initvalue: Vec<u8>,
 }
 
 impl SyncRequest for OsalNvItemInit {
     const ID: u8 = 7;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
-}
-
-#[derive(Debug, Clone, Serialize)]
-pub(crate) struct OsalNvRead {
-    id: u16,
-    offset: u8,
+    type Reply = OsalNvItemInitReply;
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct OsalNvReadReply {
-    status: u8,
-    len: u8,
-    value: Vec<u8>,
+pub struct OsalNvItemInitReply(pub Status);
+impl SyncReply for OsalNvItemInitReply {
+    type Request = OsalNvItemInit;
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct OsalNvRead {
+    pub id: u16,
+    pub offset: u8,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct OsalNvReadReply {
+    pub status: u8,
+    pub len: u8,
+    pub value: Vec<u8>,
 }
 
 impl SyncReply for OsalNvReadReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = OsalNvRead;
 }
 
 impl SyncRequest for OsalNvRead {
@@ -198,53 +211,70 @@ impl SyncRequest for OsalNvRead {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct OsalNvWrite {
-    id: u16,
-    offset: u8,
-    len: u8,
-    value: Vec<u8>,
+pub struct OsalNvWrite {
+    pub id: u16,
+    pub offset: u8,
+    pub len: u8,
+    pub value: Vec<u8>,
 }
 
 impl SyncRequest for OsalNvWrite {
     const ID: u8 = 9;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
+    type Reply = OsalNvWriteReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct OsalNvWriteReply(pub Status);
+impl SyncReply for OsalNvWriteReply {
+    type Request = OsalNvWrite;
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct OsalStartTimer {
-    id: u8,
-    timeout: u16,
+pub struct OsalStartTimer {
+    pub id: u8,
+    pub timeout: u16,
 }
 
 impl SyncRequest for OsalStartTimer {
     const ID: u8 = 10;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
+    type Reply = OsalStartTimerReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct OsalStartTimerReply(pub Status);
+impl SyncReply for OsalStartTimerReply {
+    type Request = OsalStartTimer;
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct OsalStopTimer {
-    id: u8,
+pub struct OsalStopTimer {
+    pub id: u8,
 }
 
 impl SyncRequest for OsalStopTimer {
     const ID: u8 = 11;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
+    type Reply = OsalStopTimerReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct OsalStopTimerReply(pub Status);
+impl SyncReply for OsalStopTimerReply {
+    type Request = OsalStopTimer;
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct Random;
+pub struct Random;
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct RandomReply {
-    value: u16,
+pub struct RandomReply {
+    pub value: u16,
 }
 
 impl SyncReply for RandomReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = Random;
 }
 
 impl SyncRequest for Random {
@@ -254,19 +284,18 @@ impl SyncRequest for Random {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct AdcRead {
-    channel: u8,
-    resolution: u8,
+pub struct AdcRead {
+    pub channel: u8,
+    pub resolution: u8,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct AdcReadReply {
-    value: u16,
+pub struct AdcReadReply {
+    pub value: u16,
 }
 
 impl SyncReply for AdcReadReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = AdcRead;
 }
 
 impl SyncRequest for AdcRead {
@@ -276,19 +305,18 @@ impl SyncRequest for AdcRead {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct Gpio {
-    operation: u8,
-    value: u8,
+pub struct Gpio {
+    pub operation: u8,
+    pub value: u8,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct GpioReply {
-    value: u8,
+pub struct GpioReply {
+    pub value: u8,
 }
 
 impl SyncReply for GpioReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = Gpio;
 }
 
 impl SyncRequest for Gpio {
@@ -298,19 +326,18 @@ impl SyncRequest for Gpio {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct StackTune {
-    operation: u8,
-    value: i8,
+pub struct StackTune {
+    pub operation: u8,
+    pub value: i8,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct StackTuneReply {
-    value: u8,
+pub struct StackTuneReply {
+    pub value: u8,
 }
 
 impl SyncReply for StackTuneReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = StackTune;
 }
 
 impl SyncRequest for StackTune {
@@ -320,39 +347,44 @@ impl SyncRequest for StackTune {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct SetTime {
-    utc: u32,
-    hour: u8,
-    minute: u8,
-    second: u8,
-    month: u8,
-    day: u8,
-    year: u16,
+pub struct SetTime {
+    pub utc: u32,
+    pub hour: u8,
+    pub minute: u8,
+    pub second: u8,
+    pub month: u8,
+    pub day: u8,
+    pub year: u16,
 }
 
 impl SyncRequest for SetTime {
     const ID: u8 = 16;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
+    type Reply = SetTimeReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct SetTimeReply(pub Status);
+impl SyncReply for SetTimeReply {
+    type Request = SetTime;
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct GetTime;
+pub struct GetTime;
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct GetTimeReply {
-    utc: u32,
-    hour: u8,
-    minute: u8,
-    second: u8,
-    month: u8,
-    day: u8,
-    year: u16,
+pub struct GetTimeReply {
+    pub utc: u32,
+    pub hour: u8,
+    pub minute: u8,
+    pub second: u8,
+    pub month: u8,
+    pub day: u8,
+    pub year: u16,
 }
 
 impl SyncReply for GetTimeReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = GetTime;
 }
 
 impl SyncRequest for GetTime {
@@ -362,30 +394,35 @@ impl SyncRequest for GetTime {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct OsalNvDelete {
-    id: u16,
-    len: u16,
+pub struct OsalNvDelete {
+    pub id: u16,
+    pub len: u16,
 }
 
 impl SyncRequest for OsalNvDelete {
     const ID: u8 = 18;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
-}
-
-#[derive(Debug, Clone, Serialize)]
-pub(crate) struct OsalNvLength {
-    id: u16,
+    type Reply = OsalNvDeleteReply;
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct OsalNvLengthReply {
-    length: u16,
+pub struct OsalNvDeleteReply(pub Status);
+impl SyncReply for OsalNvDeleteReply {
+    type Request = OsalNvDelete;
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct OsalNvLength {
+    pub id: u16,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct OsalNvLengthReply {
+    pub length: u16,
 }
 
 impl SyncReply for OsalNvLengthReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = OsalNvLength;
 }
 
 impl SyncRequest for OsalNvLength {
@@ -395,18 +432,17 @@ impl SyncRequest for OsalNvLength {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct SetTxPower {
-    level: u8,
+pub struct SetTxPower {
+    pub level: u8,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct SetTxPowerReply {
-    txpower: u8,
+pub struct SetTxPowerReply {
+    pub txpower: u8,
 }
 
 impl SyncReply for SetTxPowerReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = SetTxPower;
 }
 
 impl SyncRequest for SetTxPower {
@@ -416,51 +452,68 @@ impl SyncRequest for SetTxPower {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct JammerParameters {
-    jmrcntievents: u16,
-    jmrhinoiselvl: u8,
-    jmrdetectperiod: u32,
+pub struct JammerParameters {
+    pub jmrcntievents: u16,
+    pub jmrhinoiselvl: u8,
+    pub jmrdetectperiod: u32,
 }
 
 impl SyncRequest for JammerParameters {
     const ID: u8 = 21;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
+    type Reply = JammerParametersReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct JammerParametersReply(pub Status);
+impl SyncReply for JammerParametersReply {
+    type Request = JammerParameters;
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct SnifferParameters {
-    param: u8,
+pub struct SnifferParameters {
+    pub param: u8,
 }
 
 impl SyncRequest for SnifferParameters {
     const ID: u8 = 22;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
+    type Reply = SnifferParametersReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct SnifferParametersReply(pub Status);
+impl SyncReply for SnifferParametersReply {
+    type Request = SnifferParameters;
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct ZdiagsInitStats;
+pub struct ZdiagsInitStats;
 
 impl SyncRequest for ZdiagsInitStats {
     const ID: u8 = 23;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
-}
-
-#[derive(Debug, Clone, Serialize)]
-pub(crate) struct ZdiagsClearStats {
-    clearnv: u8,
+    type Reply = ZdiagsInitStatsReply;
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct ZdiagsClearStatsReply {
-    sysclock: u32,
+pub struct ZdiagsInitStatsReply(pub Status);
+impl SyncReply for ZdiagsInitStatsReply {
+    type Request = ZdiagsInitStats;
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ZdiagsClearStats {
+    pub clearnv: u8,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct ZdiagsClearStatsReply {
+    pub sysclock: u32,
 }
 
 impl SyncReply for ZdiagsClearStatsReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = ZdiagsClearStats;
 }
 
 impl SyncRequest for ZdiagsClearStats {
@@ -470,18 +523,17 @@ impl SyncRequest for ZdiagsClearStats {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct ZdiagsGetStats {
-    attributeid: u16,
+pub struct ZdiagsGetStats {
+    pub attributeid: u16,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct ZdiagsGetStatsReply {
-    attributevalue: u32,
+pub struct ZdiagsGetStatsReply {
+    pub attributevalue: u32,
 }
 
 impl SyncReply for ZdiagsGetStatsReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = ZdiagsGetStats;
 }
 
 impl SyncRequest for ZdiagsGetStats {
@@ -491,25 +543,30 @@ impl SyncRequest for ZdiagsGetStats {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct ZdiagsRestoreStatsNv;
+pub struct ZdiagsRestoreStatsNv;
 
 impl SyncRequest for ZdiagsRestoreStatsNv {
     const ID: u8 = 26;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
+    type Reply = ZdiagsRestoreStatsNvReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct ZdiagsRestoreStatsNvReply(pub Status);
+impl SyncReply for ZdiagsRestoreStatsNvReply {
+    type Request = ZdiagsRestoreStatsNv;
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct ZdiagsSaveStatsToNv;
+pub struct ZdiagsSaveStatsToNv;
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct ZdiagsSaveStatsToNvReply {
-    sysclock: u32,
+pub struct ZdiagsSaveStatsToNvReply {
+    pub sysclock: u32,
 }
 
 impl SyncReply for ZdiagsSaveStatsToNvReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = ZdiagsSaveStatsToNv;
 }
 
 impl SyncRequest for ZdiagsSaveStatsToNv {
@@ -519,21 +576,20 @@ impl SyncRequest for ZdiagsSaveStatsToNv {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct OsalNvReadExt {
-    id: u16,
-    offset: u16,
+pub struct OsalNvReadExt {
+    pub id: u16,
+    pub offset: u16,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct OsalNvReadExtReply {
-    status: u8,
-    len: u8,
-    value: Vec<u8>,
+pub struct OsalNvReadExtReply {
+    pub status: u8,
+    pub len: u8,
+    pub value: Vec<u8>,
 }
 
 impl SyncReply for OsalNvReadExtReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = OsalNvReadExt;
 }
 
 impl SyncRequest for OsalNvReadExt {
@@ -543,61 +599,78 @@ impl SyncRequest for OsalNvReadExt {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct OsalNvWriteExt {
-    id: u16,
-    offset: u16,
-    len: u16,
-    value: Vec<u8>,
+pub struct OsalNvWriteExt {
+    pub id: u16,
+    pub offset: u16,
+    pub len: u16,
+    pub value: Vec<u8>,
 }
 
 impl SyncRequest for OsalNvWriteExt {
     const ID: u8 = 29;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
+    type Reply = OsalNvWriteExtReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct OsalNvWriteExtReply(pub Status);
+impl SyncReply for OsalNvWriteExtReply {
+    type Request = OsalNvWriteExt;
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct NvCreate {
-    sysid: u8,
-    itemid: u16,
-    subid: u16,
-    len: u32,
+pub struct NvCreate {
+    pub sysid: u8,
+    pub itemid: u16,
+    pub subid: u16,
+    pub len: u32,
 }
 
 impl SyncRequest for NvCreate {
     const ID: u8 = 48;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
+    type Reply = NvCreateReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct NvCreateReply(pub Status);
+impl SyncReply for NvCreateReply {
+    type Request = NvCreate;
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct NvDelete {
-    sysid: u8,
-    itemid: u16,
-    subid: u16,
+pub struct NvDelete {
+    pub sysid: u8,
+    pub itemid: u16,
+    pub subid: u16,
 }
 
 impl SyncRequest for NvDelete {
     const ID: u8 = 49;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
-}
-
-#[derive(Debug, Clone, Serialize)]
-pub(crate) struct NvLength {
-    sysid: u8,
-    itemid: u16,
-    subid: u16,
+    type Reply = NvDeleteReply;
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct NvLengthReply {
-    len: u8,
+pub struct NvDeleteReply(pub Status);
+impl SyncReply for NvDeleteReply {
+    type Request = NvDelete;
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct NvLength {
+    pub sysid: u8,
+    pub itemid: u16,
+    pub subid: u16,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct NvLengthReply {
+    pub len: u8,
 }
 
 impl SyncReply for NvLengthReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = NvLength;
 }
 
 impl SyncRequest for NvLength {
@@ -607,24 +680,23 @@ impl SyncRequest for NvLength {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct NvRead {
-    sysid: u8,
-    itemid: u16,
-    subid: u16,
-    offset: u16,
-    len: u8,
+pub struct NvRead {
+    pub sysid: u8,
+    pub itemid: u16,
+    pub subid: u16,
+    pub offset: u16,
+    pub len: u8,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub(crate) struct NvReadReply {
-    status: u8,
-    len: u8,
-    value: Vec<u8>,
+pub struct NvReadReply {
+    pub status: u8,
+    pub len: u8,
+    pub value: Vec<u8>,
 }
 
 impl SyncReply for NvReadReply {
-    const CMD0: u8 = 0; // placeholder
-    const CMD1: u8 = 0; // placeholder
+    type Request = NvRead;
 }
 
 impl SyncRequest for NvRead {
@@ -634,55 +706,73 @@ impl SyncRequest for NvRead {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct NvWrite {
-    sysid: u8,
-    itemid: u16,
-    subid: u16,
-    offset: u16,
-    len: u8,
-    value: Vec<u8>,
+pub struct NvWrite {
+    pub sysid: u8,
+    pub itemid: u16,
+    pub subid: u16,
+    pub offset: u16,
+    pub len: u8,
+    pub value: Vec<u8>,
 }
 
 impl SyncRequest for NvWrite {
     const ID: u8 = 52;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
+    type Reply = NvWriteReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct NvWriteReply(pub Status);
+impl SyncReply for NvWriteReply {
+    type Request = NvWrite;
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct NvUpdate {
-    sysid: u8,
-    itemid: u16,
-    subid: u16,
-    len: u8,
-    value: Vec<u8>,
+pub struct NvUpdate {
+    pub sysid: u8,
+    pub itemid: u16,
+    pub subid: u16,
+    pub len: u8,
+    pub value: Vec<u8>,
 }
 
 impl SyncRequest for NvUpdate {
     const ID: u8 = 53;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
+    type Reply = NvUpdateReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct NvUpdateReply(pub Status);
+impl SyncReply for NvUpdateReply {
+    type Request = NvUpdate;
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct NvCompact {
-    threshold: u16,
+pub struct NvCompact {
+    pub threshold: u16,
 }
 
 impl SyncRequest for NvCompact {
     const ID: u8 = 54;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    type Reply = Status;
+    type Reply = NvCompactReply;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct NvCompactReply(pub Status);
+impl SyncReply for NvCompactReply {
+    type Request = NvCompact;
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct ResetInd {
-    reason: u8,
-    transportrev: u8,
-    productid: u8,
-    majorrel: u8,
-    minorrel: u8,
-    hwrev: u8,
+pub struct ResetInd {
+    pub reason: u8,
+    pub transportrev: u8,
+    pub productid: u8,
+    pub majorrel: u8,
+    pub minorrel: u8,
+    pub hwrev: u8,
 }
 
 impl AsyncRequest for ResetInd {
@@ -691,8 +781,8 @@ impl AsyncRequest for ResetInd {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct OsalTimerExpired {
-    id: u8,
+pub struct OsalTimerExpired {
+    pub id: u8,
 }
 
 impl AsyncRequest for OsalTimerExpired {
@@ -701,8 +791,8 @@ impl AsyncRequest for OsalTimerExpired {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct JammerInd {
-    jammerind: u8,
+pub struct JammerInd {
+    pub jammerind: u8,
 }
 
 impl AsyncRequest for JammerInd {

@@ -2,7 +2,7 @@ use std::io::{Read, Write};
 
 use tracing::info;
 
-use crate::commands::{self, SyncRequest, CommandError, ReplyError};
+use crate::commands::{self, CommandError, ReplyError, SyncRequest};
 
 pub fn start_coordinator(
     adaptor: &mut Adaptor<impl Serial>,
