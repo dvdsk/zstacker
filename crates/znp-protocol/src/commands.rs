@@ -53,6 +53,18 @@ macro_rules! basic_reply {
 }
 pub(crate) use basic_reply;
 
+macro_rules! empty_reply {
+    ($request_name:ident, $reply_name:ident) => {
+        #[derive(Debug, Clone, Deserialize)]
+        pub struct $reply_name;
+
+        impl SyncReply for $reply_name {
+            type Request = $request_name;
+        }
+    };
+}
+pub(crate) use empty_reply;
+
 #[derive(Debug, thiserror::Error)]
 #[error("Could not send command: {command}")]
 pub struct CommandError {

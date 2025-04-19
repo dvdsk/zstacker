@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 
 use super::{AsyncRequest, IeeeAddr, SubSystem, SyncReply, SyncRequest};
