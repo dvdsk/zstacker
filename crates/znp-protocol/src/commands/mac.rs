@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{
-    AsyncRequest, IeeeAddr, Status, SubSystem, SyncReply, SyncRequest,
-};
+use super::{basic_reply, AsyncRequest, IeeeAddr, SubSystem, SyncReply, SyncRequest};
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ResetReq {
@@ -15,11 +13,7 @@ impl SyncRequest for ResetReq {
     type Reply = ResetReqReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct ResetReqReply(pub Status);
-impl SyncReply for ResetReqReply {
-    type Request = ResetReq;
-}
+basic_reply! { ResetReq, ResetReqReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Init {}
@@ -30,11 +24,7 @@ impl SyncRequest for Init {
     type Reply = InitReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct InitReply(pub Status);
-impl SyncReply for InitReply {
-    type Request = Init;
-}
+basic_reply! { Init, InitReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct StartReq {
@@ -63,11 +53,7 @@ impl SyncRequest for StartReq {
     type Reply = StartReqReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct StartReqReply(pub Status);
-impl SyncReply for StartReqReply {
-    type Request = StartReq;
-}
+basic_reply! { StartReq, StartReqReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct SyncReq {
@@ -82,11 +68,7 @@ impl SyncRequest for SyncReq {
     type Reply = SyncReqReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct SyncReqReply(pub Status);
-impl SyncReply for SyncReqReply {
-    type Request = SyncReq;
-}
+basic_reply! { SyncReq, SyncReqReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct DataReq {
@@ -112,11 +94,7 @@ impl SyncRequest for DataReq {
     type Reply = DataReqReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct DataReqReply(pub Status);
-impl SyncReply for DataReqReply {
-    type Request = DataReq;
-}
+basic_reply! { DataReq, DataReqReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct AssociateReq {
@@ -138,11 +116,7 @@ impl SyncRequest for AssociateReq {
     type Reply = AssociateReqReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct AssociateReqReply(pub Status);
-impl SyncReply for AssociateReqReply {
-    type Request = AssociateReq;
-}
+basic_reply! { AssociateReq, AssociateReqReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct DisassociateReq {
@@ -163,11 +137,7 @@ impl SyncRequest for DisassociateReq {
     type Reply = DisassociateReqReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct DisassociateReqReply(pub Status);
-impl SyncReply for DisassociateReqReply {
-    type Request = DisassociateReq;
-}
+basic_reply! { DisassociateReq, DisassociateReqReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct GetReq {
@@ -202,12 +172,7 @@ impl SyncRequest for SetReq {
     type Reply = SetReqReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct SetReqReply(pub Status);
-
-impl SyncReply for SetReqReply {
-    type Request = SetReq;
-}
+basic_reply! { SetReq, SetReqReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ScanReq {
@@ -228,12 +193,7 @@ impl SyncRequest for ScanReq {
     type Reply = ScanReqReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct ScanReqReply(pub Status);
-
-impl SyncReply for ScanReqReply {
-    type Request = ScanReq;
-}
+basic_reply! { ScanReq, ScanReqReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct PollReq {
@@ -252,12 +212,7 @@ impl SyncRequest for PollReq {
     type Reply = PollReqReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct PollReqReply(pub Status);
-
-impl SyncReply for PollReqReply {
-    type Request = PollReq;
-}
+basic_reply! { PollReq, PollReqReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct PurgeReq {
@@ -270,12 +225,7 @@ impl SyncRequest for PurgeReq {
     type Reply = PurgeReqReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct PurgeReqReply(pub Status);
-
-impl SyncReply for PurgeReqReply {
-    type Request = PurgeReq;
-}
+basic_reply! { PurgeReq, PurgeReqReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct SetRxGainReq {
@@ -288,12 +238,7 @@ impl SyncRequest for SetRxGainReq {
     type Reply = SetRxGainReqReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct SetRxGainReqReply(pub Status);
-
-impl SyncReply for SetRxGainReqReply {
-    type Request = SetRxGainReq;
-}
+basic_reply! { SetRxGainReq, SetRxGainReqReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct SecurityGetReq {
@@ -308,12 +253,7 @@ impl SyncRequest for SecurityGetReq {
     type Reply = SecurityGetReqReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct SecurityGetReqReply(pub Status);
-
-impl SyncReply for SecurityGetReqReply {
-    type Request = SecurityGetReq;
-}
+basic_reply! { SecurityGetReq, SecurityGetReqReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct SecuritySetReq {
@@ -327,12 +267,7 @@ impl SyncRequest for SecuritySetReq {
     type Reply = SecuritySetReqReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct SecuritySetReqReply(pub Status);
-
-impl SyncReply for SecuritySetReqReply {
-    type Request = SecuritySetReq;
-}
+basic_reply! { SecuritySetReq, SecuritySetReqReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct AssociateRsp {
@@ -347,12 +282,7 @@ impl SyncRequest for AssociateRsp {
     type Reply = AssociateRspReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct AssociateRspReply(pub Status);
-
-impl SyncReply for AssociateRspReply {
-    type Request = AssociateRsp;
-}
+basic_reply! { AssociateRsp, AssociateRspReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct OrphanRsp {
@@ -367,12 +297,7 @@ impl SyncRequest for OrphanRsp {
     type Reply = OrphanRspReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct OrphanRspReply(pub Status);
-
-impl SyncReply for OrphanRspReply {
-    type Request = OrphanRsp;
-}
+basic_reply! { OrphanRsp, OrphanRspReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct SyncLossInd {

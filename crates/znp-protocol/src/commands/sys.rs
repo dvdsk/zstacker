@@ -1,5 +1,5 @@
 use super::{
-    AsyncRequest, IeeeAddr, Status, SubSystem, SyncReply, SyncRequest,
+    basic_reply, AsyncRequest, IeeeAddr, SubSystem, SyncReply, SyncRequest
 };
 use serde::{Deserialize, Serialize};
 
@@ -19,7 +19,7 @@ pub struct Ping;
 #[derive(Debug, Clone, Deserialize)]
 pub struct PingReply {
     #[serde(deserialize_with = "capabilities_from_u16")]
-    pub(crate) capabilities: Vec<Capability>,
+    pub capabilities: Vec<Capability>,
 }
 
 impl SyncReply for PingReply {
@@ -101,11 +101,7 @@ impl SyncRequest for SetExtAddr {
     type Reply = SetExtAddrReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct SetExtAddrReply(pub Status);
-impl SyncReply for SetExtAddrReply {
-    type Request = SetExtAddr;
-}
+basic_reply! { SetExtAddr, SetExtAddrReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct GetExtAddr;
@@ -161,11 +157,7 @@ impl SyncRequest for RamWrite {
     type Reply = RamWriteReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct RamWriteReply(pub Status);
-impl SyncReply for RamWriteReply {
-    type Request = RamWrite;
-}
+basic_reply! { RamWrite, RamWriteReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct OsalNvItemInit {
@@ -181,11 +173,7 @@ impl SyncRequest for OsalNvItemInit {
     type Reply = OsalNvItemInitReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct OsalNvItemInitReply(pub Status);
-impl SyncReply for OsalNvItemInitReply {
-    type Request = OsalNvItemInit;
-}
+basic_reply! { OsalNvItemInit, OsalNvItemInitReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct OsalNvRead {
@@ -224,11 +212,7 @@ impl SyncRequest for OsalNvWrite {
     type Reply = OsalNvWriteReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct OsalNvWriteReply(pub Status);
-impl SyncReply for OsalNvWriteReply {
-    type Request = OsalNvWrite;
-}
+basic_reply! { OsalNvWrite, OsalNvWriteReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct OsalStartTimer {
@@ -242,11 +226,7 @@ impl SyncRequest for OsalStartTimer {
     type Reply = OsalStartTimerReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct OsalStartTimerReply(pub Status);
-impl SyncReply for OsalStartTimerReply {
-    type Request = OsalStartTimer;
-}
+basic_reply! { OsalStartTimer, OsalStartTimerReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct OsalStopTimer {
@@ -259,11 +239,7 @@ impl SyncRequest for OsalStopTimer {
     type Reply = OsalStopTimerReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct OsalStopTimerReply(pub Status);
-impl SyncReply for OsalStopTimerReply {
-    type Request = OsalStopTimer;
-}
+basic_reply! { OsalStopTimer, OsalStopTimerReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Random;
@@ -363,11 +339,7 @@ impl SyncRequest for SetTime {
     type Reply = SetTimeReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct SetTimeReply(pub Status);
-impl SyncReply for SetTimeReply {
-    type Request = SetTime;
-}
+basic_reply! { SetTime, SetTimeReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct GetTime;
@@ -405,11 +377,7 @@ impl SyncRequest for OsalNvDelete {
     type Reply = OsalNvDeleteReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct OsalNvDeleteReply(pub Status);
-impl SyncReply for OsalNvDeleteReply {
-    type Request = OsalNvDelete;
-}
+basic_reply! { OsalNvDelete, OsalNvDeleteReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct OsalNvLength {
@@ -464,11 +432,7 @@ impl SyncRequest for JammerParameters {
     type Reply = JammerParametersReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct JammerParametersReply(pub Status);
-impl SyncReply for JammerParametersReply {
-    type Request = JammerParameters;
-}
+basic_reply! { JammerParameters, JammerParametersReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct SnifferParameters {
@@ -481,11 +445,7 @@ impl SyncRequest for SnifferParameters {
     type Reply = SnifferParametersReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct SnifferParametersReply(pub Status);
-impl SyncReply for SnifferParametersReply {
-    type Request = SnifferParameters;
-}
+basic_reply! { SnifferParameters, SnifferParametersReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ZdiagsInitStats;
@@ -496,11 +456,7 @@ impl SyncRequest for ZdiagsInitStats {
     type Reply = ZdiagsInitStatsReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct ZdiagsInitStatsReply(pub Status);
-impl SyncReply for ZdiagsInitStatsReply {
-    type Request = ZdiagsInitStats;
-}
+basic_reply! { ZdiagsInitStats, ZdiagsInitStatsReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ZdiagsClearStats {
@@ -551,11 +507,7 @@ impl SyncRequest for ZdiagsRestoreStatsNv {
     type Reply = ZdiagsRestoreStatsNvReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct ZdiagsRestoreStatsNvReply(pub Status);
-impl SyncReply for ZdiagsRestoreStatsNvReply {
-    type Request = ZdiagsRestoreStatsNv;
-}
+basic_reply! { ZdiagsRestoreStatsNv, ZdiagsRestoreStatsNvReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ZdiagsSaveStatsToNv;
@@ -612,11 +564,7 @@ impl SyncRequest for OsalNvWriteExt {
     type Reply = OsalNvWriteExtReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct OsalNvWriteExtReply(pub Status);
-impl SyncReply for OsalNvWriteExtReply {
-    type Request = OsalNvWriteExt;
-}
+basic_reply! { OsalNvWriteExt, OsalNvWriteExtReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct NvCreate {
@@ -632,11 +580,7 @@ impl SyncRequest for NvCreate {
     type Reply = NvCreateReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct NvCreateReply(pub Status);
-impl SyncReply for NvCreateReply {
-    type Request = NvCreate;
-}
+basic_reply! { NvCreate, NvCreateReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct NvDelete {
@@ -651,11 +595,7 @@ impl SyncRequest for NvDelete {
     type Reply = NvDeleteReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct NvDeleteReply(pub Status);
-impl SyncReply for NvDeleteReply {
-    type Request = NvDelete;
-}
+basic_reply! { NvDelete, NvDeleteReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct NvLength {
@@ -721,11 +661,7 @@ impl SyncRequest for NvWrite {
     type Reply = NvWriteReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct NvWriteReply(pub Status);
-impl SyncReply for NvWriteReply {
-    type Request = NvWrite;
-}
+basic_reply! { NvWrite, NvWriteReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct NvUpdate {
@@ -742,11 +678,7 @@ impl SyncRequest for NvUpdate {
     type Reply = NvUpdateReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct NvUpdateReply(pub Status);
-impl SyncReply for NvUpdateReply {
-    type Request = NvUpdate;
-}
+basic_reply! { NvUpdate, NvUpdateReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct NvCompact {
@@ -759,11 +691,7 @@ impl SyncRequest for NvCompact {
     type Reply = NvCompactReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct NvCompactReply(pub Status);
-impl SyncReply for NvCompactReply {
-    type Request = NvCompact;
-}
+basic_reply! { NvCompact, NvCompactReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ResetInd {

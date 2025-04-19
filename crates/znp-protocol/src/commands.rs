@@ -20,8 +20,39 @@ pub mod mac;
 pub mod sapi;
 pub mod sys;
 pub mod util;
-// most of these are wrong
+// // Most of these are wrong
 // pub(crate) mod zdo;
+
+#[derive(Debug, Clone, Copy, Deserialize_repr)]
+#[repr(u8)]
+pub(crate) enum BasicStatus {
+    Ok = 0,
+    Err = 1,
+}
+
+macro_rules! basic_reply {
+    ($request_name:ident, $reply_name:ident) => {
+        #[derive(Debug, Clone, Deserialize)]
+        pub struct $reply_name(crate::commands::BasicStatus);
+
+        impl $reply_name {
+            pub fn is_ok(&self) -> bool {
+                match self.0 {
+                    crate::commands::BasicStatus::Ok => true,
+                    crate::commands::BasicStatus::Err => false,
+                }
+            }
+            pub fn is_err(&self) -> bool {
+                !self.is_ok()
+            }
+        }
+
+        impl SyncReply for $reply_name {
+            type Request = $request_name;
+        }
+    };
+}
+pub(crate) use basic_reply;
 
 #[derive(Debug, thiserror::Error)]
 #[error("Could not send command: {command}")]
@@ -49,10 +80,6 @@ pub enum ReplyErrorCause {
     ReadingData(#[source] std::io::Error),
     #[error("First byte of reply should have been: {START_OF_FRAME}")]
     ExpectedStartOfFrame,
-    #[error("Second byte of package should be {expected} however we got {got}")]
-    WrongCmd1Field { expected: u8, got: u8 },
-    #[error("Third byte of package should be {expected} however we got {got}")]
-    WrongCmd0Field { expected: u8, got: u8 },
     #[error("Could not read checksum")]
     ReadingChecksum(#[source] std::io::Error),
     #[error("Checksum is not correct")]
@@ -78,9 +105,6 @@ fn from_reader_inner<R: SyncReply>(
         .read_exact(&mut reply_header)
         .map_err(E::ReadingHeader)?;
 
-    // TODO construct CMD0 and CMD1 from org
-    // then probably do away with this again :)
-    // and absorb it in Command
     let [START_OF_FRAME, length, cmd0, cmd1] = reply_header else {
         return Err(E::ExpectedStartOfFrame);
     };
@@ -132,57 +156,6 @@ fn split_off_and_verify_checksum<R: SyncReply>(
         return Err(ReplyErrorCause::CheckSumMismatch);
     }
     Ok(())
-}
-
-/// The status parameter that is returned from the `ZNP` device
-///
-/// From: `Z-Stack ZNP Interface Specification.pdf` revision 1.1 (11/11/2016)
-/// url: https://community.silabs.com/s/contentversion/0681M00000EWPKrQAP
-/// viewed: 2025-04-15
-#[allow(dead_code)]
-#[derive(Debug, Clone, Deserialize_repr)]
-#[repr(u8)]
-pub enum Status {
-    ZSuccess = 0x00,
-    Zfailure = 0x01,
-    ZinvalidParameter = 0x02,
-    NvItemUninit = 0x09,
-    NvOperFailed = 0x0a,
-    NvBadItemLen = 0x0c,
-    ZmemError = 0x10,
-    ZbufferFull = 0x11,
-    ZunsupportedMode = 0x12,
-    ZmacMemError = 0x13,
-    ZdoInvalidRequestType = 0x80,
-    ZdoInvalidEndpoint = 0x82,
-    ZdoUnsupported = 0x84,
-    ZdoTimeout = 0x85,
-    ZdoNoMatch = 0x86,
-    ZdoTableFull = 0x87,
-    ZdoNoBindEntry = 0x88,
-    ZsecNoKey = 0xa1,
-    ZsecMaxFrmCount = 0xa3,
-    ZapsFail = 0xb1,
-    ZapsTableFull = 0xb2,
-    ZapsIllegalRequest = 0xb3,
-    ZapsInvalidBinding = 0xb4,
-    ZapsUnsupportedAttrib = 0xb5,
-    ZapsNotSupported = 0xb6,
-    ZapsNoAck = 0xb7,
-    ZapsDuplicateEntry = 0xb8,
-    ZapsNoBoundDevice = 0xb9,
-    ZnwkInvalidParam = 0xc1,
-    ZnwkInvalidRequest = 0xc2,
-    ZnwkNotPermitted = 0xc3,
-    ZnwkStartupFailure = 0xc4,
-    ZnwkTableFull = 0xc7,
-    ZnwkUnknownDevice = 0xc8,
-    ZnwkUnsupportedAttribute = 0xc9,
-    ZnwkNoNetworks = 0xca,
-    ZnwkLeaveUnconfirmed = 0xcb,
-    ZnwkNoAck = 0xcc,
-    ZnwkNoRoute = 0xcd,
-    ZMacNoACK = 0xe9,
 }
 
 #[derive(Clone, Copy, Debug, strum::FromRepr, PartialEq, Eq)]

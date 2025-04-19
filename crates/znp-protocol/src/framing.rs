@@ -18,10 +18,10 @@ pub struct CommandInfo {
 
 #[derive(Debug, thiserror::Error)]
 pub enum CommandIDError {
-    #[error("Could not deserialize into a command type")]
-    NotCommandType,
-    #[error("Could not deserialize into a subsystem")]
-    NotSubSystem,
+    #[error("Could not deserialize {got} into a command type")]
+    NotCommandType { got: u8 },
+    #[error("Could not deserialize {got} into a subsystem")]
+    NotSubSystem { got: u8 },
 }
 
 impl CommandInfo {
@@ -33,11 +33,13 @@ impl CommandInfo {
     }
 
     pub fn deserialize(buf: [u8; 2]) -> Result<Self, CommandIDError> {
+        let ty = buf[0] & 0b1111_0000;
+        let sub_system = buf[0] & 0b0000_1111;
         Ok(Self {
-            ty: CommandType::from_repr(buf[0] | 0b1111_0000)
-                .ok_or(CommandIDError::NotCommandType)?,
-            sub_system: SubSystem::from_repr(buf[0] & 0b0000_1111)
-                .ok_or(CommandIDError::NotSubSystem)?,
+            ty: CommandType::from_repr(ty)
+                .ok_or(CommandIDError::NotCommandType { got: ty })?,
+            sub_system: SubSystem::from_repr(sub_system)
+                .ok_or(CommandIDError::NotSubSystem { got: sub_system })?,
             id: buf[1],
         })
     }

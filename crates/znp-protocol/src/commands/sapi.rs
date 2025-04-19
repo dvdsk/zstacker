@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::{
-    AsyncRequest, IeeeAddr, Status, SubSystem, SyncReply, SyncRequest,
+    AsyncRequest, IeeeAddr, SubSystem, SyncReply, SyncRequest, basic_reply,
 };
 
 #[derive(Debug, Clone, Serialize)]
@@ -126,12 +126,7 @@ impl SyncRequest for WriteConfiguration {
     type Reply = WriteConfigurationReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct WriteConfigurationReply(pub Status);
-
-impl SyncReply for WriteConfigurationReply {
-    type Request = WriteConfiguration;
-}
+basic_reply! { WriteConfiguration, WriteConfigurationReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct GetDeviceInfo {
@@ -184,12 +179,7 @@ impl SyncRequest for PermitJoiningRequest {
     type Reply = PermitJoiningRequestReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct PermitJoiningRequestReply(pub Status);
-
-impl SyncReply for PermitJoiningRequestReply {
-    type Request = PermitJoiningRequest;
-}
+basic_reply! { PermitJoiningRequest, PermitJoiningRequestReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct StartConfirm {

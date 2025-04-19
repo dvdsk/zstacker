@@ -1,26 +1,13 @@
-[package]
-name = "zstacker"
-version = "0.0.1-dev"
-edition = "2024"
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.package]
 rust-version = "1.87"
-authors = ["David Kleingeld"]
-description = "TI Z-Stack API"
+edition = "2024"
 license = "MIT OR Apache-2.0"
-readme = "README.md"
-keywords = ["Zigbee", "Z-Stack", "Texas-Instruments"]
+authors = ["David Kleingeld"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-thiserror = "2.0.12"
-tokio = { version = "1.44", features = ["io-util"] }
-serde = { version = "1", features = ["derive"] }
-serde_repr = "0.1.20"
-strum = { version = "0.27.1", features = ["derive"] }
-tracing = "0.1.41"
-itertools = "0.14.0"
-
-[dev-dependencies]
-color-eyre = "0.6.3"
-serialport = "4.2.2"
-tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+[profile.release-with-debug]
+inherits = "release"
+debug = true

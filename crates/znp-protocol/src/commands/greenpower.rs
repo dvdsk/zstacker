@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{IeeeAddr, Status, SubSystem, SyncReply, SyncRequest};
+use super::{basic_reply, IeeeAddr, SubSystem, SyncReply, SyncRequest};
 
 #[derive(Debug, Clone, Serialize)]
 pub struct SecReq {
@@ -19,9 +19,4 @@ impl SyncRequest for SecReq {
     type Reply = SecReqReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct SecReqReply(pub Status);
-
-impl SyncReply for SecReqReply {
-    type Request = SecReq;
-}
+basic_reply! { SecReq, SecReqReply }

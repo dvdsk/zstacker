@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{AsyncRequest, Status, SubSystem, SyncReply, SyncRequest};
+use super::{AsyncRequest, SubSystem, SyncReply, SyncRequest, basic_reply};
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Msg {
@@ -18,12 +18,7 @@ impl SyncRequest for Msg {
     type Reply = MsgReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct MsgReply(pub Status);
-
-impl SyncReply for MsgReply {
-    type Request = Msg;
-}
+basic_reply! { Msg, MsgReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct UserTest {
@@ -39,12 +34,7 @@ impl SyncRequest for UserTest {
     type Reply = UserTestReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct UserTestReply(pub Status);
-
-impl SyncReply for UserTestReply {
-    type Request = UserTest;
-}
+basic_reply! { UserTest, UserTestReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ZllTlInd {

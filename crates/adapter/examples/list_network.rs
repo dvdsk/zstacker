@@ -33,7 +33,7 @@ impl std::io::Write for UsbSerial {
     }
 }
 
-impl zstacker::api::Serial for UsbSerial {}
+impl zstacker_znp::startup::Serial for UsbSerial {}
 
 fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
@@ -59,8 +59,8 @@ fn main() -> color_eyre::Result<()> {
             .open()
             .expect("Failed to open port");
         let serial = UsbSerial(serial);
-        let mut candidate = zstacker::api::Adaptor { serial };
-        match zstacker::api::check_connection_to_adapter(&mut candidate) {
+        let mut candidate = zstacker_znp::startup::Adaptor { serial };
+        match zstacker_znp::check_connection_to_adapter(&mut candidate) {
             Ok(()) => adaptor = Some(candidate),
             Err(e) => eprintln!(
                 "error while connecting: \n\tport: {}\n\terror: {e:?}\ncould be wrong port?",
@@ -72,31 +72,7 @@ fn main() -> color_eyre::Result<()> {
     let Some(mut adaptor) = adaptor else {
         return Err(eyre!("No adapter found"));
     };
-    zstacker::api::start_coordinator(&mut adaptor)
+    zstacker_znp::start_coordinator(&mut adaptor, vec![])
         .wrap_err("Could not start coordinator")?;
     Ok(())
 }
-
-//[
-//fe, start of frame
-//e,  length
-//67, cmd0
-//0,  cmd1
-//]
-//[
-//0,  status
-//51, |
-//13, |
-//8b, |
-//2f, |
-//0,  | IEEEAddr
-//4b, |
-//12, |
-//0,  |
-//fe,   | ShortAddr
-//ff, *
-//7,  devicetype
-//0,  devicestate
-//0,  list len
-//d0  list element
-//]

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::{
-    AsyncRequest, IeeeAddr, Status, SubSystem, SyncReply, SyncRequest,
+    AsyncRequest, IeeeAddr, SubSystem, SyncReply, SyncRequest, basic_reply,
 };
 
 #[derive(Debug, Clone, Serialize)]
@@ -20,12 +20,7 @@ impl SyncRequest for Register {
     type Reply = RegisterReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct RegisterReply(pub Status);
-
-impl SyncReply for RegisterReply {
-    type Request = Register;
-}
+basic_reply! {Register, RegisterReply}
 
 #[derive(Debug, Clone, Serialize)]
 pub struct DataRequest {
@@ -46,12 +41,7 @@ impl SyncRequest for DataRequest {
     type Reply = DataRequestReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct DataRequestReply(pub Status);
-
-impl SyncReply for DataRequestReply {
-    type Request = DataRequest;
-}
+basic_reply! { DataRequest, DataRequestReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct DataRequestExt {
@@ -74,12 +64,7 @@ impl SyncRequest for DataRequestExt {
     type Reply = DataRequestExtReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct DataRequestExtReply(pub Status);
-
-impl SyncReply for DataRequestExtReply {
-    type Request = DataRequestExt;
-}
+basic_reply! { DataRequestExt, DataRequestExtReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct DataRequestSrcRtg {
@@ -101,12 +86,7 @@ impl SyncRequest for DataRequestSrcRtg {
     type Reply = DataRequestSrcRtgReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct DataRequestSrcRtgReply(pub Status);
-
-impl SyncReply for DataRequestSrcRtgReply {
-    type Request = DataRequestSrcRtg;
-}
+basic_reply! { DataRequestSrcRtg, DataRequestSrcRtgReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Delete {
@@ -119,12 +99,7 @@ impl SyncRequest for Delete {
     type Reply = DeleteReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct DeleteReply(pub Status);
-
-impl SyncReply for DeleteReply {
-    type Request = Delete;
-}
+basic_reply! { Delete, DeleteReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct InterPanCtl {
@@ -138,12 +113,7 @@ impl SyncRequest for InterPanCtl {
     type Reply = InterPanCtlReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct InterPanCtlReply(pub Status);
-
-impl SyncReply for InterPanCtlReply {
-    type Request = InterPanCtl;
-}
+basic_reply! { InterPanCtl, InterPanCtlReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct DataStore {
@@ -158,12 +128,7 @@ impl SyncRequest for DataStore {
     type Reply = DataStoreReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct DataStoreReply(pub Status);
-
-impl SyncReply for DataStoreReply {
-    type Request = DataStore;
-}
+basic_reply! { DataStore, DataStoreReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct DataRetrieve {
@@ -202,12 +167,7 @@ impl SyncRequest for ApsfConfigSet {
     type Reply = ApsfConfigSetReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct ApsfConfigSetReply(pub Status);
-
-impl SyncReply for ApsfConfigSetReply {
-    type Request = ApsfConfigSet;
-}
+basic_reply! { ApsfConfigSet, ApsfConfigSetReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ApsfConfigGet {

@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_repr::Serialize_repr;
 
 use super::{
-    AsyncRequest, IeeeAddr, Status, SubSystem, SyncReply, SyncRequest,
+    AsyncRequest, IeeeAddr, SubSystem, SyncReply, SyncRequest,
 };
 
 #[derive(Clone, Copy, Debug, Serialize_repr)]
@@ -55,12 +55,8 @@ impl SyncRequest for AddInstallCode {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct AddInstallCodeReply(pub Status);
 
-impl SyncReply for AddInstallCodeReply {
-    type Request = AddInstallCode;
-}
+basic_reply! { AddInstallCode, AddInstallCodeReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct BdbStartCommissioning {
@@ -73,12 +69,8 @@ impl SyncRequest for BdbStartCommissioning {
     type Reply = BdbStartCommissioningReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct BdbStartCommissioningReply(pub Status);
 
-impl SyncReply for BdbStartCommissioningReply {
-    type Request = BdbStartCommissioning;
-}
+basic_reply! { BdbStartCommissioning, BdbStartCommissioningReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct BdbSetChannel {
@@ -92,12 +84,8 @@ impl SyncRequest for BdbSetChannel {
     type Reply = BdbSetChannelReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct BdbSetChannelReply(pub Status);
 
-impl SyncReply for BdbSetChannelReply {
-    type Request = BdbSetChannel;
-}
+basic_reply! { BdbSetChannel, BdbSetChannelReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct BdbSetTcRequireKeyExchange {
@@ -109,12 +97,8 @@ impl SyncRequest for BdbSetTcRequireKeyExchange {
     type Reply = BdbSetTcRequireKeyExchangeReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct BdbSetTcRequireKeyExchangeReply(pub Status);
 
-impl SyncReply for BdbSetTcRequireKeyExchangeReply {
-    type Request = BdbSetTcRequireKeyExchange;
-}
+basic_reply! { BdbSetTcRequireKeyExchange, BdbSetTcRequireKeyExchangeReply }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct BdbComissioningNotification {
@@ -137,9 +121,5 @@ impl SyncRequest for SetNwkFrameCounter {
     type Reply = SetNwkFrameCounterReply;
 }
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct SetNwkFrameCounterReply(pub Status);
 
-impl SyncReply for SetNwkFrameCounterReply {
-    type Request = SetNwkFrameCounter;
-}
+basic_reply! { SetNwkFrameCounter, SetNwkFrameCounterReply }
