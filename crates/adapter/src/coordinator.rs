@@ -1,20 +1,16 @@
-use std::sync::Arc;
 use std::time::Duration;
 
-use tokio::io::AsyncReadExt;
 use tokio::sync::{mpsc, oneshot};
 use tokio::task;
 use tokio_serial::SerialStream;
 use tokio_util::time::FutureExt as _;
 use tracing::error;
 use zstacker_znp_protocol::commands::util::DeviceInfo;
-use zstacker_znp_protocol::commands::{
-    AsyncReply, ReplyError, START_OF_FRAME, SyncReply,
-};
+use zstacker_znp_protocol::commands::{AsyncReply, ReplyError, SyncReply};
 use zstacker_znp_protocol::commands::{
     AsyncRequest, CommandError, IeeeAddr, ShortAddr, SyncRequest,
 };
-use zstacker_znp_protocol::framing::{CommandMeta, CommandMetaError};
+use zstacker_znp_protocol::framing::CommandMeta;
 
 use crate::startup::Adaptor;
 
@@ -161,49 +157,4 @@ pub enum QueueError {
 pub enum IoHandleError {
     #[error("Io error while reading data")]
     IoErrReadingData(#[source] std::io::Error),
-}
-
-#[derive(Debug, Clone, thiserror::Error)]
-pub enum ReadMetaError {
-    #[error(
-        "Frame should start with start of frame token ({})",
-        START_OF_FRAME
-    )]
-    ExpectedStartOfFrame,
-    #[error("Could not read from serial")]
-    Io(#[source] Arc<std::io::Error>),
-    #[error("Could not read from serial")]
-    Deserialize(#[source] CommandMetaError),
-}
-
-#[derive(Debug, Default)]
-struct CommandMetaReader {
-    buffer: [u8; 4],
-    read: usize,
-}
-
-type Length = u8;
-impl CommandMetaReader {
-    async fn read(
-        &mut self,
-        serial: &mut SerialStream,
-    ) -> Result<(Length, CommandMeta), ReadMetaError> {
-        for byte in self.buffer.iter_mut().skip(self.read) {
-            *byte = serial
-                .read_u8()
-                .await
-                .map_err(Arc::new)
-                .map_err(ReadMetaError::Io)?;
-            self.read += 1
-        }
-
-        self.read = 0;
-        let [START_OF_FRAME, length, meta_bytes @ ..] = self.buffer else {
-            return Err(ReadMetaError::ExpectedStartOfFrame);
-        };
-
-        let meta = CommandMeta::deserialize(meta_bytes)
-            .map_err(ReadMetaError::Deserialize)?;
-        Ok((length, meta))
-    }
 }

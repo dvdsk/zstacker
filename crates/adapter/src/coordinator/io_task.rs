@@ -1,7 +1,7 @@
 use futures::future::FutureExt;
 use futures_concurrency::future::Race;
+use reader::CommandMetaReader;
 use tokio::sync::mpsc;
-use crate::coordinator::CommandMetaReader;
 use tracing::{debug, error};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -12,9 +12,10 @@ use tokio_serial::SerialStream;
 use tokio_util::time::FutureExt as _;
 use zstacker_znp_protocol::framing::CommandMeta;
 
-use super::{IoAwnserer, PendingSend, ReadMetaError};
+use super::{IoAwnserer, PendingSend};
 
 mod matcher;
+mod reader;
 
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum Error {
@@ -25,7 +26,7 @@ pub enum Error {
     #[error("Timed out reading incoming response (header already read)")]
     ReadingDataTimeout,
     #[error("IO Error while reading metadata")]
-    ReadingMetaIo(#[source] ReadMetaError),
+    ReadingMetaIo(#[source] reader::Error),
     #[error("IO task panicked, panick info: {0:?}")]
     Panicked(String),
 }
@@ -39,7 +40,7 @@ pub async fn io_task(
 
     enum Event {
         Received(Option<PendingSend>),
-        ReadMeta(Result<(u8, CommandMeta), ReadMetaError>),
+        ReadMeta(Result<(u8, CommandMeta), reader::Error>),
     }
 
     let mut read_buf = vec![0u8; u8::MAX as usize];
