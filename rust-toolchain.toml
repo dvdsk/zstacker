@@ -1,0 +1,2 @@
+[toolchain]
+channel = "beta" # for cast_signed
