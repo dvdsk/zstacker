@@ -1,20 +1,18 @@
 use futures::future::FutureExt;
 use futures_concurrency::future::Race;
-use reader::CommandMetaReader;
+use reader::FrameReader;
+use std::sync::Arc;
 use tokio::sync::mpsc;
 use tracing::{debug, error};
-use std::collections::HashMap;
-use std::sync::Arc;
-use std::time::Duration;
 
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::io::AsyncWriteExt;
 use tokio_serial::SerialStream;
-use tokio_util::time::FutureExt as _;
 use zstacker_znp_protocol::framing::CommandMeta;
 
-use super::{IoAwnserer, PendingSend};
+use super::PendingSend;
 
-mod matcher;
+pub mod dispatch;
+use dispatch::Dispatcher;
 mod reader;
 
 #[derive(Debug, Clone, thiserror::Error)]
@@ -25,8 +23,8 @@ pub enum Error {
     ReadingDataIo(#[source] Arc<std::io::Error>),
     #[error("Timed out reading incoming response (header already read)")]
     ReadingDataTimeout,
-    #[error("IO Error while reading metadata")]
-    ReadingMetaIo(#[source] reader::Error),
+    #[error("IO Error while reading frame")]
+    ReadingFrameIo(#[source] reader::Error),
     #[error("IO task panicked, panick info: {0:?}")]
     Panicked(String),
 }
@@ -35,16 +33,14 @@ pub async fn io_task(
     mut serial: SerialStream,
     mut rx: mpsc::Receiver<PendingSend>,
 ) -> (SerialStream, Result<(), Error>) {
-    let mut requests_expecting_reply: HashMap<_, IoAwnserer> = HashMap::new();
-    // Future work: track usage per route too. Prevent overloading route
+    let mut requests_expecting_reply = Dispatcher::default();
 
     enum Event {
         Received(Option<PendingSend>),
-        ReadMeta(Result<(u8, CommandMeta), reader::Error>),
+        ReadMeta(Result<(CommandMeta, Vec<u8>), reader::Error>),
     }
 
-    let mut read_buf = vec![0u8; u8::MAX as usize];
-    let mut reader = CommandMetaReader::default();
+    let mut reader = FrameReader::default();
     loop {
         let res = match (
             rx.recv().map(Event::Received),
@@ -65,16 +61,10 @@ pub async fn io_task(
                 )
                 .await
             }
-            Event::ReadMeta(Ok((length, meta))) => {
-                handle_data(
-                    &mut serial,
-                    &mut requests_expecting_reply,
-                    &mut read_buf[..length as usize],
-                    meta,
-                )
-                .await
+            Event::ReadMeta(Ok((meta, data))) => {
+                handle_data(&mut requests_expecting_reply, meta, data).await
             }
-            Event::ReadMeta(Err(err)) => Err(Error::ReadingMetaIo(err)),
+            Event::ReadMeta(Err(err)) => Err(Error::ReadingFrameIo(err)),
         };
 
         if let Err(err) = res {
@@ -90,7 +80,7 @@ pub async fn io_task(
 async fn send_pending(
     serial: &mut SerialStream,
     pending: PendingSend,
-    requests_expecting_reply: &mut HashMap<CommandMeta, IoAwnserer>,
+    requests_expecting_reply: &mut Dispatcher,
 ) -> Result<(), Error> {
     serial
         .write_all(&pending.to_send)
@@ -100,34 +90,20 @@ async fn send_pending(
     if pending.status_reply {
         todo!()
     }
-    requests_expecting_reply
-        .insert(pending.reply_meta, pending.awnser_to)
-        .expect(
-            "Having multiple requests with the same command \
+    requests_expecting_reply.register(pending).expect(
+        "Having multiple requests with the same command \
             pending is not supported",
-        );
+    );
     Ok(())
 }
 
 async fn handle_data(
-    serial: &mut SerialStream,
-    requests_expecting_reply: &mut HashMap<CommandMeta, IoAwnserer>,
-    buf: &mut [u8],
+    requests_expecting_reply: &mut Dispatcher,
     meta: CommandMeta,
+    data: Vec<u8>,
 ) -> Result<(), Error> {
-    let read_res = serial
-        .read_exact(buf)
-        .timeout(Duration::from_millis(10))
-        .await;
-
-    match read_res {
-        Ok(Ok(_)) => {
-            if let Some(answerer) = requests_expecting_reply.remove(&meta) {
-                let _ = answerer.send(buf.to_vec());
-            }
-            Ok(())
-        }
-        Ok(Err(io_error)) => Err(Error::ReadingDataIo(Arc::new(io_error))),
-        Err(_timeout_error) => Err(Error::ReadingDataTimeout),
+    if let Some(answerer) = requests_expecting_reply.remove(&meta, &data) {
+        let _ = answerer.send(data);
     }
+    Ok(())
 }

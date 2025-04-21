@@ -7,7 +7,9 @@ use serde::de::DeserializeOwned;
 use crate::data_format;
 use crate::framing::CommandMeta;
 
-use super::{CommandError, CommandType, ReplyError, START_OF_FRAME, SubSystem};
+use super::{
+    CommandError, CommandType, Pattern, ReplyError, START_OF_FRAME, SubSystem,
+};
 
 pub trait SyncRequest: Serialize {
     const ID: u8;
@@ -18,6 +20,10 @@ pub trait SyncRequest: Serialize {
         id: Self::ID,
     };
     type Reply: SyncReply;
+
+    fn reply_pattern(&self) -> Pattern {
+        Pattern::default()
+    }
 
     fn data_to_vec(&self) -> Result<Vec<u8>, data_format::Error>
     where
@@ -92,6 +98,10 @@ pub trait AsyncRequest: Serialize {
     const TIMEOUT: Duration;
     const HAS_SYNC_STATUS_RPLY: bool;
     type Reply: AsyncReply;
+
+    fn reply_pattern(&self) -> Pattern {
+        Pattern::default()
+    }
 
     fn data_to_vec(&self) -> Result<Vec<u8>, data_format::Error>
     where

@@ -4,8 +4,8 @@ use serde::{Deserialize, Serialize};
 use serde_repr::Deserialize_repr;
 
 use super::{
-    AsyncReply, AsyncRequest, IeeeAddr, ShortAddr, SubSystem, SyncReply,
-    SyncRequest,
+    AsyncReply, AsyncRequest, IeeeAddr, ShortAddr, SubSystem,
+    SyncReply, SyncRequest,
 };
 
 mod neighbor_lqi;
@@ -347,6 +347,13 @@ impl AsyncRequest for MgmtLqiReq {
     const TIMEOUT: Duration = Duration::from_millis(500);
     const HAS_SYNC_STATUS_RPLY: bool = true;
     type Reply = MgmtLqiRsp;
+
+    fn reply_pattern(&self) -> super::Pattern {
+        super::Pattern::default()
+            .match_exact(&self.dstaddr)
+            .skip(2)
+            .match_exact(&self.startindex)
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]

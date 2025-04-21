@@ -8,22 +8,25 @@ use tracing::error;
 use zstacker_znp_protocol::commands::util::DeviceInfo;
 use zstacker_znp_protocol::commands::{AsyncReply, ReplyError, SyncReply};
 use zstacker_znp_protocol::commands::{
-    AsyncRequest, CommandError, IeeeAddr, ShortAddr, SyncRequest,
+    AsyncRequest, CommandError, IeeeAddr, Pattern, ShortAddr, SyncRequest,
 };
 use zstacker_znp_protocol::framing::CommandMeta;
 
 use crate::startup::Adaptor;
 
 type Data = Vec<u8>;
-type IoAwnserer = oneshot::Sender<Data>;
+type ReplyHandler = oneshot::Sender<Data>;
 
 mod io_task;
 
 struct PendingSend {
-    awnser_to: IoAwnserer,
+    awnser_to: ReplyHandler,
     to_send: Vec<u8>,
     reply_meta: CommandMeta,
     status_reply: bool,
+    /// If this pattern is seen in the reply data and the meta matches
+    /// the reply is for us
+    reply_pattern: Pattern,
 }
 
 #[derive(Debug)]
@@ -65,6 +68,7 @@ impl Coordinator {
                 to_send: req.to_frame().map_err(QueueError::Serializing)?,
                 reply_meta: R::Reply::META,
                 status_reply: false,
+                reply_pattern: req.reply_pattern(),
             })
             .await
             .expect("Io-task is dropped after queue_requests");
@@ -89,6 +93,7 @@ impl Coordinator {
                 to_send: req.to_frame().map_err(QueueError::Serializing)?,
                 reply_meta: R::Reply::META,
                 status_reply: R::HAS_SYNC_STATUS_RPLY,
+                reply_pattern: req.reply_pattern(),
             })
             .await
             .expect("io-task is dropped after queue_requests");

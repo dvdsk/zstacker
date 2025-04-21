@@ -31,6 +31,57 @@ pub(crate) enum BasicStatus {
     Err = 1,
 }
 
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash)]
+pub enum PatternElement {
+    NeedsToMatchExact(u8),
+    #[default]
+    NeedsNotMatch,
+}
+
+impl PatternElement {
+    fn matches(&self, byte: u8) -> bool {
+        match self {
+            Self::NeedsToMatchExact(val) => byte == *val,
+            Self::NeedsNotMatch => true,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq, Hash)]
+pub struct Pattern(Vec<PatternElement>);
+
+impl Pattern {
+    pub fn matches(&self, data: &[u8]) -> bool {
+        let mut pattern = self.0.iter();
+
+        for (matcher, byte) in pattern.by_ref().zip(data) {
+            if !matcher.matches(*byte) {
+                return false;
+            }
+        }
+
+        pattern.next().is_none()
+    }
+
+    pub(crate) fn match_exact<T: Serialize>(mut self, val: &T) -> Self {
+        self.0.extend(
+            data_format::to_vec(val)
+                .expect(
+                    "only usable in crate, we only use it for commands, \
+                    they should serialize",
+                )
+                .into_iter()
+                .map(PatternElement::NeedsToMatchExact),
+        );
+        self
+    }
+    pub(crate) fn skip(mut self, n: usize) -> Self {
+        self.0
+            .extend(iter::repeat_n(PatternElement::NeedsNotMatch, n));
+        self
+    }
+}
+
 macro_rules! basic_reply {
     ($request_name:ident, $reply_name:ident) => {
         #[derive(Debug, Clone, Deserialize)]
@@ -253,25 +304,6 @@ pub struct ShortAddr(u16);
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Endpoint(u8);
-
-// /// See: Z-Stack Monitor and Test API section 3.12.2.16 revision 1.14
-// /// Note this is not serialized like this in the wire format
-// /// Can not use serde to get this over the wire. Overwrite the default
-// /// `Command::data_to_vec` implementation instead.
-// #[derive(Debug, Clone)]
-// struct NeighborLqi {
-//     /// Extended PAN ID of the neighbor device
-//     extended_pan_id: u64,
-//     /// Network extended address
-//     extended_address: IeeeAddr,
-//     network_address: ShortAddr,
-//     device_type: DeviceType, // 19th byte bits 1-0
-//     rx_on_when_idle: bool,   // 19th byte bits 3-2
-//     relationship: u8,        // 19th byte bits 6-4
-//     permit_joining: u8,      // 20th byte bits 1-0
-//     depth: u8,
-//     lqi: u8,
-// }
 
 #[derive(Debug, Clone, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
