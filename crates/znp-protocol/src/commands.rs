@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::data_format;
-use crate::framing::CommandInfo;
+use crate::framing::CommandMeta;
 
 pub const START_OF_FRAME: u8 = 0xFE;
 
@@ -129,7 +129,7 @@ fn from_reader_inner<R: SyncReply>(
     let [START_OF_FRAME, length, cmd0, cmd1] = reply_header else {
         return Err(E::ExpectedStartOfFrame);
     };
-    let info = CommandInfo::deserialize([cmd0, cmd1]).unwrap();
+    let info = CommandMeta::deserialize([cmd0, cmd1]).unwrap();
     if info.ty != CommandType::SRSP {
         return Err(E::ExpectedSynchrousReply(info.ty));
     } else if info.sub_system != R::Request::SUBSYSTEM {
@@ -179,7 +179,7 @@ fn split_off_and_verify_checksum<R: SyncReply>(
     Ok(())
 }
 
-#[derive(Clone, Copy, Debug, strum::FromRepr, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, strum::FromRepr, PartialEq, Eq, Hash)]
 #[repr(u8)]
 pub enum CommandType {
     /// A POLL command is used to retrieve queued data. Third command is only
@@ -200,7 +200,7 @@ pub enum CommandType {
     SRSP = 0x60,
 }
 
-#[derive(Clone, Copy, Debug, strum::FromRepr, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, strum::FromRepr, PartialEq, Eq, Hash)]
 #[repr(u8)]
 pub enum SubSystem {
     Reserved = 0x00,
@@ -236,7 +236,7 @@ pub enum DeviceState {
     DeviceLostInfoAboutParent = 0x0A,
 }
 
-#[derive(Clone, Copy, Debug, strum::EnumIter)]
+#[derive(Clone, Copy, Debug, strum::EnumIter, strum::FromRepr)]
 #[repr(u8)]
 pub enum DeviceType {
     None = 0,
@@ -245,13 +245,13 @@ pub enum DeviceType {
     EndDevice = 3,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct IeeeAddr(u64);
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct ShortAddr(u16);
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Endpoint(u8);
 
 // /// See: Z-Stack Monitor and Test API section 3.12.2.16 revision 1.14

@@ -1,7 +1,14 @@
+use std::time::Duration;
+
 use serde::{Deserialize, Serialize};
 use serde_repr::Deserialize_repr;
 
-use super::{SubSystem, SyncReply, SyncRequest, basic_reply};
+use super::{
+    AsyncReply, AsyncRequest, IeeeAddr, ShortAddr, SubSystem, SyncReply,
+    SyncRequest,
+};
+
+mod neighbor_lqi;
 
 // #[derive(Debug, Clone, Serialize, Deserialize)]
 // pub struct NwkAddrReq {
@@ -16,20 +23,37 @@ use super::{SubSystem, SyncReply, SyncRequest, basic_reply};
 //     type Reply = NwkAddrReqReply;
 // }
 // basic_reply! {NwkAddrReq, NwkAddrReqReply }
-//
-// #[derive(Debug, Clone, Serialize, Deserialize)]
-// pub struct IeeeAddrReq {
-//     pub shortaddr: u16,
-//     pub reqtype: u8,
-//     pub startindex: u8,
-// }
-//
-// impl AsyncRequest for IeeeAddrReq {
-//     const ID: u8 = 1;
-//     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
-//     type Reply = IeeeAddrRsp;
-// }
-//
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IeeeAddrReq {
+    pub shortaddr: u16,
+    pub reqtype: u8,
+    pub startindex: u8,
+}
+
+impl AsyncRequest for IeeeAddrReq {
+    const ID: u8 = 1;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
+    const TIMEOUT: Duration = Duration::from_millis(500);
+    const HAS_SYNC_STATUS_RPLY: bool = true;
+    type Reply = IeeeAddrRsp;
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IeeeAddrRsp {
+    pub status: u8,
+    pub ieeeaddr: IeeeAddr,
+    pub nwkaddr: u16,
+    pub startindex: u8,
+    pub assocdevlist: Vec<u16>,
+}
+
+impl AsyncReply for IeeeAddrRsp {
+    const ID: u8 = 0x81;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
+    type Request = IeeeAddrReq;
+}
+
 // #[derive(Debug, Clone, Serialize, Deserialize)]
 // pub struct NodeDescReq {
 //     pub dstaddr: u16,
@@ -310,20 +334,36 @@ use super::{SubSystem, SyncReply, SyncRequest, basic_reply};
 //     type Reply = MgmtNwkDiscReqReply;
 // }
 // basic_reply! {MgmtNwkDiscReq, MgmtNwkDiscReqReply }
-//
-// #[derive(Debug, Clone, Serialize, Deserialize)]
-// pub struct MgmtLqiReq {
-//     pub dstaddr: u16,
-//     pub startindex: u8,
-// }
-//
-// impl SyncRequest for MgmtLqiReq {
-//     const ID: u8 = 49;
-//     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
-//     type Reply = MgmtLqiReqReply;
-// }
-// basic_reply! {MgmtLqiReq, MgmtLqiReqReply }
-//
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MgmtLqiReq {
+    pub dstaddr: ShortAddr,
+    pub startindex: u8,
+}
+
+impl AsyncRequest for MgmtLqiReq {
+    const ID: u8 = 49;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
+    const TIMEOUT: Duration = Duration::from_millis(500);
+    const HAS_SYNC_STATUS_RPLY: bool = true;
+    type Reply = MgmtLqiRsp;
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct MgmtLqiRsp {
+    pub srcaddr: u16,
+    pub status: u8,
+    pub neighbortableentries: u8,
+    pub startindex: u8,
+    pub neighborlqilist: Vec<neighbor_lqi::NeighborLqi>,
+}
+
+impl AsyncReply for MgmtLqiRsp {
+    const ID: u8 = 177;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
+    type Request = MgmtLqiReq;
+}
+
 // #[derive(Debug, Clone, Serialize, Deserialize)]
 // pub struct MgmtRtgReq {
 //     pub dstaddr: u16,
@@ -482,21 +522,6 @@ impl SyncReply for StartupFromAppReply {
 // impl AsyncReply for NwkAddrRsp {
 //     const ID: u8 = 0x80;
 //     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
-// }
-//
-// #[derive(Debug, Clone, Serialize, Deserialize)]
-// pub struct IeeeAddrRsp {
-//     pub status: u8,
-//     pub ieeeaddr: IeeeAddr,
-//     pub nwkaddr: u16,
-//     pub startindex: u8,
-//     pub assocdevlist: Vec<u16>,
-// }
-//
-// impl AsyncReply for IeeeAddrRsp {
-//     const ID: u8 = 0x81;
-//     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
-//     type Request = IeeeAddrReq;
 // }
 //
 // #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -695,22 +720,6 @@ impl SyncReply for StartupFromAppReply {
 // }
 //
 // impl SyncReply for MgmtNwkDiscRsp {
-//     const CMD0: u8 = 0; // placeholder
-//     const CMD1: u8 = 0; // placeholder
-// }
-//
-// #[derive(Debug, Clone, Serialize, Deserialize)]
-// pub struct MgmtLqiRsp {
-//     pub srcaddr: u16,
-//     pub status: u8,
-//     pub neighbortableentries: u8,
-//     pub startindex: u8,
-//     pub neighborlqilistcount: u8,
-//     pub neighborlqilist:
-//         compile_error!("needs custom derive with NeighborLqi type"),
-// }
-//
-// impl SyncReply for MgmtLqiRsp {
 //     const CMD0: u8 = 0; // placeholder
 //     const CMD1: u8 = 0; // placeholder
 // }

@@ -21,6 +21,8 @@ pub enum StartUpError {
     NetworkRecoverFailed,
     #[error("Could not add device to green power group")]
     AddingToGreenPowerGroup(#[source] SendCommandError),
+    #[error("Could not reset the adaptor")]
+    ResetFailed(#[source] std::io::Error),
 }
 
 #[derive(Debug, thiserror::Error)]

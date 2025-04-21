@@ -1,17 +1,18 @@
 use std::iter;
+use std::time::Duration;
 
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 
 use crate::data_format;
-use crate::framing::CommandInfo;
+use crate::framing::CommandMeta;
 
 use super::{CommandError, CommandType, ReplyError, START_OF_FRAME, SubSystem};
 
 pub trait SyncRequest: Serialize {
     const ID: u8;
     const SUBSYSTEM: SubSystem;
-    const META: CommandInfo = CommandInfo {
+    const META: CommandMeta = CommandMeta {
         ty: CommandType::SREQ,
         sub_system: Self::SUBSYSTEM,
         id: Self::ID,
@@ -29,30 +30,38 @@ pub trait SyncRequest: Serialize {
     where
         Self: Sized,
     {
-        let serialized = self.data_to_vec().map_err(|error| CommandError {
-            command: std::any::type_name::<Self>(),
-            cause: error,
-        })?;
-        let frame = [serialized.len() as u8]
-            .into_iter()
-            .chain(Self::META.serialize())
-            .chain(serialized);
-
-        let checksum = frame
-            .clone()
-            .reduce(|checksum, byte| checksum ^ byte)
-            .expect("never empty");
-
-        Ok(iter::once(START_OF_FRAME)
-            .chain(frame)
-            .chain([checksum])
-            .collect())
+        let serialized_data =
+            self.data_to_vec().map_err(|error| CommandError {
+                command: std::any::type_name::<Self>(),
+                cause: error,
+            })?;
+        to_frame(serialized_data, Self::META)
     }
+}
+
+fn to_frame(
+    serialized_data: Vec<u8>,
+    meta: CommandMeta,
+) -> Result<Vec<u8>, CommandError> {
+    let frame = [serialized_data.len() as u8]
+        .into_iter()
+        .chain(meta.serialize())
+        .chain(serialized_data);
+
+    let checksum = frame
+        .clone()
+        .reduce(|checksum, byte| checksum ^ byte)
+        .expect("never empty");
+
+    Ok(iter::once(START_OF_FRAME)
+        .chain(frame)
+        .chain([checksum])
+        .collect())
 }
 
 pub trait SyncReply: DeserializeOwned {
     type Request: SyncRequest;
-    const META: CommandInfo = CommandInfo {
+    const META: CommandMeta = CommandMeta {
         ty: CommandType::SRSP,
         sub_system: Self::Request::SUBSYSTEM,
         id: Self::Request::ID,
@@ -66,11 +75,22 @@ pub trait SyncReply: DeserializeOwned {
             cause,
         })
     }
+
+    fn from_data(_data: &[u8]) -> Result<Self, ReplyError> {
+        todo!()
+    }
 }
 
 pub trait AsyncRequest: Serialize {
     const ID: u8;
     const SUBSYSTEM: SubSystem;
+    const META: CommandMeta = CommandMeta {
+        ty: CommandType::AREQ,
+        sub_system: Self::SUBSYSTEM,
+        id: Self::ID,
+    };
+    const TIMEOUT: Duration;
+    const HAS_SYNC_STATUS_RPLY: bool;
     type Reply: AsyncReply;
 
     fn data_to_vec(&self) -> Result<Vec<u8>, data_format::Error>
@@ -84,7 +104,12 @@ pub trait AsyncRequest: Serialize {
     where
         Self: Sized,
     {
-        todo!();
+        let serialized_data =
+            self.data_to_vec().map_err(|error| CommandError {
+                command: std::any::type_name::<Self>(),
+                cause: error,
+            })?;
+        to_frame(serialized_data, Self::META)
     }
 }
 
@@ -97,13 +122,18 @@ pub trait AsyncNotify {
     const SUBSYSTEM: SubSystem;
 }
 
-/// Only send by the device in response to a AsyncRequest
+/// Only send by the device in response to an AsyncRequest
 pub trait AsyncReply: DeserializeOwned {
     const ID: u8;
     const SUBSYSTEM: SubSystem;
+    const META: CommandMeta = CommandMeta {
+        ty: CommandType::AREQ,
+        sub_system: Self::SUBSYSTEM,
+        id: Self::ID,
+    };
     type Request: AsyncRequest;
 
-    fn from_reader(_: &mut impl std::io::Read) -> Result<Self, ReplyError> {
+    fn from_data(_data: &[u8]) -> Result<Self, ReplyError> {
         todo!()
     }
 }

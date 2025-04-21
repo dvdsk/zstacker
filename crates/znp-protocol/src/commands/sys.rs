@@ -1,18 +1,58 @@
 #![allow(dead_code)]
 
-use super::{SubSystem, SyncReply, SyncRequest};
-use serde::{Deserialize, Serialize};
+use std::time::Duration;
 
-// #[derive(Debug, Clone, Serialize)]
-// pub struct ResetReq {
-//     pub ty: u8,
-// }
-//
-// impl AsyncRequest for ResetReq {
-//     const ID: u8 = 0;
-//     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-//     type Reply = ResetInd;
-// }
+use super::{
+    AsyncNotify, AsyncReply, AsyncRequest, SubSystem, SyncReply, SyncRequest,
+};
+use serde::{Deserialize, Serialize};
+use serde_repr::Serialize_repr;
+
+#[derive(Debug, Clone, Serialize_repr)]
+#[repr(u8)]
+pub enum ResetType {
+    /// Reset the device by using a hardware reset (i.e.watchdog reset)
+    Hardware = 0,
+    /// Soft reset (i.e. a jump to the reset vector). This is especially
+    /// useful in the `CC2531`, for instance, so that the USB host does not
+    /// have to contend with the USB hardware resetting.
+    Soft,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ResetReq {
+    pub ty: ResetType,
+}
+
+impl AsyncRequest for ResetReq {
+    const ID: u8 = 0;
+    const SUBSYSTEM: SubSystem = SubSystem::Sys;
+    const TIMEOUT: std::time::Duration = Duration::from_millis(100);
+    const HAS_SYNC_STATUS_RPLY: bool = false;
+    type Reply = ResetInd;
+}
+
+/// This callback is sent by the device to indicate that a reset has occurred.
+#[derive(Debug, Clone, Deserialize)]
+pub struct ResetInd {
+    pub reason: u8,
+    pub transportrev: u8,
+    pub productid: u8,
+    pub majorrel: u8,
+    pub minorrel: u8,
+    pub hwrev: u8,
+}
+
+impl AsyncReply for ResetInd {
+    const ID: u8 = 128;
+    const SUBSYSTEM: SubSystem = SubSystem::Sys;
+    type Request = ResetReq;
+}
+
+impl AsyncNotify for ResetInd {
+    const ID: u8 = 128;
+    const SUBSYSTEM: SubSystem = SubSystem::Sys;
+}
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Ping;
@@ -693,22 +733,6 @@ impl SyncRequest for Version {
 // }
 //
 // basic_reply! { NvCompact, NvCompactReply }
-//
-// /// This callback is sent by the device to indicate that a reset has occurred.
-// #[derive(Debug, Clone, Serialize)]
-// pub struct ResetInd {
-//     pub reason: u8,
-//     pub transportrev: u8,
-//     pub productid: u8,
-//     pub majorrel: u8,
-//     pub minorrel: u8,
-//     pub hwrev: u8,
-// }
-//
-// impl AsyncNotify for ResetInd {
-//     const ID: u8 = 128;
-//     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-// }
 //
 // /// This callback is sent by the device to indicate that a specific timer has
 // /// been expired.

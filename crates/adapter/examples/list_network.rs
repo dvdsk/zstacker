@@ -59,7 +59,8 @@ fn main() -> color_eyre::Result<()> {
             .open()
             .expect("Failed to open port");
         let serial = UsbSerial(serial);
-        let mut candidate = zstacker_znp::startup::Adaptor { serial };
+        let mut candidate =
+            zstacker_znp::startup::UnInitializedAdaptor { serial };
         match zstacker_znp::check_connection_to_adapter(&mut candidate) {
             Ok(()) => adaptor = Some(candidate),
             Err(e) => eprintln!(
@@ -72,7 +73,10 @@ fn main() -> color_eyre::Result<()> {
     let Some(mut adaptor) = adaptor else {
         return Err(eyre!("No adapter found"));
     };
-    zstacker_znp::start_coordinator(&mut adaptor, vec![])
+    let coordinator = zstacker_znp::start_coordinator(&mut adaptor, vec![])
         .wrap_err("Could not start coordinator")?;
+    coordinator
+        .list_addresses_on_network()
+        .wrap_err("Could not get active adresses")?;
     Ok(())
 }
