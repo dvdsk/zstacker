@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::data_format;
-use crate::framing::CommandMeta;
 
 pub const START_OF_FRAME: u8 = 0xFE;
 
@@ -168,66 +167,13 @@ pub enum ReplyErrorCause {
     WrongId { expected: u8, got: u8 },
 }
 
-fn from_reader_inner<R: SyncReply>(
-    reader: &mut impl std::io::Read,
-) -> Result<R, ReplyErrorCause> {
+fn from_data_inner<R: SyncReply>(data: &[u8]) -> Result<R, ReplyErrorCause> {
     use ReplyErrorCause as E;
-    let mut reply_header = [0u8; 4];
-    reader
-        .read_exact(&mut reply_header)
-        .map_err(E::ReadingHeader)?;
 
-    let [START_OF_FRAME, length, cmd0, cmd1] = reply_header else {
-        return Err(E::ExpectedStartOfFrame);
-    };
-    let info = CommandMeta::deserialize([cmd0, cmd1]).unwrap();
-    if info.ty != CommandType::SRSP {
-        return Err(E::ExpectedSynchrousReply(info.ty));
-    } else if info.sub_system != R::Request::SUBSYSTEM {
-        return Err(E::WrongSubSystem {
-            expected: R::Request::SUBSYSTEM,
-            got: info.sub_system,
-        });
-    } else if info.id != R::Request::ID {
-        return Err(E::WrongId {
-            expected: R::Request::ID,
-            got: info.id,
-        });
-    }
-
-    let mut buf = vec![0u8; length as usize + 1];
-    reader.read_exact(&mut buf).map_err(E::ReadingData)?;
-    split_off_and_verify_checksum::<R>(length, &mut buf)?;
-
-    use itertools::Itertools;
-    tracing::trace!(
-        "data: [{}]",
-        buf.iter().map(|byte| format!("{byte:x}")).join(",")
-    );
-
-    let mut data = std::io::Cursor::new(buf);
+    let mut data = std::io::Cursor::new(data);
     let reply = data_format::from_reader(&mut data).map_err(E::Deserialize)?;
 
     Ok(reply)
-}
-
-fn split_off_and_verify_checksum<R: SyncReply>(
-    length: u8,
-    buf: &mut Vec<u8>,
-) -> Result<(), ReplyErrorCause> {
-    let expected_checksum =
-        buf.pop().expect("read_exact only Ok if the buffer is full");
-    let expected_meta = R::META.serialize();
-    let frame = iter::once(length)
-        .chain(expected_meta)
-        .chain(buf.iter().copied());
-    let calculated_checksum = frame
-        .reduce(|checksum, byte| checksum ^ byte)
-        .expect("never empty");
-    if expected_checksum != calculated_checksum {
-        return Err(ReplyErrorCause::CheckSumMismatch);
-    }
-    Ok(())
 }
 
 #[derive(Clone, Copy, Debug, strum::FromRepr, PartialEq, Eq, Hash)]

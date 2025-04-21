@@ -1,5 +1,6 @@
 //! Pretty inefficient but it is cancel safe
 
+use std::iter;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -22,6 +23,8 @@ pub enum Error {
     Deserialize(#[source] CommandMetaError),
     #[error("Timed out reading next serial byte")]
     Timeout,
+    #[error("Send checksum does not match calculated one")]
+    CheckSumMismatch,
 }
 
 #[derive(Debug)]
@@ -93,7 +96,7 @@ impl MetaReader {
         }
 
         self.n_read = 0;
-        let [START_OF_FRAME, length, meta_bytes @ ..] = self.buffer else {
+        let [START_OF_FRAME, data_length, meta_bytes @ ..] = self.buffer else {
             return Err(Error::ExpectedStartOfFrame);
         };
 
@@ -101,7 +104,7 @@ impl MetaReader {
             CommandMeta::deserialize(meta_bytes).map_err(Error::Deserialize)?;
         Ok(DataReader {
             meta,
-            data_length: length as usize,
+            data_length: data_length as usize,
             bytes_read: Vec::new(),
         })
     }
@@ -112,7 +115,9 @@ impl DataReader {
         &mut self,
         serial: &mut SerialStream,
     ) -> Result<(CommandMeta, Data), Error> {
-        let left_to_read = self.data_length - self.bytes_read.len();
+        const CHECKSUM_LENGTH: usize = 1;
+        let left_to_read =
+            self.data_length + CHECKSUM_LENGTH - self.bytes_read.len();
         for _ in 0..left_to_read {
             self.bytes_read.push(
                 serial
@@ -123,6 +128,17 @@ impl DataReader {
                     .map_err(Arc::new)
                     .map_err(Error::Io)?,
             );
+        }
+        let checksum_in_frame = self.bytes_read.pop().unwrap();
+
+        let frame = iter::once(self.data_length as u8)
+            .chain(self.meta.serialize())
+            .chain(self.bytes_read.iter().copied());
+        let calculated_checksum = frame
+            .reduce(|checksum, byte| checksum ^ byte)
+            .expect("never empty");
+        if checksum_in_frame != calculated_checksum {
+            return Err(Error::CheckSumMismatch);
         }
 
         Ok((self.meta.clone(), self.bytes_read.clone()))

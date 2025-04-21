@@ -54,6 +54,7 @@ pub async fn io_task(
                 return (serial, Ok(()));
             }
             Event::Received(Some(pending)) => {
+                dbg!();
                 send_pending(
                     &mut serial,
                     pending,
@@ -70,7 +71,7 @@ pub async fn io_task(
         if let Err(err) = res {
             error!(
                 "Io task ran into error, coordinator needs to be restarted to \
-                recover. Erro was: {err}"
+                recover. Error was: {err:?}"
             );
             return (serial, Err(err));
         }
@@ -90,6 +91,7 @@ async fn send_pending(
     if pending.status_reply {
         todo!()
     }
+    dbg!();
     requests_expecting_reply.register(pending).expect(
         "Having multiple requests with the same command \
             pending is not supported",
@@ -102,7 +104,9 @@ async fn handle_data(
     meta: CommandMeta,
     data: Vec<u8>,
 ) -> Result<(), Error> {
+    dbg!();
     if let Some(answerer) = requests_expecting_reply.remove(&meta, &data) {
+        dbg!();
         let _ = answerer.send(data);
     }
     Ok(())

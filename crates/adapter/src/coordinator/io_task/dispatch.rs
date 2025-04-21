@@ -3,6 +3,7 @@
 
 use std::collections::HashMap;
 use std::collections::hash_map::Entry;
+use std::iter;
 
 use zstacker_znp_protocol::commands::Pattern;
 use zstacker_znp_protocol::framing::CommandMeta;
@@ -21,17 +22,24 @@ impl Dispatcher {
         &mut self,
         pending: crate::coordinator::PendingSend,
     ) -> Result<(), DuplicateEntry> {
+        dbg!();
         let mut res = Ok(());
-        self.0
-            .entry(pending.reply_meta)
-            .and_modify(|patterns| {
-                match patterns.entry(pending.reply_pattern) {
+        match self.0.entry(pending.reply_meta) {
+            Entry::Occupied(occupied) => {
+                match occupied.into_mut().entry(pending.reply_pattern) {
                     Entry::Occupied(_) => res = Err(DuplicateEntry),
-                    Entry::Vacant(vacant_entry) => {
-                        vacant_entry.insert(pending.awnser_to);
+                    Entry::Vacant(vacent) => {
+                        vacent.insert(pending.awnser_to);
                     }
                 }
-            });
+            }
+            Entry::Vacant(vacant_entry) => {
+                let patterns =
+                    iter::once((pending.reply_pattern, pending.awnser_to))
+                        .collect();
+                vacant_entry.insert(patterns);
+            }
+        }
         res
     }
 

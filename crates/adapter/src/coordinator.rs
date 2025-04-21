@@ -12,8 +12,6 @@ use zstacker_znp_protocol::commands::{
 };
 use zstacker_znp_protocol::framing::CommandMeta;
 
-use crate::startup::Adaptor;
-
 type Data = Vec<u8>;
 type ReplyHandler = oneshot::Sender<Data>;
 
@@ -30,10 +28,7 @@ struct PendingSend {
 }
 
 #[derive(Debug)]
-pub struct Coordinator {
-    pub short_addr: ShortAddr,
-    pub ieee_addr: IeeeAddr,
-
+pub struct Adaptor {
     to_io_task: mpsc::Sender<PendingSend>,
     io_task:
         Option<task::JoinHandle<(SerialStream, Result<(), io_task::Error>)>>,
@@ -43,14 +38,41 @@ pub struct Coordinator {
     recovered_serial: Option<SerialStream>,
 }
 
+pub struct Coordinator {
+    pub short_addr: ShortAddr,
+    pub ieee_addr: IeeeAddr,
+    adaptor: Adaptor,
+}
+
 impl Coordinator {
     pub(crate) fn start(device_info: DeviceInfo, adaptor: Adaptor) -> Self {
-        let (tx, rx) = mpsc::channel(100);
         Self {
             short_addr: device_info.short_addr,
             ieee_addr: device_info.ieee_addr,
+            adaptor,
+        }
+    }
+
+    pub async fn queue_sync<R: SyncRequest>(
+        &mut self,
+        req: R,
+    ) -> Result<R::Reply, QueueError> {
+        self.adaptor.queue_sync(req).await
+    }
+    pub async fn queue_async<R: AsyncRequest>(
+        &mut self,
+        req: R,
+    ) -> Result<R::Reply, QueueError> {
+        self.adaptor.queue_async(req).await
+    }
+}
+
+impl Adaptor {
+    pub fn start(serial: SerialStream) -> Self {
+        let (tx, rx) = mpsc::channel(100);
+        Self {
             to_io_task: tx,
-            io_task: Some(task::spawn(io_task::io_task(adaptor.serial, rx))),
+            io_task: Some(task::spawn(io_task::io_task(serial, rx))),
             io_task_error: None,
             recovered_serial: None,
         }
@@ -62,6 +84,7 @@ impl Coordinator {
         req: R,
     ) -> Result<R::Reply, QueueError> {
         let (tx, rx) = tokio::sync::oneshot::channel();
+        dbg!();
         self.to_io_task
             .send(PendingSend {
                 awnser_to: tx,
@@ -76,7 +99,7 @@ impl Coordinator {
             Err(_) => Err(QueueError::ReplyNotImmediate),
             Ok(Err(_)) => Err(self.io_task_error().await),
             Ok(Ok(data)) => {
-                R::Reply::from_data(&data).map_err(QueueError::Derializing)
+                R::Reply::from_data(&data).map_err(QueueError::Deserializing)
             }
         }
     }
@@ -97,13 +120,14 @@ impl Coordinator {
             })
             .await
             .expect("io-task is dropped after queue_requests");
+
         match rx.timeout(R::TIMEOUT).await {
             Err(_) => Err(QueueError::TimedOut {
                 timeout: R::TIMEOUT,
             }),
             Ok(Err(_)) => Err(self.io_task_error().await),
             Ok(Ok(data)) => {
-                R::Reply::from_data(&data).map_err(QueueError::Derializing)
+                R::Reply::from_data(&data).map_err(QueueError::Deserializing)
             }
         }
     }
@@ -149,7 +173,7 @@ pub enum QueueError {
     #[error("Error while serializing the request")]
     Serializing(#[source] CommandError),
     #[error("Error deseralizing the request")]
-    Derializing(#[source] ReplyError),
+    Deserializing(#[source] ReplyError),
     #[error("IoTask ran into an error and has ended")]
     IoTask(#[source] io_task::Error),
     #[error("Async request did not get awnserd within: {timeout:?}")]

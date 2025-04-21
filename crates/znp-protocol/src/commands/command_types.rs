@@ -73,17 +73,11 @@ pub trait SyncReply: DeserializeOwned {
         id: Self::Request::ID,
     };
 
-    fn from_reader(
-        reader: &mut impl std::io::Read,
-    ) -> Result<Self, ReplyError> {
-        super::from_reader_inner(reader).map_err(|cause| ReplyError {
+    fn from_data(data: &[u8]) -> Result<Self, ReplyError> {
+        super::from_data_inner(data).map_err(|cause| ReplyError {
             reply: std::any::type_name::<Self>(),
             cause,
         })
-    }
-
-    fn from_data(_data: &[u8]) -> Result<Self, ReplyError> {
-        todo!()
     }
 }
 

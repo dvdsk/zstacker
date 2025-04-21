@@ -8,7 +8,7 @@ use super::{
 use serde::{Deserialize, Serialize};
 use serde_repr::Serialize_repr;
 
-#[derive(Debug, Clone, Serialize_repr)]
+#[derive(Debug, Clone, Copy, Serialize_repr)]
 #[repr(u8)]
 pub enum ResetType {
     /// Reset the device by using a hardware reset (i.e.watchdog reset)
@@ -19,7 +19,7 @@ pub enum ResetType {
     Soft,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Copy, Serialize)]
 pub struct ResetReq {
     pub ty: ResetType,
 }
