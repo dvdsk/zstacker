@@ -12,6 +12,9 @@ pub use command_types::{
     AsyncNotify, AsyncReply, AsyncRequest, SyncReply, SyncRequest,
 };
 
+#[cfg(feature = "mocking")]
+pub use command_types::to_frame;
+
 pub mod af;
 pub mod app;
 pub mod appconfig;
@@ -165,15 +168,6 @@ pub enum ReplyErrorCause {
         "Expected a reply for command: {expected} however got one for {got}"
     )]
     WrongId { expected: u8, got: u8 },
-}
-
-fn from_data_inner<R: SyncReply>(data: &[u8]) -> Result<R, ReplyErrorCause> {
-    use ReplyErrorCause as E;
-
-    let mut data = std::io::Cursor::new(data);
-    let reply = data_format::from_reader(&mut data).map_err(E::Deserialize)?;
-
-    Ok(reply)
 }
 
 #[derive(Clone, Copy, Debug, strum::FromRepr, PartialEq, Eq, Hash)]

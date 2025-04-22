@@ -11,7 +11,7 @@ use super::{
     CommandError, CommandType, Pattern, ReplyError, START_OF_FRAME, SubSystem,
 };
 
-pub trait SyncRequest: Serialize {
+pub trait SyncRequest: Serialize + std::fmt::Debug {
     const ID: u8;
     const SUBSYSTEM: SubSystem;
     const META: CommandMeta = CommandMeta {
@@ -45,22 +45,23 @@ pub trait SyncRequest: Serialize {
     }
 }
 
-fn to_frame(
+#[cfg(feature = "mocking")]
+pub fn to_frame(
     serialized_data: Vec<u8>,
     meta: CommandMeta,
 ) -> Result<Vec<u8>, CommandError> {
-    let frame = [serialized_data.len() as u8]
+    let frame_body = [serialized_data.len() as u8]
         .into_iter()
         .chain(meta.serialize())
         .chain(serialized_data);
 
-    let checksum = frame
+    let checksum = frame_body
         .clone()
         .reduce(|checksum, byte| checksum ^ byte)
         .expect("never empty");
 
     Ok(iter::once(START_OF_FRAME)
-        .chain(frame)
+        .chain(frame_body)
         .chain([checksum])
         .collect())
 }
@@ -74,14 +75,18 @@ pub trait SyncReply: DeserializeOwned {
     };
 
     fn from_data(data: &[u8]) -> Result<Self, ReplyError> {
-        super::from_data_inner(data).map_err(|cause| ReplyError {
-            reply: std::any::type_name::<Self>(),
-            cause,
-        })
+        use crate::commands::ReplyErrorCause as E;
+        let mut data = std::io::Cursor::new(data);
+        data_format::from_reader(&mut data)
+            .map_err(E::Deserialize)
+            .map_err(|cause| ReplyError {
+                reply: std::any::type_name::<Self>(),
+                cause,
+            })
     }
 }
 
-pub trait AsyncRequest: Serialize {
+pub trait AsyncRequest: Serialize + std::fmt::Debug {
     const ID: u8;
     const SUBSYSTEM: SubSystem;
     const META: CommandMeta = CommandMeta {
@@ -137,7 +142,14 @@ pub trait AsyncReply: DeserializeOwned {
     };
     type Request: AsyncRequest;
 
-    fn from_data(_data: &[u8]) -> Result<Self, ReplyError> {
-        todo!()
+    fn from_data(data: &[u8]) -> Result<Self, ReplyError> {
+        use crate::commands::ReplyErrorCause as E;
+        let mut data = std::io::Cursor::new(data);
+        data_format::from_reader(&mut data)
+            .map_err(E::Deserialize)
+            .map_err(|cause| ReplyError {
+                reply: std::any::type_name::<Self>(),
+                cause,
+            })
     }
 }

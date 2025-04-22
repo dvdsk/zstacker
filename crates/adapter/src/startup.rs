@@ -36,20 +36,23 @@ pub async fn reset_device(coord: &mut Adaptor) -> Result<(), StartUpError> {
     };
 
     // Reset device multiple times to make sure one arrives
-    coord
+    let reset_reply = coord
         .queue_async(reset_cmd)
         .await
         .map_err(StartUpError::ResetFailed)?;
+    debug!("reset reply: {:?}", reset_reply);
     time::sleep(Duration::from_millis(100)).await;
-    coord
+    let reset_reply = coord
         .queue_async(reset_cmd)
         .await
         .map_err(StartUpError::ResetFailed)?;
+    debug!("reset reply: {:?}", reset_reply);
     time::sleep(Duration::from_millis(100)).await;
-    coord
+    let reset_reply = coord
         .queue_async(reset_cmd)
         .await
         .map_err(StartUpError::ResetFailed)?;
+    debug!("reset reply: {:?}", reset_reply);
 
     // Give the device time to reset
     time::sleep(Duration::from_secs(1)).await;

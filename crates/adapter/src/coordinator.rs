@@ -4,7 +4,7 @@ use tokio::sync::{mpsc, oneshot};
 use tokio::task;
 use tokio_serial::SerialStream;
 use tokio_util::time::FutureExt as _;
-use tracing::error;
+use tracing::{error, instrument};
 use zstacker_znp_protocol::commands::util::DeviceInfo;
 use zstacker_znp_protocol::commands::{AsyncReply, ReplyError, SyncReply};
 use zstacker_znp_protocol::commands::{
@@ -79,6 +79,7 @@ impl Adaptor {
     }
 
     /// May wait until there is space in the receive buffer
+    #[instrument(skip(self), err)]
     pub async fn queue_sync<R: SyncRequest>(
         &mut self,
         req: R,
@@ -105,6 +106,7 @@ impl Adaptor {
     }
 
     /// May wait until there is space in the receive buffer
+    #[instrument(skip(self), err)]
     pub async fn queue_async<R: AsyncRequest>(
         &mut self,
         req: R,

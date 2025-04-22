@@ -42,6 +42,7 @@ pub async fn io_task(
 
     let mut reader = FrameReader::default();
     loop {
+        debug!("lop loop");
         let res = match (
             rx.recv().map(Event::Received),
             reader.read(&mut serial).map(Event::ReadMeta),
@@ -54,7 +55,7 @@ pub async fn io_task(
                 return (serial, Ok(()));
             }
             Event::Received(Some(pending)) => {
-                dbg!();
+                debug!("Got new request to send");
                 send_pending(
                     &mut serial,
                     pending,
@@ -63,6 +64,7 @@ pub async fn io_task(
                 .await
             }
             Event::ReadMeta(Ok((meta, data))) => {
+                debug!("Read meta: {meta:?}");
                 handle_data(&mut requests_expecting_reply, meta, data).await
             }
             Event::ReadMeta(Err(err)) => Err(Error::ReadingFrameIo(err)),
@@ -88,6 +90,7 @@ async fn send_pending(
         .await
         .map_err(Arc::new)
         .map_err(Error::WritingIo)?;
+    debug!("send request");
     if pending.status_reply {
         todo!()
     }
@@ -104,9 +107,7 @@ async fn handle_data(
     meta: CommandMeta,
     data: Vec<u8>,
 ) -> Result<(), Error> {
-    dbg!();
     if let Some(answerer) = requests_expecting_reply.remove(&meta, &data) {
-        dbg!();
         let _ = answerer.send(data);
     }
     Ok(())

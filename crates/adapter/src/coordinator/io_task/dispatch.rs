@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::collections::hash_map::Entry;
 use std::iter;
 
+use tracing::debug;
 use zstacker_znp_protocol::commands::Pattern;
 use zstacker_znp_protocol::framing::CommandMeta;
 
@@ -22,7 +23,6 @@ impl Dispatcher {
         &mut self,
         pending: crate::coordinator::PendingSend,
     ) -> Result<(), DuplicateEntry> {
-        dbg!();
         let mut res = Ok(());
         match self.0.entry(pending.reply_meta) {
             Entry::Occupied(occupied) => {
@@ -40,6 +40,7 @@ impl Dispatcher {
                 vacant_entry.insert(patterns);
             }
         }
+        debug!("registered reply handler");
         res
     }
 

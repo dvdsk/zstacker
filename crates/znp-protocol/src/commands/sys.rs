@@ -6,7 +6,7 @@ use super::{
     AsyncNotify, AsyncReply, AsyncRequest, SubSystem, SyncReply, SyncRequest,
 };
 use serde::{Deserialize, Serialize};
-use serde_repr::Serialize_repr;
+use serde_repr::{Deserialize_repr, Serialize_repr};
 
 #[derive(Debug, Clone, Copy, Serialize_repr)]
 #[repr(u8)]
@@ -32,15 +32,25 @@ impl AsyncRequest for ResetReq {
     type Reply = ResetInd;
 }
 
+#[derive(Debug, Clone, Deserialize_repr)]
+#[cfg_attr(feature = "mocking", derive(Serialize_repr))]
+#[repr(u8)]
+pub enum ResetReason {
+    PowerUp = 0,
+    External = 1,
+    WatchDog = 2,
+}
+
 /// This callback is sent by the device to indicate that a reset has occurred.
 #[derive(Debug, Clone, Deserialize)]
+#[cfg_attr(feature = "mocking", derive(Serialize))]
 pub struct ResetInd {
-    pub reason: u8,
-    pub transportrev: u8,
-    pub productid: u8,
-    pub majorrel: u8,
-    pub minorrel: u8,
-    pub hwrev: u8,
+    pub reason: ResetReason,
+    pub transport_rev: u8,
+    pub product_id: u8,
+    pub major_rel: u8,
+    pub minor_rel: u8,
+    pub hw_rev: u8,
 }
 
 impl AsyncReply for ResetInd {

@@ -7,6 +7,9 @@ authors.workspace = true
 license.workspace = true
 keywords = ["Zigbee", "Z-Stack", "Texas-Instruments"]
 
+[features]
+mocking = []
+
 [dependencies]
 thiserror = "2.0.12"
 tokio = { version = "1.44", features = ["io-util"] }
@@ -20,3 +23,4 @@ itertools = "0.14.0"
 color-eyre = "0.6.3"
 serialport = "4.2.2"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+
