@@ -4,11 +4,11 @@ use serde::{Deserialize, Serialize};
 use serde_repr::Deserialize_repr;
 
 use super::{
-    AsyncReply, AsyncRequest, IeeeAddr, ShortAddr, SubSystem,
-    SyncReply, SyncRequest,
+    AsyncReply, AsyncRequest, BasicStatus, IeeeAddr, ShortAddr, SubSystem, SyncReply, SyncRequest
 };
 
 mod neighbor_lqi;
+pub use neighbor_lqi::NeighborLqi;
 
 // #[derive(Debug, Clone, Serialize, Deserialize)]
 // pub struct NwkAddrReq {
@@ -356,13 +356,17 @@ impl AsyncRequest for MgmtLqiReq {
     }
 }
 
+#[cfg_attr(feature = "mocking", derive(Serialize))]
 #[derive(Debug, Clone, Deserialize)]
 pub struct MgmtLqiRsp {
-    pub srcaddr: u16,
-    pub status: u8,
-    pub neighbortableentries: u8,
+    pub srcaddr: ShortAddr,
+    pub status: BasicStatus,
+    // TODO replace this with a better abstraction
+    /// Total number of entries available in the device.
+    pub neighbortable_entries: u8,
+    /// Where in the total number of entries this response starts.
     pub startindex: u8,
-    pub neighborlqilist: Vec<neighbor_lqi::NeighborLqi>,
+    pub neighbor_lqi_list: Vec<NeighborLqi>,
 }
 
 impl AsyncReply for MgmtLqiRsp {
@@ -1136,12 +1140,10 @@ impl SyncRequest for ExtFindGroup {
     type Reply = ExtFindGroupReply;
 }
 
+#[cfg_attr(feature = "mocking", derive(Serialize))]
 #[derive(Debug, Clone, Deserialize)]
 pub struct ExtFindGroupReply {
-    pub status: u8,
-    pub groupid: u16,
-    pub namelen: u8,
-    pub groupname: Vec<u8>,
+    pub group_info: [u8; 18],
 }
 
 impl SyncReply for ExtFindGroupReply {

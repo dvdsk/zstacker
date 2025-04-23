@@ -7,7 +7,6 @@ use std::time::Duration;
 use tokio::io::AsyncReadExt;
 use tokio_serial::SerialStream;
 use tokio_util::time::FutureExt;
-use tracing::debug;
 use zstacker_znp_protocol::commands::START_OF_FRAME;
 use zstacker_znp_protocol::framing::{CommandMeta, CommandMetaError};
 
@@ -87,18 +86,18 @@ impl MetaReader {
         serial: &mut SerialStream,
     ) -> Result<DataReader, Error> {
         if self.n_read == 0 {
-            let START_OF_FRAME = serial
+            if serial
                 .read_u8()
                 .await
                 .map_err(Arc::new)
                 .map_err(Error::Io)?
-            else {
+                != START_OF_FRAME
+            {
                 return Err(Error::ExpectedStartOfFrame);
             };
         }
 
         for byte in self.buffer.iter_mut().skip(self.n_read) {
-            debug!("start read byte");
             *byte = serial
                 .read_u8()
                 .timeout(Duration::from_millis(50))
@@ -106,7 +105,6 @@ impl MetaReader {
                 .map_err(|_| Error::Timeout)?
                 .map_err(Arc::new)
                 .map_err(Error::Io)?;
-            debug!("read a byte");
             self.n_read += 1;
         }
 

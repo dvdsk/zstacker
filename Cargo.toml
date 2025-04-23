@@ -11,3 +11,7 @@ authors = ["David Kleingeld"]
 [profile.release-with-debug]
 inherits = "release"
 debug = true
+
+[workspace.dependencies]
+tokio = { version = "1.44", features = ["io-util", "sync", "rt", "time"] }
+tokio-serial = "5.4.5"

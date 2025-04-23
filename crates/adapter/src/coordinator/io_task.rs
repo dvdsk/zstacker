@@ -65,7 +65,8 @@ pub async fn io_task(
             }
             Event::ReadMeta(Ok((meta, data))) => {
                 debug!("Read meta: {meta:?}");
-                handle_data(&mut requests_expecting_reply, meta, data).await
+                requests_expecting_reply.process_reply(&meta, data);
+                Ok(())
             }
             Event::ReadMeta(Err(err)) => Err(Error::ReadingFrameIo(err)),
         };
@@ -85,30 +86,16 @@ async fn send_pending(
     pending: PendingSend,
     requests_expecting_reply: &mut Dispatcher,
 ) -> Result<(), Error> {
-    serial
-        .write_all(&pending.to_send)
-        .await
-        .map_err(Arc::new)
-        .map_err(Error::WritingIo)?;
-    debug!("send request");
-    if pending.status_reply {
-        todo!()
-    }
-    dbg!();
+    let to_send = pending.to_send.clone();
     requests_expecting_reply.register(pending).expect(
         "Having multiple requests with the same command \
             pending is not supported",
     );
-    Ok(())
-}
-
-async fn handle_data(
-    requests_expecting_reply: &mut Dispatcher,
-    meta: CommandMeta,
-    data: Vec<u8>,
-) -> Result<(), Error> {
-    if let Some(answerer) = requests_expecting_reply.remove(&meta, &data) {
-        let _ = answerer.send(data);
-    }
+    serial
+        .write_all(&to_send)
+        .await
+        .map_err(Arc::new)
+        .map_err(Error::WritingIo)?;
+    debug!("send request");
     Ok(())
 }

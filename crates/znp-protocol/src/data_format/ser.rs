@@ -199,9 +199,10 @@ impl ser::Serializer for &mut Serializer {
         Ok(self)
     }
 
-    fn serialize_tuple(self, _len: usize) -> Result<Self::SerializeTuple> {
-        Err(Error::TupleUnsupported)
-        // self.serialize_seq(Some(len))
+    // Serialize a statically sized sequence whose length will be known
+    // at deserialization
+    fn serialize_tuple(self, len: usize) -> Result<Self::SerializeTuple> {
+        self.serialize_seq(Some(len))
     }
 
     // Tuple structs look just like sequences in JSON.
@@ -283,15 +284,15 @@ impl ser::SerializeTuple for &mut Serializer {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_element<T>(&mut self, _: &T) -> Result<()>
+    fn serialize_element<T>(&mut self, value: &T) -> Result<()>
     where
         T: ?Sized + Serialize,
     {
-        Err(Error::TupleUnsupported)
+        value.serialize(&mut **self)
     }
 
     fn end(self) -> Result<()> {
-        Err(Error::TupleUnsupported)
+        Ok(())
     }
 }
 

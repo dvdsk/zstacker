@@ -8,11 +8,12 @@ authors.workspace = true
 
 [dependencies]
 zstacker-znp-protocol = { path = "../znp-protocol/" }
+zstacker-test-support = { path = "../test-support/" }
 thiserror = "2.0.12"
-tokio = { version = "1.44", features = ["io-util", "sync", "rt", "time"] }
+tokio.workspace = true
 tracing = "0.1.41"
 itertools = "0.14.0"
-tokio-serial = "5.4.5"
+tokio-serial.workspace = true
 futures-concurrency = "7.6.3"
 futures = "0.3.31"
 tokio-util = { version = "0.7.14", features = ["time"] }
@@ -20,6 +21,5 @@ tokio-util = { version = "0.7.14", features = ["time"] }
 [dev-dependencies]
 zstacker-znp-protocol = { path = "../znp-protocol/", features = ["mocking"] }
 color-eyre = "0.6.3"
-serialport = "4.2.2"
-tokio = { version = "1.44", features = ["macros", "rt-multi-thread", "time"] }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "time"] }
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }

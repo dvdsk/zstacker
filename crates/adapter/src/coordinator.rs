@@ -21,7 +21,7 @@ struct PendingSend {
     awnser_to: ReplyHandler,
     to_send: Vec<u8>,
     reply_meta: CommandMeta,
-    status_reply: bool,
+    status_reply: Option<CommandMeta>,
     /// If this pattern is seen in the reply data and the meta matches
     /// the reply is for us
     reply_pattern: Pattern,
@@ -84,14 +84,14 @@ impl Adaptor {
         &mut self,
         req: R,
     ) -> Result<R::Reply, QueueError> {
+        dbg!(&req);
         let (tx, rx) = tokio::sync::oneshot::channel();
-        dbg!();
         self.to_io_task
             .send(PendingSend {
                 awnser_to: tx,
                 to_send: req.to_frame().map_err(QueueError::Serializing)?,
                 reply_meta: R::Reply::META,
-                status_reply: false,
+                status_reply: None,
                 reply_pattern: req.reply_pattern(),
             })
             .await
@@ -111,13 +111,14 @@ impl Adaptor {
         &mut self,
         req: R,
     ) -> Result<R::Reply, QueueError> {
+        dbg!(&req);
         let (tx, rx) = tokio::sync::oneshot::channel();
         self.to_io_task
             .send(PendingSend {
                 awnser_to: tx,
                 to_send: req.to_frame().map_err(QueueError::Serializing)?,
                 reply_meta: R::Reply::META,
-                status_reply: R::HAS_SYNC_STATUS_RPLY,
+                status_reply: R::status_reply_meta(),
                 reply_pattern: req.reply_pattern(),
             })
             .await

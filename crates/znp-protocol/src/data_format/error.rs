@@ -61,6 +61,9 @@ pub enum Error {
     EnumUnsupported,
     IdentifierUnsupported,
     Reading(std::io::Error),
+    TupleUnsupported1,
+    TupleUnsupported2,
+    TupleUnsupported3,
 }
 
 impl ser::Error for Error {

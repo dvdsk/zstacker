@@ -26,9 +26,10 @@ pub mod sys;
 pub mod util;
 pub mod zdo;
 
+#[cfg_attr(feature = "mocking", derive(Serialize_repr))]
 #[derive(Debug, Clone, Copy, Deserialize_repr)]
 #[repr(u8)]
-pub(crate) enum BasicStatus {
+pub enum BasicStatus {
     Ok = 0,
     Err = 1,
 }
@@ -211,6 +212,7 @@ pub enum SubSystem {
     GreenPower = 0x15,
 }
 
+#[cfg_attr(feature = "mocking", derive(Serialize_repr))]
 #[derive(Clone, Copy, Debug, Deserialize_repr)]
 #[repr(u8)]
 pub enum DeviceState {
@@ -237,10 +239,10 @@ pub enum DeviceType {
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub struct IeeeAddr(u64);
+pub struct IeeeAddr(pub u64);
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub struct ShortAddr(u16);
+pub struct ShortAddr(pub u16);
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Endpoint(u8);

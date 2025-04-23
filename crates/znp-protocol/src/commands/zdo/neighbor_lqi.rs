@@ -1,5 +1,6 @@
 use serde::de::{SeqAccess, Visitor};
-use serde::{Deserialize, de};
+use serde::ser::SerializeStruct;
+use serde::{Deserialize, Serialize, de};
 
 use crate::commands::{DeviceType, IeeeAddr, ShortAddr};
 
@@ -90,5 +91,25 @@ impl<'de> Deserialize<'de> for NeighborLqi {
             ],
             NeighborLqiVisitor,
         )
+    }
+}
+
+impl Serialize for NeighborLqi {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let bit_packed_lqi_entry = self.device_type as u8
+            | (self.rx_on_when_idle as u8) << 2
+            | (self.relationship as u8) << 4;
+        let mut s = serializer.serialize_struct("NeighborLqi", 7)?;
+        s.serialize_field("extended_pan_id", &self.extended_pan_id)?;
+        s.serialize_field("extended_address", &self.extended_address)?;
+        s.serialize_field("network_address", &self.network_address)?;
+        s.serialize_field("bit_packed_lqi_entry", &bit_packed_lqi_entry)?;
+        s.serialize_field("permit_joining", &self.permit_joining)?;
+        s.serialize_field("depth", &self.depth)?;
+        s.serialize_field("lqi", &self.lqi)?;
+        s.end()
     }
 }

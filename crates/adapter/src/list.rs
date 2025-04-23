@@ -20,7 +20,6 @@ impl Coordinator {
             })
             .await
             .map_err(ListError::RequestLinkQuality)?;
-        dbg!(rsp);
         Ok(())
     }
 }

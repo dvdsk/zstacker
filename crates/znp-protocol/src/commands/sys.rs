@@ -121,6 +121,7 @@ where
 #[derive(Debug, Clone, Serialize)]
 pub struct Version;
 
+#[cfg_attr(feature = "mocking", derive(Serialize))]
 #[derive(Debug, Clone, Deserialize)]
 pub struct VersionReply {
     pub transportrev: u8,

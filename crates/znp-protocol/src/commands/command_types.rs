@@ -45,26 +45,33 @@ pub trait SyncRequest: Serialize + std::fmt::Debug {
     }
 }
 
-#[cfg(feature = "mocking")]
-pub fn to_frame(
-    serialized_data: Vec<u8>,
-    meta: CommandMeta,
-) -> Result<Vec<u8>, CommandError> {
-    let frame_body = [serialized_data.len() as u8]
-        .into_iter()
-        .chain(meta.serialize())
-        .chain(serialized_data);
+mod to_frame {
+    use super::*;
 
-    let checksum = frame_body
-        .clone()
-        .reduce(|checksum, byte| checksum ^ byte)
-        .expect("never empty");
+    pub fn to_frame(
+        serialized_data: Vec<u8>,
+        meta: CommandMeta,
+    ) -> Result<Vec<u8>, CommandError> {
+        let frame_body = [serialized_data.len() as u8]
+            .into_iter()
+            .chain(meta.serialize())
+            .chain(serialized_data);
 
-    Ok(iter::once(START_OF_FRAME)
-        .chain(frame_body)
-        .chain([checksum])
-        .collect())
+        let checksum = frame_body
+            .clone()
+            .reduce(|checksum, byte| checksum ^ byte)
+            .expect("never empty");
+
+        Ok(iter::once(START_OF_FRAME)
+            .chain(frame_body)
+            .chain([checksum])
+            .collect())
+    }
 }
+#[cfg(feature = "mocking")]
+pub use to_frame::to_frame;
+#[cfg(not(feature = "mocking"))]
+pub(crate) use to_frame::to_frame;
 
 pub trait SyncReply: DeserializeOwned {
     type Request: SyncRequest;
@@ -86,17 +93,35 @@ pub trait SyncReply: DeserializeOwned {
     }
 }
 
+/// These map to two separate mt command types: 
+/// - `Self::HAS_SYNC_STATUS_RPLY` is false: an AREQ send by the host 
+/// - `Self::HAS_SYNC_STATUS_RPLY` is true: an SREQ send by the host then 
+/// immediately answered with a status SRSP from the device. Then at some
+/// later time an AREQ from the device
 pub trait AsyncRequest: Serialize + std::fmt::Debug {
     const ID: u8;
     const SUBSYSTEM: SubSystem;
     const META: CommandMeta = CommandMeta {
-        ty: CommandType::AREQ,
+        ty: if Self::HAS_SYNC_STATUS_RPLY {
+            CommandType::SREQ
+        } else {
+            CommandType::AREQ
+        },
         sub_system: Self::SUBSYSTEM,
         id: Self::ID,
     };
+
     const TIMEOUT: Duration;
     const HAS_SYNC_STATUS_RPLY: bool;
     type Reply: AsyncReply;
+
+    fn status_reply_meta() -> Option<CommandMeta> {
+        Self::HAS_SYNC_STATUS_RPLY.then(|| CommandMeta {
+            ty: CommandType::SRSP,
+            sub_system: Self::SUBSYSTEM,
+            id: Self::ID,
+        })
+    }
 
     fn reply_pattern(&self) -> Pattern {
         Pattern::default()
