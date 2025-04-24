@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use color_eyre::eyre::{Context, eyre};
+use tokio::time::sleep;
 use tokio_serial::{SerialPortBuilderExt, SerialPortType};
 use tracing::level_filters::LevelFilter;
 use tracing_subscriber::layer::SubscriberExt;
@@ -18,7 +19,7 @@ async fn main() -> color_eyre::Result<()> {
                 .with_default_directive(LevelFilter::INFO.into())
                 .from_env()?,
         )
-        .with(fmt::layer())
+        .with(fmt::layer().pretty().with_line_number(true))
         .try_init()?;
 
     let ports = tokio_serial::available_ports()
@@ -49,6 +50,8 @@ async fn main() -> color_eyre::Result<()> {
     let mut coordinator = zstacker_znp::start_coordinator(adaptor, vec![])
         .await
         .wrap_err("Could not start coordinator")?;
+    println!("sleeping to give the coordinator time to discover the network");
+    sleep(Duration::from_secs(5)).await;
     coordinator
         .list_addresses_on_network()
         .await

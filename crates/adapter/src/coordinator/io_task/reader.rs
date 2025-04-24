@@ -7,6 +7,7 @@ use std::time::Duration;
 use tokio::io::AsyncReadExt;
 use tokio_serial::SerialStream;
 use tokio_util::time::FutureExt;
+use tracing::{instrument, trace};
 use zstacker_znp_protocol::commands::START_OF_FRAME;
 use zstacker_znp_protocol::framing::{CommandMeta, CommandMetaError};
 
@@ -97,6 +98,7 @@ impl MetaReader {
             };
         }
 
+        trace!("new frame started");
         for byte in self.buffer.iter_mut().skip(self.n_read) {
             *byte = serial
                 .read_u8()
@@ -122,11 +124,14 @@ impl MetaReader {
 }
 
 impl DataReader {
+    #[instrument(skip(serial))]
     pub async fn read(
         &mut self,
         serial: &mut SerialStream,
     ) -> Result<(CommandMeta, Data), Error> {
         const CHECKSUM_LENGTH: usize = 1;
+        trace!("reading frame data");
+
         let left_to_read =
             self.data_length + CHECKSUM_LENGTH - self.bytes_read.len();
         for _ in 0..left_to_read {

@@ -24,7 +24,7 @@ pub enum Error {
     // are specific to the format, in this case JSON.
     Eof,
     Syntax,
-    ExpectedBoolean,
+    ExpectedBoolean(u8),
     ExpectedInteger,
     ExpectedString,
     ExpectedNull,
@@ -83,7 +83,9 @@ impl Display for Error {
         match self {
             Error::Message(msg) => formatter.write_str(msg),
             Error::Eof => formatter.write_str("unexpected end of input"),
-            _ => todo!(),
+            Error::ExpectedBoolean(byte) => formatter
+                .write_fmt(format_args!("expected boolean got: 0b{byte:0b}")),
+            _ => formatter.write_fmt(format_args!("{self:?}")),
             /* and so forth */
         }
     }

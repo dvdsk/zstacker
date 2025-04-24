@@ -49,7 +49,7 @@ impl<'de> Visitor<'de> for NeighborLqiVisitor {
             .next_element::<u8>()?
             .ok_or_else(|| de::Error::invalid_length(3, &self))?;
         let permit_joining = seq
-            .next_element::<bool>()?
+            .next_element::<u8>()?
             .ok_or_else(|| de::Error::invalid_length(4, &self))?;
         let depth = seq
             .next_element::<u8>()?
@@ -66,7 +66,7 @@ impl<'de> Visitor<'de> for NeighborLqiVisitor {
                 .expect("can only represent valid values for DeviceType"),
             rx_on_when_idle: (packed & 0b0000_1100) >> 2,
             relationship: (packed & 0b1111_0000) >> 4,
-            permit_joining,
+            permit_joining: (permit_joining & 0b1100_0000 == 1),
             depth,
             lqi,
         })

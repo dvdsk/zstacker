@@ -27,7 +27,8 @@ pub struct ResetReq {
 impl AsyncRequest for ResetReq {
     const ID: u8 = 0;
     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-    const TIMEOUT: std::time::Duration = Duration::from_millis(100);
+    /// Reset can be really slow
+    const TIMEOUT: std::time::Duration = Duration::from_millis(5000);
     const HAS_SYNC_STATUS_RPLY: bool = false;
     type Reply = ResetInd;
 }
@@ -129,7 +130,6 @@ pub struct VersionReply {
     pub majorrel: u8,
     pub minorrel: u8,
     pub maintrel: u8,
-    pub revision: u32,
 }
 
 impl SyncReply for VersionReply {

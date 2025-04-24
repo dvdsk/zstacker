@@ -3,7 +3,7 @@ use futures_concurrency::future::Race;
 use reader::FrameReader;
 use std::sync::Arc;
 use tokio::sync::mpsc;
-use tracing::{debug, error};
+use tracing::error;
 
 use tokio::io::AsyncWriteExt;
 use tokio_serial::SerialStream;
@@ -33,7 +33,7 @@ pub async fn io_task(
     mut serial: SerialStream,
     mut rx: mpsc::Receiver<PendingSend>,
 ) -> (SerialStream, Result<(), Error>) {
-    let mut requests_expecting_reply = Dispatcher::default();
+    let mut dispatcher = Dispatcher::new();
 
     enum Event {
         Received(Option<PendingSend>),
@@ -42,7 +42,7 @@ pub async fn io_task(
 
     let mut reader = FrameReader::default();
     loop {
-        debug!("lop loop");
+        dispatcher.collect_garbage();
         let res = match (
             rx.recv().map(Event::Received),
             reader.read(&mut serial).map(Event::ReadMeta),
@@ -51,21 +51,14 @@ pub async fn io_task(
             .await
         {
             Event::Received(None) => {
-                debug!("Coordinator dropped, ending IO task");
+                tracing::warn!("Coordinator dropped, ending IO task");
                 return (serial, Ok(()));
             }
             Event::Received(Some(pending)) => {
-                debug!("Got new request to send");
-                send_pending(
-                    &mut serial,
-                    pending,
-                    &mut requests_expecting_reply,
-                )
-                .await
+                send_pending(&mut serial, pending, &mut dispatcher).await
             }
             Event::ReadMeta(Ok((meta, data))) => {
-                debug!("Read meta: {meta:?}");
-                requests_expecting_reply.process_reply(&meta, data);
+                dispatcher.process_reply(&meta, data);
                 Ok(())
             }
             Event::ReadMeta(Err(err)) => Err(Error::ReadingFrameIo(err)),
@@ -96,6 +89,5 @@ async fn send_pending(
         .await
         .map_err(Arc::new)
         .map_err(Error::WritingIo)?;
-    debug!("send request");
     Ok(())
 }

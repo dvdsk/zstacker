@@ -57,7 +57,6 @@ pub(crate) fn sys_version() -> Vec<u8> {
         majorrel: 2,
         minorrel: 3,
         maintrel: 4,
-        revision: 5,
     };
 
     to_frame(data_format::to_vec(&RESPONSE).unwrap(), VersionReply::META)

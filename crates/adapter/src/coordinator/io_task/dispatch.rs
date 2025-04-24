@@ -4,24 +4,25 @@
 use std::collections::HashMap;
 use std::collections::hash_map::Entry;
 use std::iter;
+use std::time::{Duration, Instant};
 
 use tokio::sync::oneshot::Sender;
-use tracing::debug;
 use zstacker_znp_protocol::commands::Pattern;
 use zstacker_znp_protocol::framing::CommandMeta;
 
 use crate::coordinator::ReplyHandler;
 
 #[derive(Debug)]
-struct PendingReply {
+struct PendingStatusReply {
     awnser_to: Sender<Vec<u8>>,
     reply_meta: CommandMeta,
     reply_pattern: Pattern,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct Dispatcher {
-    status_handlers: HashMap<CommandMeta, PendingReply>,
+    last_garbage_collect: Instant,
+    status_handlers: HashMap<CommandMeta, PendingStatusReply>,
     normal_handlers: HashMap<CommandMeta, HashMap<Pattern, ReplyHandler>>,
 }
 
@@ -30,6 +31,14 @@ pub struct Dispatcher {
 pub struct DuplicateEntry;
 
 impl Dispatcher {
+    pub(crate) fn new() -> Self {
+        Self {
+            last_garbage_collect: Instant::now(),
+            status_handlers: HashMap::new(),
+            normal_handlers: HashMap::new(),
+        }
+    }
+
     pub(crate) fn register(
         &mut self,
         mut pending: crate::coordinator::PendingSend,
@@ -46,7 +55,11 @@ impl Dispatcher {
         meta: CommandMeta,
         pending: crate::coordinator::PendingSend,
     ) -> Result<(), DuplicateEntry> {
-        if self.status_handlers.contains_key(&meta) {
+        if self
+            .status_handlers
+            .get(&meta)
+            .is_some_and(|h| !h.awnser_to.is_closed())
+        {
             return Err(DuplicateEntry);
         }
 
@@ -56,7 +69,7 @@ impl Dispatcher {
 
         self.status_handlers.insert(
             meta,
-            PendingReply {
+            PendingStatusReply {
                 awnser_to: pending.awnser_to,
                 reply_meta: pending.reply_meta,
                 reply_pattern: pending.reply_pattern,
@@ -86,7 +99,6 @@ impl Dispatcher {
                 vacant_entry.insert(patterns);
             }
         }
-        debug!("registered reply handler");
         res
     }
 
@@ -96,10 +108,11 @@ impl Dispatcher {
         data: Vec<u8>,
     ) -> Option<()> {
         // Option so we can easily return early with `?`
-        if let Some(PendingReply {
+        if let Some(PendingStatusReply {
             awnser_to,
             reply_meta,
             reply_pattern,
+            ..
         }) = self.status_handlers.remove(meta)
         {
             match self.normal_handlers.entry(reply_meta) {
@@ -126,6 +139,38 @@ impl Dispatcher {
 
         None
     }
+
+    pub(crate) fn collect_garbage(&mut self) {
+        if self.last_garbage_collect.elapsed() < Duration::from_secs(30) {
+            return;
+        }
+        self.last_garbage_collect = Instant::now();
+
+        let expired: Vec<CommandMeta> = self
+            .status_handlers
+            .iter()
+            .filter(|(_, PendingStatusReply { awnser_to, .. })| {
+                awnser_to.is_closed()
+            })
+            .map(|(key, _)| key)
+            .cloned()
+            .collect();
+        for key in expired {
+            self.status_handlers.remove(&key);
+        }
+
+        for (_, handlers) in self.normal_handlers.iter_mut() {
+            let expired: Vec<Pattern> = handlers
+                .iter()
+                .filter(|(_, handler)| handler.is_closed())
+                .map(|(key, _)| key)
+                .cloned()
+                .collect();
+            for key in expired {
+                handlers.remove(&key);
+            }
+        }
+    }
 }
 
 fn in_handlers(
@@ -134,6 +179,10 @@ fn in_handlers(
 ) -> bool {
     handlers
         .get(&pending.reply_meta)
-        .map(|patterns| patterns.contains_key(&pending.reply_pattern))
+        .map(|patterns| {
+            patterns
+                .get(&pending.reply_pattern)
+                .is_some_and(|sender| sender.is_closed())
+        })
         .unwrap_or(false)
 }

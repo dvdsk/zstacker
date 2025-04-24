@@ -45,7 +45,7 @@ impl<R: Read> Deserializer<R> {
         } else if byte == false as u8 {
             Ok(false)
         } else {
-            Err(Error::ExpectedBoolean)
+            Err(Error::ExpectedBoolean(byte))
         }
     }
 

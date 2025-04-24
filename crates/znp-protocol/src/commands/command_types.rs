@@ -19,6 +19,7 @@ pub trait SyncRequest: Serialize + std::fmt::Debug {
         sub_system: Self::SUBSYSTEM,
         id: Self::ID,
     };
+    const TIMEOUT: Duration = Duration::from_millis(50);
     type Reply: SyncReply;
 
     fn reply_pattern(&self) -> Pattern {
@@ -73,7 +74,7 @@ pub use to_frame::to_frame;
 #[cfg(not(feature = "mocking"))]
 pub(crate) use to_frame::to_frame;
 
-pub trait SyncReply: DeserializeOwned {
+pub trait SyncReply: DeserializeOwned + std::fmt::Debug {
     type Request: SyncRequest;
     const META: CommandMeta = CommandMeta {
         ty: CommandType::SRSP,
@@ -93,9 +94,9 @@ pub trait SyncReply: DeserializeOwned {
     }
 }
 
-/// These map to two separate mt command types: 
-/// - `Self::HAS_SYNC_STATUS_RPLY` is false: an AREQ send by the host 
-/// - `Self::HAS_SYNC_STATUS_RPLY` is true: an SREQ send by the host then 
+/// These map to two separate mt command types:
+/// - `Self::HAS_SYNC_STATUS_RPLY` is false: an AREQ send by the host
+/// - `Self::HAS_SYNC_STATUS_RPLY` is true: an SREQ send by the host then
 /// immediately answered with a status SRSP from the device. Then at some
 /// later time an AREQ from the device
 pub trait AsyncRequest: Serialize + std::fmt::Debug {
@@ -157,7 +158,7 @@ pub trait AsyncNotify {
 }
 
 /// Only send by the device in response to an AsyncRequest
-pub trait AsyncReply: DeserializeOwned {
+pub trait AsyncReply: DeserializeOwned + std::fmt::Debug {
     const ID: u8;
     const SUBSYSTEM: SubSystem;
     const META: CommandMeta = CommandMeta {

@@ -1,10 +1,9 @@
 use std::thread;
 use std::time::Duration;
 
-use tokio::time;
-use tracing::{debug, info};
+use tracing::{debug, info, instrument};
 
-use zstacker_znp_protocol::commands::sys::ResetType;
+use zstacker_znp_protocol::commands::sys::{ResetInd, ResetType};
 use zstacker_znp_protocol::commands::util::DeviceInfo;
 use zstacker_znp_protocol::commands::{self, DeviceState};
 
@@ -13,12 +12,12 @@ use crate::error::{RegisterEndpointsError, StartUpError};
 
 type Endpoint = commands::af::Register;
 
+#[instrument(skip(adaptor))]
 pub async fn start_coordinator(
     mut adaptor: Adaptor,
     endpoints: Vec<Endpoint>,
 ) -> Result<Coordinator, StartUpError> {
     reset_device(&mut adaptor).await?;
-    debug!("device reset");
     let device_info = start_as_coordinator_if_needed(&mut adaptor).await?;
     debug!("device started as coordinator");
     register_endpoints(&mut adaptor, endpoints)
@@ -30,35 +29,26 @@ pub async fn start_coordinator(
     Ok(Coordinator::start(device_info, adaptor))
 }
 
-pub async fn reset_device(coord: &mut Adaptor) -> Result<(), StartUpError> {
-    let reset_cmd = commands::sys::ResetReq {
-        ty: ResetType::Soft,
-    };
+#[instrument(skip(adaptor))]
+pub async fn reset_device(adaptor: &mut Adaptor) -> Result<(), StartUpError> {
+    let ResetInd {
+        product_id,
+        major_rel,
+        minor_rel,
+        ..
+    } = adaptor
+        .queue_async(commands::sys::ResetReq {
+            ty: ResetType::Soft,
+        })
+        .await
+        .map_err(StartUpError::ResetFailed)?;
 
-    // Reset device multiple times to make sure one arrives
-    let reset_reply = coord
-        .queue_async(reset_cmd)
-        .await
-        .map_err(StartUpError::ResetFailed)?;
-    debug!("reset reply: {:?}", reset_reply);
-    time::sleep(Duration::from_millis(100)).await;
-    let reset_reply = coord
-        .queue_async(reset_cmd)
-        .await
-        .map_err(StartUpError::ResetFailed)?;
-    debug!("reset reply: {:?}", reset_reply);
-    time::sleep(Duration::from_millis(100)).await;
-    let reset_reply = coord
-        .queue_async(reset_cmd)
-        .await
-        .map_err(StartUpError::ResetFailed)?;
-    debug!("reset reply: {:?}", reset_reply);
+    info!("device id: {product_id}, version: {major_rel}.{minor_rel}");
 
-    // Give the device time to reset
-    time::sleep(Duration::from_secs(1)).await;
     Ok(())
 }
 
+#[instrument(skip(adaptor))]
 pub async fn check_connection_to_adapter(
     adaptor: &mut Adaptor,
 ) -> Result<(), StartUpError> {
@@ -73,6 +63,7 @@ pub async fn check_connection_to_adapter(
     Ok(())
 }
 
+#[instrument(skip(adaptor))]
 async fn start_as_coordinator_if_needed(
     adaptor: &mut Adaptor,
 ) -> Result<DeviceInfo, StartUpError> {
@@ -82,14 +73,8 @@ async fn start_as_coordinator_if_needed(
             .queue_sync(commands::util::GetDeviceInfo)
             .await
             .map_err(StartUpError::GetDeviceInfo)?;
-        tracing::debug!("device_info: {device_info:?}");
         match device_info.device_state {
             DeviceState::StartedAsZBCoordinator => {
-                let version = adaptor
-                    .queue_sync(commands::sys::Version)
-                    .await
-                    .map_err(StartUpError::GetVersion)?;
-                tracing::debug!("device_version: {version:?}");
                 return Ok(device_info);
             }
             DeviceState::StartingAsZBCoordinator => {
@@ -111,6 +96,7 @@ async fn start_as_coordinator_if_needed(
     }
 }
 
+#[instrument(skip(adaptor))]
 async fn add_to_green_power_group(
     adaptor: &mut Adaptor,
 ) -> Result<(), StartUpError> {
@@ -125,6 +111,7 @@ async fn add_to_green_power_group(
     Ok(())
 }
 
+#[instrument(skip(adaptor))]
 async fn register_endpoints(
     adaptor: &mut Adaptor,
     endpoints: Vec<Endpoint>,

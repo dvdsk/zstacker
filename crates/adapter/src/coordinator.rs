@@ -4,7 +4,7 @@ use tokio::sync::{mpsc, oneshot};
 use tokio::task;
 use tokio_serial::SerialStream;
 use tokio_util::time::FutureExt as _;
-use tracing::{error, instrument};
+use tracing::{debug, error, instrument};
 use zstacker_znp_protocol::commands::util::DeviceInfo;
 use zstacker_znp_protocol::commands::{AsyncReply, ReplyError, SyncReply};
 use zstacker_znp_protocol::commands::{
@@ -84,7 +84,6 @@ impl Adaptor {
         &mut self,
         req: R,
     ) -> Result<R::Reply, QueueError> {
-        dbg!(&req);
         let (tx, rx) = tokio::sync::oneshot::channel();
         self.to_io_task
             .send(PendingSend {
@@ -96,11 +95,14 @@ impl Adaptor {
             })
             .await
             .expect("Io-task is dropped after queue_requests");
-        match rx.timeout(Duration::from_millis(50)).await {
+        match rx.timeout(R::TIMEOUT).await {
             Err(_) => Err(QueueError::ReplyNotImmediate),
             Ok(Err(_)) => Err(self.io_task_error().await),
             Ok(Ok(data)) => {
-                R::Reply::from_data(&data).map_err(QueueError::Deserializing)
+                let reply = R::Reply::from_data(&data)
+                    .map_err(QueueError::Deserializing)?;
+                debug!("Got reply: {reply:?}");
+                Ok(reply)
             }
         }
     }
@@ -111,7 +113,6 @@ impl Adaptor {
         &mut self,
         req: R,
     ) -> Result<R::Reply, QueueError> {
-        dbg!(&req);
         let (tx, rx) = tokio::sync::oneshot::channel();
         self.to_io_task
             .send(PendingSend {
@@ -130,7 +131,10 @@ impl Adaptor {
             }),
             Ok(Err(_)) => Err(self.io_task_error().await),
             Ok(Ok(data)) => {
-                R::Reply::from_data(&data).map_err(QueueError::Deserializing)
+                let reply = R::Reply::from_data(&data)
+                    .map_err(QueueError::Deserializing)?;
+                debug!("Got reply: {reply:?}");
+                Ok(reply)
             }
         }
     }
@@ -181,7 +185,7 @@ pub enum QueueError {
     IoTask(#[source] io_task::Error),
     #[error("Async request did not get awnserd within: {timeout:?}")]
     TimedOut { timeout: Duration },
-    #[error("Sync request was not awnserd immediatly")]
+    #[error("Sync request was not awnsered immediately")]
     ReplyNotImmediate,
 }
 

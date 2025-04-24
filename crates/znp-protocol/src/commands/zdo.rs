@@ -495,6 +495,8 @@ pub struct StartupFromApp {
 impl SyncRequest for StartupFromApp {
     const ID: u8 = 64;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
+    /// zigbee2mqtt even uses 40s
+    const TIMEOUT: Duration = Duration::from_secs(10);
     type Reply = StartupFromAppReply;
 }
 
