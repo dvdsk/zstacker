@@ -8,6 +8,7 @@ use zstacker_znp_protocol::commands::util::DeviceInfo;
 use zstacker_znp_protocol::commands::{self, DeviceState};
 
 use crate::coordinator::{Adaptor, Coordinator};
+use crate::endpoints::default_endpoints;
 use crate::error::{RegisterEndpointsError, StartUpError};
 
 type Endpoint = commands::af::Register;
@@ -16,17 +17,31 @@ type Endpoint = commands::af::Register;
 pub async fn start_coordinator(
     mut adaptor: Adaptor,
     endpoints: Vec<Endpoint>,
+    skip_reset: bool,
 ) -> Result<Coordinator, StartUpError> {
-    reset_device(&mut adaptor).await?;
+    if !skip_reset {
+        reset_device(&mut adaptor).await?;
+    }
+    use_maximum_tx_power(&mut adaptor).await?;
     let device_info = start_as_coordinator_if_needed(&mut adaptor).await?;
     debug!("device started as coordinator");
-    register_endpoints(&mut adaptor, endpoints)
+    register_endpoints(&mut adaptor, default_endpoints())
         .await
         .map_err(StartUpError::RegisterEndpoints)?;
     debug!("needed endpoints registered on device");
     add_to_green_power_group(&mut adaptor).await?;
     debug!("added device to green power group");
     Ok(Coordinator::start(device_info, adaptor))
+}
+
+async fn use_maximum_tx_power(
+    adaptor: &mut Adaptor,
+) -> Result<(), StartUpError> {
+    adaptor
+        .queue_sync(commands::sys::SetTxPower { level: 20 })
+        .await
+        .map_err(StartUpError::SetMaxTxPower)?
+        .map_err(StartUpError::SetMaxTxPowerFailure)
 }
 
 #[instrument(skip(adaptor))]
@@ -111,10 +126,10 @@ async fn add_to_green_power_group(
     Ok(())
 }
 
-#[instrument(skip(adaptor))]
+#[instrument(skip(adaptor, endpoints))]
 async fn register_endpoints(
     adaptor: &mut Adaptor,
-    endpoints: Vec<Endpoint>,
+    endpoints: impl IntoIterator<Item = Endpoint>,
 ) -> Result<(), RegisterEndpointsError> {
     // Note, `z2m` checks if the endpoint is already registered first
     // no idea why, let's see

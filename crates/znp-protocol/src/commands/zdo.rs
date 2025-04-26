@@ -1,14 +1,18 @@
 use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
-use serde_repr::Deserialize_repr;
+use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use super::{
-    AsyncReply, AsyncRequest, BasicStatus, IeeeAddr, ShortAddr, SubSystem, SyncReply, SyncRequest
+    AsyncReply, AsyncRequest, BasicStatus, IeeeAddr, PartialList, Pattern,
+    ShortAddr, SubSystem, SyncReply, SyncRequest,
 };
 
 mod neighbor_lqi;
 pub use neighbor_lqi::NeighborLqi;
+
+mod ext_find_group_reply;
+pub use ext_find_group_reply::{ExtFindGroupReply, GroupName};
 
 // #[derive(Debug, Clone, Serialize, Deserialize)]
 // pub struct NwkAddrReq {
@@ -337,22 +341,25 @@ impl AsyncReply for IeeeAddrRsp {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MgmtLqiReq {
-    pub dstaddr: ShortAddr,
-    pub startindex: u8,
+    /// Specifies the network address of the device to process the query.
+    pub dst_addr: ShortAddr,
+    /// Where to start in the response list. Allows handling responses longer
+    /// than 3 entries.
+    pub start_index: u8,
 }
 
 impl AsyncRequest for MgmtLqiReq {
     const ID: u8 = 49;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
-    const TIMEOUT: Duration = Duration::from_millis(500);
+    const TIMEOUT: Duration = Duration::from_secs(30);
     const HAS_SYNC_STATUS_RPLY: bool = true;
     type Reply = MgmtLqiRsp;
 
-    fn reply_pattern(&self) -> super::Pattern {
-        super::Pattern::default()
-            .match_exact(&self.dstaddr)
+    fn reply_pattern(&self) -> Pattern {
+        Pattern::default()
+            .match_exact(&self.dst_addr)
             .skip(2)
-            .match_exact(&self.startindex)
+            .match_exact(&self.start_index)
     }
 }
 
@@ -361,12 +368,7 @@ impl AsyncRequest for MgmtLqiReq {
 pub struct MgmtLqiRsp {
     pub srcaddr: ShortAddr,
     pub status: BasicStatus,
-    // TODO replace this with a better abstraction
-    /// Total number of entries available in the device.
-    pub neighbortable_entries: u8,
-    /// Where in the total number of entries this response starts.
-    pub startindex: u8,
-    pub neighbor_lqi_list: Vec<NeighborLqi>,
+    pub neighbor_lqis: PartialList<NeighborLqi>,
 }
 
 impl AsyncReply for MgmtLqiRsp {
@@ -375,19 +377,65 @@ impl AsyncReply for MgmtLqiRsp {
     type Request = MgmtLqiReq;
 }
 
-// #[derive(Debug, Clone, Serialize, Deserialize)]
-// pub struct MgmtRtgReq {
-//     pub dstaddr: u16,
-//     pub startindex: u8,
-// }
-//
-// impl SyncRequest for MgmtRtgReq {
-//     const ID: u8 = 50;
-//     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
-//     type Reply = MgmtRtgReqReply;
-// }
-// basic_reply! {MgmtRtgReq, MgmtRtgReqReply }
-//
+/// Request the Routing Table of the destination device.
+#[cfg_attr(feature = "mocking", derive(Deserialize))]
+#[derive(Debug, Clone, Serialize)]
+pub struct MgmtRtgReq {
+    /// Specifies the network address of the device to process the query.
+    pub dst_addr: ShortAddr,
+    /// Where to start in the response list. Allows handling responses longer
+    /// than 15 entries.
+    pub start_index: u8,
+}
+
+impl AsyncRequest for MgmtRtgReq {
+    const ID: u8 = 50;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
+    const TIMEOUT: Duration = Duration::from_secs(30);
+    const HAS_SYNC_STATUS_RPLY: bool = true;
+    type Reply = MgmtRtgRsp;
+
+    fn reply_pattern(&self) -> Pattern {
+        Pattern::default()
+            .match_exact(&self.dst_addr)
+            .match_exact(&self.start_index)
+    }
+}
+
+#[cfg_attr(feature = "mocking", derive(Serialize))]
+#[derive(Debug, Clone, Deserialize)]
+pub struct MgmtRtgRsp {
+    /// Source address of the message.
+    pub src_addr: ShortAddr,
+    pub status: BasicStatus,
+    pub routing_table: PartialList<RoutingEntry>,
+}
+
+/// See: Z-Stack Monitor and Test API section 3.12.2.17 revision 1.14
+#[cfg_attr(feature = "mocking", derive(Serialize))]
+#[derive(Debug, Clone, Deserialize)]
+pub struct RoutingEntry {
+    pub destination_address: ShortAddr,
+    pub status: RouterStatus,
+    pub next_hop: ShortAddr,
+}
+
+#[cfg_attr(feature = "mocking", derive(Serialize_repr))]
+#[derive(Debug, Clone, Deserialize_repr)]
+#[repr(u8)]
+pub enum RouterStatus {
+    Active = 0,
+    DiscoveryUnderway = 1,
+    DiscoveryFailed = 2,
+    Inactive = 3,
+}
+
+impl AsyncReply for MgmtRtgRsp {
+    const ID: u8 = 178;
+    const SUBSYSTEM: SubSystem = SubSystem::Zdo;
+    type Request = MgmtRtgReq;
+}
+
 // #[derive(Debug, Clone, Serialize, Deserialize)]
 // pub struct MgmtBindReq {
 //     pub dstaddr: u16,
@@ -489,6 +537,7 @@ impl AsyncReply for MgmtLqiRsp {
 /// This command starts the device in the network.
 #[derive(Debug, Clone, Serialize)]
 pub struct StartupFromApp {
+    /// milliseconds
     pub startdelay: u16,
 }
 
@@ -733,21 +782,6 @@ impl SyncReply for StartupFromAppReply {
 // }
 //
 // impl SyncReply for MgmtNwkDiscRsp {
-//     const CMD0: u8 = 0; // placeholder
-//     const CMD1: u8 = 0; // placeholder
-// }
-//
-// #[derive(Debug, Clone, Serialize, Deserialize)]
-// pub struct MgmtRtgRsp {
-//     pub srcaddr: u16,
-//     pub status: u8,
-//     pub routingtableentries: u8,
-//     pub startindex: u8,
-//     pub routingtablelistcount: u8,
-//     pub routingtablelist: RoutingTable,
-// }
-//
-// impl SyncReply for MgmtRtgRsp {
 //     const CMD0: u8 = 0; // placeholder
 //     const CMD1: u8 = 0; // placeholder
 // }
@@ -1140,12 +1174,6 @@ impl SyncRequest for ExtFindGroup {
     const ID: u8 = 74;
     const SUBSYSTEM: SubSystem = SubSystem::Zdo;
     type Reply = ExtFindGroupReply;
-}
-
-#[cfg_attr(feature = "mocking", derive(Serialize))]
-#[derive(Debug, Clone, Deserialize)]
-pub struct ExtFindGroupReply {
-    pub group_info: [u8; 18],
 }
 
 impl SyncReply for ExtFindGroupReply {

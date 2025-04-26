@@ -4,7 +4,7 @@ use tokio::sync::{mpsc, oneshot};
 use tokio::task;
 use tokio_serial::SerialStream;
 use tokio_util::time::FutureExt as _;
-use tracing::{debug, error, instrument};
+use tracing::{debug, error, instrument, trace};
 use zstacker_znp_protocol::commands::util::DeviceInfo;
 use zstacker_znp_protocol::commands::{AsyncReply, ReplyError, SyncReply};
 use zstacker_znp_protocol::commands::{
@@ -13,12 +13,11 @@ use zstacker_znp_protocol::commands::{
 use zstacker_znp_protocol::framing::CommandMeta;
 
 type Data = Vec<u8>;
-type ReplyHandler = oneshot::Sender<Data>;
 
 mod io_task;
 
 struct PendingSend {
-    awnser_to: ReplyHandler,
+    awnser_to: oneshot::Sender<Data>,
     to_send: Vec<u8>,
     reply_meta: CommandMeta,
     status_reply: Option<CommandMeta>,
@@ -99,9 +98,10 @@ impl Adaptor {
             Err(_) => Err(QueueError::ReplyNotImmediate),
             Ok(Err(_)) => Err(self.io_task_error().await),
             Ok(Ok(data)) => {
+                trace!("Raw reply: {data:?}");
                 let reply = R::Reply::from_data(&data)
                     .map_err(QueueError::Deserializing)?;
-                debug!("Got reply: {reply:?}");
+                debug!("reply: {reply:?}");
                 Ok(reply)
             }
         }
@@ -131,9 +131,10 @@ impl Adaptor {
             }),
             Ok(Err(_)) => Err(self.io_task_error().await),
             Ok(Ok(data)) => {
+                trace!("Raw reply: {data:?}");
                 let reply = R::Reply::from_data(&data)
                     .map_err(QueueError::Deserializing)?;
-                debug!("Got reply: {reply:?}");
+                debug!("reply: {reply:?}");
                 Ok(reply)
             }
         }

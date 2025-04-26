@@ -10,7 +10,7 @@ use zstacker_znp::start_coordinator;
 
 async fn run_test(serial: SerialStream) {
     let adaptor = Adaptor::start(serial);
-    let mut coordinator = start_coordinator(adaptor, Vec::new()).await.unwrap();
+    let mut coordinator = start_coordinator(adaptor, Vec::new(), false).await.unwrap();
     coordinator.list_addresses_on_network().await.unwrap();
 }
 

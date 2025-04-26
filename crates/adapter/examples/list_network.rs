@@ -47,14 +47,16 @@ async fn main() -> color_eyre::Result<()> {
     let Some(adaptor) = adaptor else {
         return Err(eyre!("No adapter found"));
     };
-    let mut coordinator = zstacker_znp::start_coordinator(adaptor, vec![])
-        .await
-        .wrap_err("Could not start coordinator")?;
+    let mut coordinator =
+        zstacker_znp::start_coordinator(adaptor, vec![], true)
+            .await
+            .wrap_err("Could not start coordinator")?;
     println!("sleeping to give the coordinator time to discover the network");
-    sleep(Duration::from_secs(5)).await;
-    coordinator
-        .list_addresses_on_network()
+    sleep(Duration::from_secs(60)).await;
+    let table = coordinator
+        .lqi_table()
         .await
         .wrap_err("Could not get active adresses")?;
+    dbg!(table);
     Ok(())
 }

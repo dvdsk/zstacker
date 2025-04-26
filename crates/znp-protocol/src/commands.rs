@@ -34,6 +34,15 @@ pub enum BasicStatus {
     Err = 1,
 }
 
+impl BasicStatus {
+    pub fn as_result(self) -> Result<(), ()> {
+        match self {
+            BasicStatus::Ok => Ok(()),
+            BasicStatus::Err => Err(()),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash)]
 pub enum PatternElement {
     NeedsToMatchExact(u8),
@@ -101,7 +110,7 @@ macro_rules! basic_reply {
                 !self.is_ok()
             }
             pub fn map_err<E>(&self, err: E) -> Result<(), E> {
-                Err(err)
+                if self.is_ok() { Ok(()) } else { Err(err) }
             }
         }
 
@@ -238,30 +247,40 @@ pub enum DeviceType {
     EndDevice = 3,
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct IeeeAddr(pub u64);
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct ShortAddr(pub u16);
+
+impl std::fmt::Display for ShortAddr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_fmt(format_args!("{}", self.0))
+    }
+}
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Endpoint(u8);
 
-#[derive(Debug, Clone, Serialize_repr, Deserialize_repr)]
-#[repr(u8)]
-pub enum RouterStatus {
-    Active = 0,
-    DiscoveryUnderway = 1,
-    DiscoveryFailed = 2,
-    Inactive = 3,
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PartialList<T> {
+    pub total_entries: u8,
+    pub offset_in_total: u8,
+    pub list: Vec<T>,
 }
 
-/// See: Z-Stack Monitor and Test API section 3.12.2.17 revision 1.14
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RoutingTable {
-    pub destination_address: ShortAddr,
-    pub status: RouterStatus,
-    pub next_hop: ShortAddr,
+impl<T> PartialList<T> {
+    pub fn from_vec(start_offset: u8, total_len: u8, list: Vec<T>) -> Self {
+        Self {
+            total_entries: total_len,
+            offset_in_total: start_offset,
+            list,
+        }
+    }
+
+    pub fn next_start(&self) -> u8 {
+        self.offset_in_total + self.list.len() as u8
+    }
 }
 
 /// See Z-Stack Monitor and Test API section 3.12.2.18 revision 1.14

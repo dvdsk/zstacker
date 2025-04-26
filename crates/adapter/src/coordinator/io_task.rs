@@ -12,7 +12,7 @@ use zstacker_znp_protocol::framing::CommandMeta;
 use super::PendingSend;
 
 pub mod dispatch;
-use dispatch::Dispatcher;
+use dispatch::ReplyHandler;
 mod reader;
 
 #[derive(Debug, Clone, thiserror::Error)]
@@ -33,7 +33,7 @@ pub async fn io_task(
     mut serial: SerialStream,
     mut rx: mpsc::Receiver<PendingSend>,
 ) -> (SerialStream, Result<(), Error>) {
-    let mut dispatcher = Dispatcher::new();
+    let mut reply_handler = ReplyHandler::new();
 
     enum Event {
         Received(Option<PendingSend>),
@@ -42,7 +42,7 @@ pub async fn io_task(
 
     let mut reader = FrameReader::default();
     loop {
-        dispatcher.collect_garbage();
+        reply_handler.collect_garbage();
         let res = match (
             rx.recv().map(Event::Received),
             reader.read(&mut serial).map(Event::ReadMeta),
@@ -55,10 +55,10 @@ pub async fn io_task(
                 return (serial, Ok(()));
             }
             Event::Received(Some(pending)) => {
-                send_pending(&mut serial, pending, &mut dispatcher).await
+                send_pending(&mut serial, pending, &mut reply_handler).await
             }
             Event::ReadMeta(Ok((meta, data))) => {
-                dispatcher.process_reply(&meta, data);
+                reply_handler.process_reply(&meta, data);
                 Ok(())
             }
             Event::ReadMeta(Err(err)) => Err(Error::ReadingFrameIo(err)),
@@ -77,7 +77,7 @@ pub async fn io_task(
 async fn send_pending(
     serial: &mut SerialStream,
     pending: PendingSend,
-    requests_expecting_reply: &mut Dispatcher,
+    requests_expecting_reply: &mut ReplyHandler,
 ) -> Result<(), Error> {
     let to_send = pending.to_send.clone();
     requests_expecting_reply.register(pending).expect(

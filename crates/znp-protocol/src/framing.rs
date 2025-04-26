@@ -2,10 +2,11 @@
 //!
 //! These look like this:
 //!
-//! ```
+//!_____________________________________ 
 //! n bytes: | 1       | 2       | 0-250
 //!          | Length  | Command | Data
-//! ```
+//! ____________________________________
+//! 
 //! Length: length of data field (0 to 250)
 
 use crate::commands::{CommandType, SubSystem};

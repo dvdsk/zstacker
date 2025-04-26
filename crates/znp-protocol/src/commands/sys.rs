@@ -3,7 +3,7 @@
 use std::time::Duration;
 
 use super::{
-    AsyncNotify, AsyncReply, AsyncRequest, SubSystem, SyncReply, SyncRequest,
+    basic_reply, AsyncNotify, AsyncReply, AsyncRequest, SubSystem, SyncReply, SyncRequest
 };
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
@@ -450,27 +450,21 @@ impl SyncRequest for Version {
 //     const SUBSYSTEM: SubSystem = SubSystem::Sys;
 //     type Reply = OsalNvLengthReply;
 // }
-//
-// #[derive(Debug, Clone, Serialize)]
-// pub struct SetTxPower {
-//     pub level: u8,
-// }
-//
-// #[derive(Debug, Clone, Deserialize)]
-// pub struct SetTxPowerReply {
-//     pub txpower: u8,
-// }
-//
-// impl SyncReply for SetTxPowerReply {
-//     type Request = SetTxPower;
-// }
-//
-// impl SyncRequest for SetTxPower {
-//     const ID: u8 = 20;
-//     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-//     type Reply = SetTxPowerReply;
-// }
-//
+
+#[derive(Debug, Clone, Serialize)]
+pub struct SetTxPower {
+    /// Requested TX power in dBm
+    pub level: u8,
+}
+
+impl SyncRequest for SetTxPower {
+    const ID: u8 = 20;
+    const SUBSYSTEM: SubSystem = SubSystem::Sys;
+    type Reply = SetTxPowerReply;
+}
+
+basic_reply! {SetTxPower, SetTxPowerReply}
+
 // #[derive(Debug, Clone, Serialize)]
 // pub struct JammerParameters {
 //     pub jmrcntievents: u16,

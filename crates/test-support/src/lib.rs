@@ -33,9 +33,20 @@ pub async fn mock_adaptor(mut serial: SerialStream) {
                 serial.write_all(&responses::find_group()).await.unwrap();
             }
             responses::LQI_REQ => {
+                let dst_addr = u16::from_le_bytes(
+                    data[0..2].try_into().expect("data should be longer the 2"),
+                );
                 serial.write_all(&responses::lqi_status()).await.unwrap();
                 sleep(Duration::from_millis(300)).await;
-                serial.write_all(&responses::lqi()).await.unwrap();
+                serial.write_all(&responses::lqi(dst_addr)).await.unwrap();
+            }
+            responses::RTG_REQ => {
+                let dst_addr = u16::from_le_bytes(
+                    data[0..2].try_into().expect("data should be longer the 2"),
+                );
+                serial.write_all(&responses::rtg_status()).await.unwrap();
+                sleep(Duration::from_millis(300)).await;
+                serial.write_all(&responses::routing_table(dst_addr)).await.unwrap();
             }
             CommandMeta { .. } => {
                 panic!("mock can not handle command type: {meta:?}")

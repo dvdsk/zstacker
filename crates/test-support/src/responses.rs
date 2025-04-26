@@ -1,6 +1,6 @@
 use zstacker_znp_protocol::commands::{
-    AsyncReply, AsyncRequest, CommandType, ShortAddr,
-    SubSystem, SyncReply, to_frame,
+    AsyncReply, AsyncRequest, CommandType, PartialList, ShortAddr, SubSystem,
+    SyncReply, to_frame,
 };
 use zstacker_znp_protocol::data_format;
 use zstacker_znp_protocol::framing::CommandMeta;
@@ -33,6 +33,12 @@ pub(crate) const LQI_REQ: CommandMeta = CommandMeta {
     ty: CommandType::SREQ,
     sub_system: SubSystem::Zdo,
     id: 49,
+};
+
+pub(crate) const RTG_REQ: CommandMeta = CommandMeta {
+    ty: CommandType::SREQ,
+    sub_system: SubSystem::Zdo,
+    id: 50,
 };
 
 pub(crate) fn reset() -> Vec<u8> {
@@ -81,8 +87,10 @@ pub(crate) fn device_info() -> Vec<u8> {
 
 pub(crate) fn find_group() -> Vec<u8> {
     use zstacker_znp_protocol::commands::zdo::ExtFindGroupReply;
+    use zstacker_znp_protocol::commands::zdo::GroupName;
     let response = ExtFindGroupReply {
-        group_info: [0u8; 18],
+        group_id: 12,
+        group_name: GroupName("hi how are you".to_string()),
     };
 
     to_frame(
@@ -102,30 +110,67 @@ pub(crate) fn lqi_status() -> Vec<u8> {
     .unwrap()
 }
 
-pub(crate) fn lqi() -> Vec<u8> {
+pub(crate) fn lqi(src_addr: u16) -> Vec<u8> {
     use zstacker_znp_protocol::commands::zdo::{MgmtLqiRsp, NeighborLqi};
     use zstacker_znp_protocol::commands::{BasicStatus, IeeeAddr};
     to_frame(
         data_format::to_vec(&MgmtLqiRsp {
-            srcaddr: ShortAddr(43),
+            srcaddr: ShortAddr(src_addr),
             status: BasicStatus::Ok,
-            neighbortable_entries: 1,
-            startindex: 0,
-            neighbor_lqi_list: vec![NeighborLqi {
-                extended_pan_id: 0,
-                extended_address: IeeeAddr(2),
-                network_address: ShortAddr(2),
-                device_type:
-                    zstacker_znp_protocol::commands::DeviceType::Router,
-                rx_on_when_idle: 1,
-                relationship: 1,
-                permit_joining: true,
-                depth: 1,
-                lqi: 16,
-            }],
+            neighbor_lqis: PartialList::from_vec(
+                0,
+                1,
+                vec![NeighborLqi {
+                    extended_pan_id: 0,
+                    extended_address: IeeeAddr(2),
+                    network_address: ShortAddr(2),
+                    device_type:
+                        zstacker_znp_protocol::commands::DeviceType::Router,
+                    rx_on_when_idle: 1,
+                    relationship: 1,
+                    permit_joining: true,
+                    depth: 1,
+                    lqi: 16,
+                }],
+            ),
         })
         .unwrap(),
         MgmtLqiRsp::META,
+    )
+    .unwrap()
+}
+
+pub(crate) fn rtg_status() -> Vec<u8> {
+    use zstacker_znp_protocol::commands::BasicStatus;
+    use zstacker_znp_protocol::commands::zdo::MgmtRtgReq;
+    to_frame(
+        data_format::to_vec(&BasicStatus::Ok).unwrap(),
+        MgmtRtgReq::status_reply_meta().unwrap(),
+    )
+    .unwrap()
+}
+
+pub(crate) fn routing_table(src_addr: u16) -> Vec<u8> {
+    use zstacker_znp_protocol::commands::BasicStatus;
+    use zstacker_znp_protocol::commands::zdo::{
+        MgmtRtgRsp, RouterStatus, RoutingEntry,
+    };
+    to_frame(
+        data_format::to_vec(&MgmtRtgRsp {
+            src_addr: ShortAddr(src_addr),
+            status: BasicStatus::Ok,
+            routing_table: PartialList::from_vec(
+                0,
+                1,
+                vec![RoutingEntry {
+                    destination_address: ShortAddr(42),
+                    status: RouterStatus::Active,
+                    next_hop: ShortAddr(42),
+                }],
+            ),
+        })
+        .unwrap(),
+        MgmtRtgRsp::META,
     )
     .unwrap()
 }

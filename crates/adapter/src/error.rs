@@ -25,6 +25,10 @@ pub enum StartUpError {
     AddingToGreenPowerGroup(#[source] QueueError),
     #[error("Could not reset the adaptor")]
     ResetFailed(#[source] QueueError),
+    #[error("Could not configure the device to use maximum tx power")]
+    SetMaxTxPower(#[source] QueueError),
+    #[error("Device returned an error when configuring max tx power")]
+    SetMaxTxPowerFailure,
 }
 
 #[derive(Debug, thiserror::Error)]

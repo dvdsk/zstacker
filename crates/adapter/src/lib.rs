@@ -1,5 +1,6 @@
 pub mod error;
 pub mod startup;
+pub mod endpoints;
 pub mod list;
 pub mod coordinator;
 

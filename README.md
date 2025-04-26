@@ -4,6 +4,9 @@ Goal is to be able to control and read zigbee devices through a Rust API without
 [zigbee2mqtt](www.zigbee2mqtt.io) while [zigbee2mqtt](www.zigbee2mqtt.io) is
 used for managing the zigbee network (updating/adding/removing/naming etc). 
 
+This is tested and only supports the `CC2652P USB Dongle` (Sonoff zigbee 3.0 USB dongle
+plus
+
 # License
 
 The code in `ts_fragment` files belongs to 'Koen Kanters' and was auto translated

@@ -1,15 +1,28 @@
 use serde::{Deserialize, Serialize};
+use serde_repr::Serialize_repr;
 
 use super::{SubSystem, SyncReply, SyncRequest, basic_reply};
+
+#[derive(Debug, Clone, Serialize_repr)]
+#[repr(u8)]
+pub enum LatencyRequirement {
+    NoRequirement = 0,
+    FastBeacons = 1,
+    SlowBeacons = 2,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ClusterId(pub u16);
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Register {
     pub endpoint: u8,
-    pub appprofid: u16,
-    pub appdeviceid: u16,
-    pub appdevver: u8,
-    pub latencyreq: u8,
-    pub appinclusterlist: Vec<u16>,
+    pub app_prof_id: u16,
+    pub app_device_id: u16,
+    pub app_dev_ver: u8,
+    pub latency_req: LatencyRequirement,
+    pub in_clusters: Vec<ClusterId>,
+    pub out_clusters: Vec<ClusterId>,
 }
 
 impl SyncRequest for Register {

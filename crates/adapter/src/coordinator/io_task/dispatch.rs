@@ -10,8 +10,6 @@ use tokio::sync::oneshot::Sender;
 use zstacker_znp_protocol::commands::Pattern;
 use zstacker_znp_protocol::framing::CommandMeta;
 
-use crate::coordinator::ReplyHandler;
-
 #[derive(Debug)]
 struct PendingStatusReply {
     awnser_to: Sender<Vec<u8>>,
@@ -20,17 +18,17 @@ struct PendingStatusReply {
 }
 
 #[derive(Debug)]
-pub struct Dispatcher {
+pub struct ReplyHandler {
     last_garbage_collect: Instant,
     status_handlers: HashMap<CommandMeta, PendingStatusReply>,
-    normal_handlers: HashMap<CommandMeta, HashMap<Pattern, ReplyHandler>>,
+    normal_handlers: HashMap<CommandMeta, HashMap<Pattern, Sender<Vec<u8>>>>,
 }
 
 #[derive(Debug, thiserror::Error)]
 #[error("Could not register request, cmd and pattern already registerd")]
 pub struct DuplicateEntry;
 
-impl Dispatcher {
+impl ReplyHandler {
     pub(crate) fn new() -> Self {
         Self {
             last_garbage_collect: Instant::now(),
@@ -174,7 +172,7 @@ impl Dispatcher {
 }
 
 fn in_handlers(
-    handlers: &HashMap<CommandMeta, HashMap<Pattern, ReplyHandler>>,
+    handlers: &HashMap<CommandMeta, HashMap<Pattern, Sender<Vec<u8>>>>,
     pending: &crate::coordinator::PendingSend,
 ) -> bool {
     handlers
