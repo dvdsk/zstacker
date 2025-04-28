@@ -3,10 +3,14 @@
 use std::time::Duration;
 
 use super::{
-    basic_reply, AsyncNotify, AsyncReply, AsyncRequest, SubSystem, SyncReply, SyncRequest
+    AsyncNotify, AsyncReply, AsyncRequest, BasicStatus, SubSystem, SyncReply,
+    SyncRequest, basic_reply,
 };
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
+
+mod osal_nv_length_reply;
+pub use osal_nv_length_reply::OsalNvLengthReply;
 
 #[derive(Debug, Clone, Copy, Serialize_repr)]
 #[repr(u8)]
@@ -430,26 +434,21 @@ impl SyncRequest for Version {
 // }
 //
 // basic_reply! { OsalNvDelete, OsalNvDeleteReply }
-//
-// #[derive(Debug, Clone, Serialize)]
-// pub struct OsalNvLength {
-//     pub id: u16,
-// }
-//
-// #[derive(Debug, Clone, Deserialize)]
-// pub struct OsalNvLengthReply {
-//     pub length: u16,
-// }
-//
-// impl SyncReply for OsalNvLengthReply {
-//     type Request = OsalNvLength;
-// }
-//
-// impl SyncRequest for OsalNvLength {
-//     const ID: u8 = 19;
-//     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-//     type Reply = OsalNvLengthReply;
-// }
+
+/// An id for an item in non volatile ram (NVRAM)
+#[derive(Debug, Clone, Copy, Serialize)]
+pub struct NvId(pub u16);
+
+#[derive(Debug, Clone, Serialize)]
+pub struct OsalNvLength {
+    pub item_id: NvId,
+}
+
+impl SyncRequest for OsalNvLength {
+    const ID: u8 = 19;
+    const SUBSYSTEM: SubSystem = SubSystem::Sys;
+    type Reply = OsalNvLengthReply;
+}
 
 #[derive(Debug, Clone, Serialize)]
 pub struct SetTxPower {
@@ -572,30 +571,29 @@ basic_reply! {SetTxPower, SetTxPowerReply}
 //     const SUBSYSTEM: SubSystem = SubSystem::Sys;
 //     type Reply = ZdiagsSaveStatsToNvReply;
 // }
-//
-// #[derive(Debug, Clone, Serialize)]
-// pub struct OsalNvReadExt {
-//     pub id: u16,
-//     pub offset: u16,
-// }
-//
-// #[derive(Debug, Clone, Deserialize)]
-// pub struct OsalNvReadExtReply {
-//     pub status: u8,
-//     pub len: u8,
-//     pub value: Vec<u8>,
-// }
-//
-// impl SyncReply for OsalNvReadExtReply {
-//     type Request = OsalNvReadExt;
-// }
-//
-// impl SyncRequest for OsalNvReadExt {
-//     const ID: u8 = 28;
-//     const SUBSYSTEM: SubSystem = SubSystem::Sys;
-//     type Reply = OsalNvReadExtReply;
-// }
-//
+
+#[derive(Debug, Clone, Serialize)]
+pub struct OsalNvReadExt {
+    pub id: NvId,
+    pub offset: u16,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct OsalNvReadExtReply {
+    pub status: BasicStatus,
+    pub bytes: Vec<u8>,
+}
+
+impl SyncReply for OsalNvReadExtReply {
+    type Request = OsalNvReadExt;
+}
+
+impl SyncRequest for OsalNvReadExt {
+    const ID: u8 = 28;
+    const SUBSYSTEM: SubSystem = SubSystem::Sys;
+    type Reply = OsalNvReadExtReply;
+}
+
 // #[derive(Debug, Clone, Serialize)]
 // pub struct OsalNvWriteExt {
 //     pub id: u16,

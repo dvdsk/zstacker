@@ -8,6 +8,7 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{EnvFilter, fmt};
 use zstacker_znp::coordinator::Adaptor;
+use zstacker_znp::nvram;
 
 #[tokio::main]
 async fn main() -> color_eyre::Result<()> {
@@ -51,12 +52,16 @@ async fn main() -> color_eyre::Result<()> {
         zstacker_znp::start_coordinator(adaptor, vec![], true)
             .await
             .wrap_err("Could not start coordinator")?;
-    println!("sleeping to give the coordinator time to discover the network");
-    sleep(Duration::from_secs(60)).await;
-    let table = coordinator
-        .lqi_table()
-        .await
-        .wrap_err("Could not get active adresses")?;
-    dbg!(table);
+
+    let reply = coordinator.read_nvram_item(nvram::ids::NIB).await.unwrap();
+    dbg!(reply.len());
+
+    // println!("sleeping to give the coordinator time to discover the network");
+    // sleep(Duration::from_secs(60)).await;
+    // let table = coordinator
+    //     .lqi_table()
+    //     .await
+    //     .wrap_err("Could not get active adresses")?;
+    // dbg!(table);
     Ok(())
 }

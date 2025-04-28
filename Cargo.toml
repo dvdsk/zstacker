@@ -15,3 +15,5 @@ debug = true
 [workspace.dependencies]
 tokio = { version = "1.44", features = ["io-util", "sync", "rt", "time"] }
 tokio-serial = "5.4.5"
+serde = { version = "1", features = ["derive"] }
+serde_repr = "0.1.20"

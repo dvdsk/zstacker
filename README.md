@@ -7,6 +7,11 @@ used for managing the zigbee network (updating/adding/removing/naming etc).
 This is tested and only supports the `CC2652P USB Dongle` (Sonoff zigbee 3.0 USB dongle
 plus
 
+# Acknowledgements
+
+This would have been quite hard if I could read the `zigbee-herdsman` and
+`zigpy-znp` code. Many thanks to their authors and contributors.
+
 # License
 
 The code in `ts_fragment` files belongs to 'Koen Kanters' and was auto translated
